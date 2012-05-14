@@ -1,5 +1,20 @@
+--Seed 插件
+--	ui
+--包含文件
+--	ui.lua - 提供通过ccb文件创建UIstage的方法
+--	ui_menu.lua - 提供创建Menu（菜单框架）和MenuItem（可点击的菜单项）的方法
+--依赖组件
+--	plist
+--	particle
+--	transition
+--	animation
+--	uri
+--	input_ex
+--最后修改日期
+--	2012-5-14
+
 local plistParser = require("plist")
-require("plugins.ui_menu")
+require("ui_menu")
 require("particle")
 require("transition")
 require("animation")
@@ -9,34 +24,9 @@ local runtime_
 
 local screenW, screenH = display.getContentSize()
 local width, height = 480, 320
-local debugMode = false
+local debugMode_ = false
 
-local function calcData(data)
-	local ret = {}
-	ret = data
-	return ret
-end
-
-local function calcActionName(str)
-	return string.sub(str,1,-5)
-end
-
-local function getPositionCC(pos, h)
-	return pos[1], h - pos[2]
-end
-
-local function getRectCC(x, y, w, h)
-	return x, screenH - y - h, w, h
-end
-
-local function getRectPosCC(l, t, r, b)
-	return l, screenH - b, r, screenH - t
-end
-
-local function getPosCC(x, y)
-	return x, screenH - y
-end
-
+-- 从RGB表和alpha中获取颜色
 local function colorFromRGBA(color, alpha)
 	if color == nil then
 		return 1, 0, 0, 0.5
@@ -45,6 +35,7 @@ local function colorFromRGBA(color, alpha)
 	end
 end
 
+--计算CCB锚点
 local function calcAnchorRect(x, y, w, h, data)
 	if data.isRelativeAnchorPoint then
 		x = -data.anchorPoint[1] * w
@@ -55,8 +46,19 @@ local function calcAnchorRect(x, y, w, h, data)
 	return x, y, w, h
 end
 
-local function _getTexure(data)
-	return filePath_ .. data.spriteFile, 128, 128
+--根据数字查找BlendState的值
+local function numToBlendState(num)
+	if num == 0 then return "zero"
+	elseif num == 1 then return "one"
+	elseif num == 770 then return "srcAlpha"
+	elseif num == 772 then return "dstAlpha"
+	elseif num == 771 then return "invSrcAlpha"
+	elseif num == 773 then return "invDstAlpha"
+	elseif num == 768 then return "srcColor"
+	elseif num == 774 then return "dstColor"
+	elseif num == 769 then return "invSrcColor"
+	elseif num == 775 then return "invDestColor"
+	end
 end
 
 --设置各种属性
@@ -75,6 +77,12 @@ local function setNodeProperties(node, data)
 	end
 	node.container = node:newNode()
 	node.container.x, node.container.y = -data.contentSize[1]*data.anchorPoint[1], data.contentSize[2]*data.anchorPoint[2]
+	if data.blendFunc ~= nil then
+		local eff = display.BlendStateEffect.new()
+		eff.srcFactor = numToBlendState(data.blendFunc[1])
+		eff.destFactor = numToBlendState(data.blendFunc[2])
+		node:addEffect(eff)
+	end
 end
 
 local function createNode(self, data)
@@ -122,7 +130,6 @@ local function createLayerColor(self, data)
 	return node
 end
 
-
 local function createMenu(self, data)
 	local node = self:newMenu()
 	setNodeProperties(node, data)
@@ -162,7 +169,10 @@ local function createParticleSystem(self, data)
 	local texture = nil
 
 	local psd = {}
+	psd.emitterType					= data.emitterMode
 	psd.maxParticles				= data.totalParticles
+	psd.emissionRate				= data.emissionRate
+	psd.duration					= data.duration
 								   
 	psd.particleLifespan			= data.life
 	psd.particleLifespanVariance	= data.lifeVar
@@ -196,13 +206,13 @@ local function createParticleSystem(self, data)
 	psd.finishColorBlue				= data.endColorVar[3]
 	psd.finishColorAlpha			= data.endColorVar[4]
 								   
-	psd.angle						= -(data.angle or 0)
+	psd.angle						= data.angle or 0
 	psd.angleVariance				= data.angleVar
 	psd.speed						= data.speed
 	psd.speedVariance				= data.speedVar
 								   
 	psd.gravityx					= data.gravity and data.gravity[1]
-	psd.gravityy					= data.gravity and -data.gravity[2]
+	psd.gravityy					= data.gravity and data.gravity[2]
 								   
 	psd.tangentialAcceleration		= data.tangentialAccel
 	psd.tangentialAccelVariance		= data.tangentialAccelVar
@@ -213,21 +223,25 @@ local function createParticleSystem(self, data)
 	psd.rotationEnd					= data.endSpin
 	psd.rotationStartVariance		= data.startSpinVar
 	psd.rotationEndVariance			= data.endSpinVar
+	
+	psd.blendFuncSource				= data.blendFunc[1]
+	psd.blendFuncDestination		= data.blendFunc[2]
+
 								   
-	psd.minRadius					= nil
-	psd.minRadiusVariance			= nil
-	psd.maxRadius					= nil
-	psd.maxRadiusVariance			= nil
-	psd.emitterType					= nil
-	psd.rotatePerSecond				= nil
-	psd.rotatePerSecondVariance		= nil
+	psd.minRadius					= data.startRadius
+	psd.minRadiusVariance			= data.startRadiusVar
+	psd.maxRadius					= data.endRadius
+	psd.maxRadiusVariance			= data.endRadiusVar
+	psd.rotatePerSecond				= rotatePerSecond
+	psd.rotatePerSecondVariance		= rotatePerSecondVar
 	psd.omegaAcceleration			= nil
 	psd.omegaAccelVariance			= nil
-						
-	local txtW, txtH = 24, 24
-	psd.textureFileName, txtW, txtH	= _getTexure(data)
+
+	psd.textureFileName	= filePath_ .. "/" .. data.spriteFile
+	print(psd.textureFileName)
 
 	local node_base = self:newNode()
+	data.blendFunc = nil
 	setNodeProperties(node_base, data)
 	
 	psd.sourcePositionx, psd.sourcePositiony = 0, 0
@@ -308,7 +322,7 @@ local function create(self, data)
 	print("====",data.class)
 	printTable(data.properties)
 	
-	if debugMode then
+	if debugMode_ then
 		node = createDebugNode(self, data.properties)
 	else
 		local t = data.class
@@ -331,7 +345,7 @@ end
 
 
 
-local function _newUIFromCCB(display, ccb, runtime, isDebugMode)
+local function _newUIFromCCB(display, ccb, runtime, isdebugMode_)
 	local data 
 	if type(ccb) == "table" then
 		data = ccb
@@ -340,13 +354,12 @@ local function _newUIFromCCB(display, ccb, runtime, isDebugMode)
 		filePath_ = urilib.dirname(ccb)
 		data = plistParser.parseUri(ccb)
 	end
-	debugMode = isDebugMode or false
+	debugMode_ = isdebugMode_ or false
 	width, height = data.stageWidth, data.stageHeight
 	local stage = display:newStage2D()
 	stage.runtime = runtime
 	stage.selectorTable = {}
 	stage.SymbolTable = {}
-	stage.SymbolTableTag = {}
 	stage.setSymbolTable = function(self, _name, _node)
 		if _node == nil then
 			error("node cannot be nil")
@@ -359,8 +372,24 @@ local function _newUIFromCCB(display, ccb, runtime, isDebugMode)
 	stage.camera = camera
 	camera.x, camera.y = width / 2, -height / 2
 	local node = create(stage, data.nodeGraph)
-	printTable(stage.SymbolTable)
 	return stage
 end
 
 display.newUIFromCCBFile = _newUIFromCCB
+
+
+--[[
+
+UI的使用方法：
+使用display:newUIFromCCBFile(ccb, runtime, isdebugMode)来创建
+	参数：
+		ccb - ccb文件的URI
+		runtime
+		isdebugMode - 默认为false，给true值后，使用线框绘制场景
+	返回值：
+		stage - 一个Stage2D对象，同时附加了selectorTable和sambolTable
+		stage.selectorTable - 记录了UI里所有的selector，可以使用stage.selectorTable["selector名称"]来引用
+		stage.SymbolTable - 记录了UI里所有取了名字的Node，可以使用stage.SymbolTable["node名称"]来引用相应的Node
+	
+
+]]--

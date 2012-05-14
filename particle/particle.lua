@@ -4,6 +4,22 @@ local urilib = require("uri")
 local r2d = require("render2d")
 local plistParser = require("plist")
 
+local function numToBlendState(num)
+	if num == 0 then return "zero"
+	elseif num == 1 then return "one"
+	elseif num == 770 then return "srcAlpha"
+	elseif num == 772 then return "dstAlpha"
+	elseif num == 771 then return "invSrcAlpha"
+	elseif num == 773 then return "invDstAlpha"
+	elseif num == 768 then return "srcColor"
+	elseif num == 774 then return "dstColor"
+	elseif num == 769 then return "invSrcColor"
+	elseif num == 775 then return "invDestColor"
+	else
+		print("blend func:", num, " not supported yet, setted to GL_ONE")
+		return "one"
+	end
+end
 
 function __init__()
 	error("Use newWithPlist/newWithData instead!")
@@ -30,13 +46,11 @@ local function createNodePool(emit, psd, parentNode)
 		else
 			--使用了image，取消了宽高
 			emit.node[i] = parentNode:newImage(emit.texture) -- 创建出全部粒子的Node
-			emit.node[i]:setAnchor(0.5, 0.5)
+			emit.node[i]:setAnchor(0, 0)
 		end
-			emit.node[i]:hide()
-			emit.particlesNeedActive[i] = i
-	end
-	if psd.particleLifespan ~= 0 then
-		emit.maxParticlePerFrame = psd.maxParticles / (psd.particleLifespan * 60) 
+		emit.node[i]:hide()
+		emit.particlesNeedActive[i] = i
+		emit.node[i]:addEffect(emit.blendState) 
 	end
 end
 
@@ -201,7 +215,8 @@ local function createParticleWithRotation(emit,id,osx,osy,omega,omegaAccel,fai,s
 	local ds,dr = es - ss, espin - sspin
 	local dcr, dcg, dcb, dca = ecr - scr, ecg - scg, ecb - scb, eca - sca
 	span = math.abs(span)
-	tr.start(runtime, function()
+
+	tr.start(emit.runtime, function()
 		if(span > 0) then
 			tr.timePeriod(span, function(t, dt)
 				-- 这里要加入带有角速度、相位、半径变化、颜色变化√的公式
@@ -223,63 +238,71 @@ local function createParticleWithRotation(emit,id,osx,osy,omega,omegaAccel,fai,s
 	end)
 end
 
---喷射器的update方法
-local function update(emit,psd) 				
-	local currentLoopTime = 0
+local function shootParticle(posx, posy, emit, psd)
+	if psd.emitterType == 0 then
+		createParticleWithGravity(
+			emit,
+			table.remove(emit.particlesNeedActive),
+			calcVariance(posx, psd.sourcePositionVariancex),
+			calcVariance(posy, psd.sourcePositionVariancey),
+			calcVariance(psd.speed, psd.speedVariance),
+			calcVariance(psd.angle, psd.angleVariance),
+			calcVariance(psd.particleLifespan, psd.particleLifespanVariance),
+			calcVariance(psd.startParticleSize, psd.startParticleSizeVariance),
+			calcVariance(psd.finishParticleSize, psd.finishParticleSizeVariance),
+			calcVariance(psd.startColorRed, psd.startColorVarianceRed),
+			calcVariance(psd.startColorGreen, psd.startColorVarianceGreen),
+			calcVariance(psd.startColorBlue, psd.startColorVarianceBlue),
+			calcVariance(psd.startColorAlpha, psd.startColorVarianceAlpha),
+			calcVariance(psd.finishColorRed, psd.finishColorVarianceRed),
+			calcVariance(psd.finishColorGreen, psd.finishColorVarianceGreen),
+			calcVariance(psd.finishColorBlue, psd.finishColorVarianceBlue),
+			calcVariance(psd.finishColorAlpha, psd.finishColorVarianceAlpha),
+			calcVariance(psd.radialAcceleration, psd.radialAccelVariance),
+			calcVariance(psd.tangentialAcceleration, psd.tangentialAccelVariance),
+			calcVariance(psd.rotationStart, psd.rotationStartVariance),
+			calcVariance(psd.rotationEnd, psd.rotationEndVariance)
+		)
+	else
+		createParticleWithRotation(
+			emit,
+			table.remove(emit.particlesNeedActive),
+			posx,
+			posy,																-- 目前兼容的编辑器不支持旋转时圆心的偏移
+			calcVariance(psd.rotatePerSecond, psd.rotatePerSecondVariance),
+			calcVariance(psd.omegaAcceleration, psd.omegaAccelVariance),		-- 目前兼容的编辑器不支持角加速度
+			calcVariance(psd.angle, psd.angleVariance),							
+			calcVariance(psd.particleLifespan, psd.particleLifespanVariance),	
+			calcVariance(psd.startParticleSize, psd.startParticleSizeVariance),	
+			calcVariance(psd.finishParticleSize, psd.finishParticleSizeVariance),	
+			calcVariance(psd.startColorRed, psd.startColorVarianceRed),			
+			calcVariance(psd.startColorGreen, psd.startColorVarianceGreen),		
+			calcVariance(psd.startColorBlue, psd.startColorVarianceBlue),		
+			calcVariance(psd.startColorAlpha, psd.startColorVarianceAlpha),		
+			calcVariance(psd.finishColorRed, psd.finishColorVarianceRed),		
+			calcVariance(psd.finishColorGreen, psd.finishColorVarianceGreen),	
+			calcVariance(psd.finishColorBlue, psd.finishColorVarianceBlue),		
+			calcVariance(psd.finishColorAlpha, psd.finishColorVarianceAlpha),	
+			calcVariance(psd.maxRadius, psd.maxRadiusVariance),
+			calcVariance(psd.minRadius, psd.minRadiusVariance),					-- 目前兼容的编辑器不支持旋转结束半径的抖动
+			calcVariance(psd.rotationStart, psd.rotationStartVariance),			-- 单一粒子的旋转变化
+			calcVariance(psd.rotationEnd, psd.rotationEndVariance)				
+		)
+	end
+end
 
-	while(currentLoopTime < emit.maxParticlePerFrame and #emit.particlesNeedActive > 1 ) do
-		local posx, posy = emit:localToParent(emit.x, emit.y)
-		if psd.emitterType == 0 then
-			createParticleWithGravity(
-				emit,
-				table.remove(emit.particlesNeedActive),
-				calcVariance(posx, psd.sourcePositionVariancex),
-				calcVariance(posy, psd.sourcePositionVariancey),
-				calcVariance(psd.speed, psd.speedVariance),
-				calcVariance(psd.angle, psd.angleVariance),
-				calcVariance(psd.particleLifespan, psd.particleLifespanVariance),
-				calcVariance(psd.startParticleSize, psd.startParticleSizeVariance),
-				calcVariance(psd.finishParticleSize, psd.finishParticleSizeVariance),
-				calcVariance(psd.startColorRed, psd.startColorVarianceRed),
-				calcVariance(psd.startColorGreen, psd.startColorVarianceGreen),
-				calcVariance(psd.startColorBlue, psd.startColorVarianceBlue),
-				calcVariance(psd.startColorAlpha, psd.startColorVarianceAlpha),
-				calcVariance(psd.finishColorRed, psd.finishColorVarianceRed),
-				calcVariance(psd.finishColorGreen, psd.finishColorVarianceGreen),
-				calcVariance(psd.finishColorBlue, psd.finishColorVarianceBlue),
-				calcVariance(psd.finishColorAlpha, psd.finishColorVarianceAlpha),
-				calcVariance(psd.radialAcceleration, psd.radialAccelVariance),
-				calcVariance(psd.tangentialAcceleration, psd.tangentialAccelVariance),
-				calcVariance(psd.rotationStart, psd.rotationStartVariance),
-				calcVariance(psd.rotationEnd, psd.rotationEndVariance)
-			)
-		else
-			createParticleWithRotation(
-				emit,
-				table.remove(emit.particlesNeedActive),
-				posx,
-				posy,																-- 目前兼容的编辑器不支持旋转时圆心的偏移
-				calcVariance(psd.rotatePerSecond, psd.rotatePerSecondVariance),
-				calcVariance(psd.omegaAcceleration, psd.omegaAccelVariance),		-- 目前兼容的编辑器不支持角加速度
-				calcVariance(psd.angle, psd.angleVariance),							
-				calcVariance(psd.particleLifespan, psd.particleLifespanVariance),	
-				calcVariance(psd.startParticleSize, psd.startParticleSizeVariance),	
-				calcVariance(psd.finishParticleSize, psd.finishParticleSizeVariance),	
-				calcVariance(psd.startColorRed, psd.startColorVarianceRed),			
-				calcVariance(psd.startColorGreen, psd.startColorVarianceGreen),		
-				calcVariance(psd.startColorBlue, psd.startColorVarianceBlue),		
-				calcVariance(psd.startColorAlpha, psd.startColorVarianceAlpha),		
-				calcVariance(psd.finishColorRed, psd.finishColorVarianceRed),		
-				calcVariance(psd.finishColorGreen, psd.finishColorVarianceGreen),	
-				calcVariance(psd.finishColorBlue, psd.finishColorVarianceBlue),		
-				calcVariance(psd.finishColorAlpha, psd.finishColorVarianceAlpha),	
-				calcVariance(psd.maxRadius, psd.maxRadiusVariance),
-				calcVariance(psd.minRadius, psd.minRadiusVariance),					-- 目前兼容的编辑器不支持旋转结束半径的抖动
-				calcVariance(psd.rotationStart, psd.rotationStartVariance),			-- 单一粒子的旋转变化
-				calcVariance(psd.rotationEnd, psd.rotationEndVariance)				
-			)
+
+
+--喷射器的update方法
+local function update(emit, psd, t, dt) 				
+	local posx, posy = emit:localToParent(emit.x, emit.y)
+	local n = 0
+	if t - emit.shoot_t > emit.period then
+		while dt > n * emit.period and #emit.particlesNeedActive > 1 do		
+			shootParticle(posx, posy, emit, psd)
+			n = n + 1
 		end
-		currentLoopTime = currentLoopTime + 1
+		emit.shoot_t = t
 	end
 end
 
@@ -303,20 +326,26 @@ local function _newParticleEmit(self, texture, data, runtime )
 	emit.debugMode = false
 	emit.texture = texture
 
-	emit.node = {}							--构成粒子的node对象
-	emit.particlesNeedActive = {}			--记录粒子是否需要被激活
-	emit.imgW, emit.imgH = texW, texH		--纹理尺寸
-	emit.maxParticlePerFrame = 200			--每帧最多喷射粒子数
+	emit.node = {}									--构成粒子的node对象
+	emit.particlesNeedActive = {}					--记录粒子是否需要被激活
+	emit.imgW, emit.imgH = texW, texH				--纹理尺寸
+	emit.period = 1 / data.emissionRate				--发射周期
+	emit.shoot_t = 0
+
+	local eff = display.BlendStateEffect.new()
+	eff.srcFactor = numToBlendState(data.blendFuncSource)
+	eff.destFactor = numToBlendState(data.blendFuncDestination)
+	emit.blendState = eff
 
 	emit.psd = initAttr(data,emit,self)
-	emit.update = function() update(emit,emit.psd) end
+	emit.update = function(t, dt) update(emit, emit.psd, t, dt) end
 	
 	emit.x = emit.psd.sourcePositionx
 	emit.y = emit.psd.sourcePositiony
 	
 	emit.useGlobleGravity = false
 	emit.runtime = runtime
-	
+
 	emit.setGravity = function(gx, gy)
 		emit.psd.gravityx = gx
 		emit.psd.gravityy = gy
