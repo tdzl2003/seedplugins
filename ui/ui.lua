@@ -87,9 +87,6 @@ end
 
 local function createNode(self, data)
 	local node = self:newNode()
-	local x, y, w, h
-	w, h = data.contentSize[1], data.contentSize[2]
-	x, y, w, h = calcAnchorRect(x, y, w, h, data)
 	setNodeProperties(node, data)
 	return node
 end
@@ -282,6 +279,7 @@ local function createCCSprite(self, data)
 	else
 		node = createSprite(self, data)
 	end
+	return node
 end
 
 local function createDebugNode(self, data)
@@ -319,8 +317,6 @@ local createNodeTable = {
 
 local function create(self, data)
 	local node
-	print("====",data.class)
-	printTable(data.properties)
 	
 	if debugMode_ then
 		node = createDebugNode(self, data.properties)
@@ -329,6 +325,7 @@ local function create(self, data)
 		local createFunc = createNodeTable[t]
 		if createFunc ~= nil then
 			node = createFunc(self, data.properties)
+			print("==create",data.class)
 		else
 			node = self:newNode()
 			print(t .. "class not supported")
