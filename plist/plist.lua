@@ -8,10 +8,12 @@ local bit32 = bit32
 local setmetatable = setmetatable
 local assert = assert
 local tonumber = tonumber
+local tostring = tostring
 local error = error
 local type = type
 local unpack = table.unpack
 local ipairs = ipairs
+local pairs = pairs
 
 local display = display
 
@@ -305,7 +307,7 @@ function parseUri(uri)
 	return _parseUri(absolute(uri, 2))
 end
 
-local function matchInts(str, pat, scale)
+function matchInts(str, pat, scale)
 	if not scale then 
 		scale = 1
 	end
@@ -317,7 +319,7 @@ local function matchInts(str, pat, scale)
 end
 
 local rectpat_tp = "{{([%d%.]+),%s*([%d%.]+)},%s*{([%d%.]+),%s*([%d%.]+)}}"
-local sizepat_tp = "{([%d%.]+),%s*([%d%.]+)}"
+local sizepat_tp = "{([%-%d%.]+),%s*([%-%d%.]+)}"
 
 
 local rectpat = "{{(%d+), (%d+)}, {(%d+), (%d+)}}"
@@ -330,7 +332,7 @@ local sizepat = "{(%d+), (%d+)}"
 --	fps - played frame per seconds
 --	flag -	0 action will be single frame
 --			1 action will group be name
-function loadPlistSheet(uri, fps, flag)
+function loadPlistSheet(uri, fps,flag,array)
 	uri = absolute(uri, 2)
 	local suri, scale = uri, 1
 	if (display.resourceFilter) then
@@ -375,21 +377,24 @@ function loadPlistSheet(uri, fps, flag)
 			do
 				local sx, sy, sw, sh = matchInts(info.frame, rectpat_tp, scale)
 				local dx, dy, dw, dh = matchInts(info.sourceColorRect, rectpat_tp, scale)
+				local ox, oy = matchInts(info.offset, sizepat_tp, scale)
 				local spw, sph = matchInts(info.sourceSize, sizepat_tp, scale)
 				local flag
 				local rot = info.rotated
+				
 				if rot == true then
 					flag = 5
 					sw, sh = sh, sw
 					dw, dh = dh, dw
 					spw, sph = sph, spw
 					dx, dy = dy, dx
+					ox, oy = oy, ox
 				else
 					flag = 0
 				end
-				dx = dx - spw/2
-				dy = dy - sph/2
-				sheet[i] = {sx, sy, sx+sw, sy+sh, dx, dy, dx+dw, dy+dh, spw, sph, flag} 
+				dx = dx - spw / 2 + ox
+				dy = dy - sph / 2 + oy
+				sheet[i] = {sx, sy, sx+sw, sy+sh, dx, dy, dx + dw, dy + dh, spw, sph, flag} 
 			end
 		else
 			do
@@ -413,15 +418,18 @@ function loadPlistSheet(uri, fps, flag)
 				end
 			end
 			
+	-----------lady samurai 专用----------------			
+		if not array then 
 			local se = sets[nn]
-			
 			if (se) then
-				se[3] = i
+				table.insert(se[2],i)
 			else
-				se = {nn, i, i, 1/ff}
+				se = {nn, {i}, 1/24}
 				table.insert(set, se)
 				sets[nn] = se
 			end
+		end
+
 
 		elseif flag == 0 then
 			
@@ -431,6 +439,21 @@ function loadPlistSheet(uri, fps, flag)
 
 		end
 
+	end
+	-----------lady samurai 专用----------------
+		if array then 
+		set = {}
+
+		for i,v in pairs(array) do 
+			local se = {tostring(i), {}, 1/24}
+			for m,n in ipairs(v) do
+				assert(framemap[n])
+				table.insert(se[2],framemap[n])
+			end
+			if (#v > 0) then
+				table.insert(set, se)
+			end
+		end
 	end
 
 	return display.newSheet(pnguri, sheet), display.newSpriteSet(set), sheet, set, framemap, pnguri
