@@ -73,7 +73,7 @@ local function setNodeProperties(node, data)
 		node:hide()
 	end
 	if data.memberVarAssignmentName ~= nil then
-		node.stage:setSymbolTable(data.memberVarAssignmentName, node)
+		node.stage:setsymbolTable(data.memberVarAssignmentName, node)
 	end
 	node.container = node:newNode()
 	node.container.x, node.container.y = -data.contentSize[1]*data.anchorPoint[1], data.contentSize[2]*data.anchorPoint[2]
@@ -356,13 +356,13 @@ local function _newUIFromCCB(display, ccb, runtime, isdebugMode_)
 	local stage = display:newStage2D()
 	stage.runtime = runtime
 	stage.selectorTable = {}
-	stage.SymbolTable = {}
-	stage.setSymbolTable = function(self, _name, _node)
+	stage.symbolTable = {}
+	stage.setsymbolTable = function(self, _name, _node)
 		if _node == nil then
 			error("node cannot be nil")
 			return 
 		end
-		self.SymbolTable[_name] = _node
+		self.symbolTable[_name] = _node
 	end
 	local camera = display.Camera2D.new()
 	camera.width, camera.height = width, height
@@ -386,7 +386,7 @@ UI的使用方法：
 	返回值：
 		stage - 一个Stage2D对象，同时附加了selectorTable和sambolTable
 		stage.selectorTable - 记录了UI里所有的selector，可以使用stage.selectorTable["selector名称"]来引用
-		stage.SymbolTable - 记录了UI里所有取了名字的Node，可以使用stage.SymbolTable["node名称"]来引用相应的Node
+		stage.symbolTable - 记录了UI里所有取了名字的Node，可以使用stage.symbolTable["node名称"]来引用相应的Node
 	
 
 ]]--
