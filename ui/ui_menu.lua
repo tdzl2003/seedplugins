@@ -1,4 +1,3 @@
-local input_ex = require("input_ex").new(runtime)
 require("animation")
 
 local selectors = {}
@@ -14,7 +13,7 @@ end
 display.Stage2D.methods.newMenu = _newMenu
 display.Stage2D.Node.methods.newMenu = _newMenu
 
-local function _newMenuItemImage(self, plist, args, anchorx, anchory, selectorName, enabled)
+local function _newMenuItemImage(self, plist, args, input_ex, anchorx, anchory, selectorName, enabled)
 	local node
 	local normal = {}
 	local selected = {}

@@ -20,7 +20,6 @@ require("transition")
 require("animation")
 local urilib = require("uri")
 local filePath_
-local runtime_
 
 local screenW, screenH = display.getContentSize()
 local width, height = 480, 320
@@ -63,8 +62,8 @@ end
 
 --设置各种属性
 local function setNodeProperties(node, data)
-	node.x, node.y = data.position[1], -data.position[2]
-	node.rotation = -math.rad(data.rotation)
+	node.x, node.y = data.position[1], - data.position[2]
+	node.rotation = math.rad(data.rotation)
 	node.scalex, node.scaley = data.scaleX, data.scaleY
 	node.z = data.zOrder
 	if data.visible then
@@ -76,7 +75,26 @@ local function setNodeProperties(node, data)
 		node.stage:setsymbolTable(data.memberVarAssignmentName, node)
 	end
 	node.container = node:newNode()
-	node.container.x, node.container.y = -data.contentSize[1]*data.anchorPoint[1], data.contentSize[2]*data.anchorPoint[2]
+	local anchorX, anchorY = data.anchorPoint[1], data.anchorPoint[2]
+	if not data.isRelativeAnchorPoint  then
+		if data.scaleX ~= 0 then
+			anchorX = 0.5 - 0.5 / data.scaleX
+		else
+			anchorX = 0
+		end
+		if data.scaleY ~= 0 then
+			anchorY = 0.5 - 0.5 / data.scaleY
+		else
+			anchorY = 0
+		end
+	end
+	node.container.x, node.container.y = -data.contentSize[1] * anchorX, data.contentSize[2] * anchorY
+
+	if debugMode_ then
+		node.container.presentation = function()
+			render2d.fillCircle(0,0,4)
+		end
+	end
 	if data.blendFunc ~= nil then
 		local eff = display.BlendStateEffect.new()
 		eff.srcFactor = numToBlendState(data.blendFunc[1])
@@ -97,6 +115,8 @@ local function createSprite(self, data)
 	node = self:newSpriteWith(self.stage.runtime, sheet_set, data.spriteFile)
 	node:setAnchor(data.anchorPoint[1] - 0.5, 0.5 - data.anchorPoint[2])
 	setNodeProperties(node, data)
+	local r, g, b, a = colorFromRGBA(data.color, data.opacity)
+	node:setMaskColor(r, g, b, a)
 	return node
 end
 
@@ -141,6 +161,7 @@ local function createMenuItemImage(self, data)
 			{filePath_ .. "/" .. data.spriteFileNormal, w, h},
 			{filePath_ .. "/" .. data.spriteFileSelected, w, h},
 			{filePath_ .. "/" .. data.spriteFileDisabled, w, h}},
+			self.stage.input_ex,
 			data.anchorPoint[1] - 0.5, 0.5 - data.anchorPoint[2],
 			data.selector, data.enabled)
 	else
@@ -148,6 +169,7 @@ local function createMenuItemImage(self, data)
 			{data.spriteFileNormal, w, h},
 			{data.spriteFileSelected, w, h},
 			{data.spriteFileDisabled, w, h}},
+			self.stage.input_ex,
 			data.anchorPoint[1] - 0.5, 0.5 - data.anchorPoint[2],
 			data.selector, data.enabled)
 	end
@@ -267,7 +289,6 @@ local function createLayerGradient(self, data)
 		render2d.fillRect(l, t, r, b)
 	end
 	local r, g, b, a = colorFromRGBA(data.color, data.opacity)
-	print(r, g, b, a)
 	node:setMaskColor(r, g, b, a)
 	setNodeProperties(node, data)
 	return node
@@ -283,6 +304,7 @@ local function createCCSprite(self, data)
 end
 
 local function createDebugNode(self, data)
+	print("---------------------------")
 	printTable(data)
 	local node = self:newNode()
 	local x,y,w,h
@@ -342,7 +364,7 @@ end
 
 
 
-local function _newUIFromCCB(display, ccb, runtime, isdebugMode_)
+local function _newUIFromCCB(display, ccb, runtime, input_ex, isdebugMode_)
 	local data 
 	if type(ccb) == "table" then
 		data = ccb
@@ -351,9 +373,11 @@ local function _newUIFromCCB(display, ccb, runtime, isdebugMode_)
 		filePath_ = urilib.dirname(ccb)
 		data = plistParser.parseUri(ccb)
 	end
+	
 	debugMode_ = isdebugMode_ or false
 	width, height = data.stageWidth, data.stageHeight
 	local stage = display:newStage2D()
+	stage.input_ex = input_ex
 	stage.runtime = runtime
 	stage.selectorTable = {}
 	stage.symbolTable = {}
@@ -374,11 +398,10 @@ end
 
 display.newUIFromCCBFile = _newUIFromCCB
 
-
 --[[
 
 UI的使用方法：
-使用display:newUIFromCCBFile(ccb, runtime, isdebugMode)来创建
+使用display:newUIFromCCBFile(ccb, runtime, input_ex, isdebugMode)来创建
 	参数：
 		ccb - ccb文件的URI
 		runtime
@@ -387,6 +410,36 @@ UI的使用方法：
 		stage - 一个Stage2D对象，同时附加了selectorTable和sambolTable
 		stage.selectorTable - 记录了UI里所有的selector，可以使用stage.selectorTable["selector名称"]来引用
 		stage.symbolTable - 记录了UI里所有取了名字的Node，可以使用stage.symbolTable["node名称"]来引用相应的Node
-	
+
+]]--
+
+--[[
+
+===========================symbolTable的详细用法===============================
+
+通过“symbolTable.nodeName”可以引用到在ccb编辑器中以“nodeName”命名的节点
+可以对其执行各种诸如旋转、平移、增删子节点等各种操作
+如下的例子即让一个名为Star的节点不停旋转：
+
+local node = uiStage.symbolTable.Star
+runtime.enterFrame:addListener(function()
+	node.rotation = node.rotation + 0.05
+end)
+
+]]--
+
+--[[
+
+===========================selectorTable的详细用法=============================
+
+通过“selectorTable.selectorName”或“selectorTable["selectorName"]”可以引用到以“selectorName”命名的selector
+selector是一个事件，该事件会在selector所属的MenuItem被按下时触发。
+使用方法同其他事件，即selector:addListener(callbackFunction)
+如下的例子即让一个名为“pressedToMenu”的selector被触发时，打印"ToMenu"字符串
+（有些selector的名称，如“pressedToMenu:”中包含lua的运算符“:”，这时只能使用selectorTable["pressedToMenu:"]来引用）
+
+uiStage.selectorTable.pressedToMenu:addListener(function()
+	print("ToMenu")
+end)
 
 ]]--
