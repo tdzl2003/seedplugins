@@ -1,7 +1,20 @@
+--[[
+Seed 插件
+	input_ex
+
+	包含文件
+		input_ex.lua - 提供各种按钮或其他对象的点击、长按、拖拽等事件
+
+	依赖组件
+		无
+
+	最后修改日期
+		2012-5-22
+
+]]--
+
 module(..., package.seeall)
-require("lua_ex")
 local event = require("event")
---TODO: 提供C++版本以优化各种操作
 
 local updateEvent
 local handlers = {}
@@ -99,6 +112,7 @@ local rect_testhit = function(n,x,y)
 			return (x > n.x and x < n.r and y > n.y and y < n.b)
 		end
 
+--事件列表
 local events = {"onTap", "onHold", "onDragBegin", "onDragging", "onDragEnd", "onTouchDown", "onTouchUp"}
 
 local function initNode(n)
@@ -111,6 +125,7 @@ local function initNode(n)
 	setmetatable(n, nodemt)
 end
 
+--增加一个圆形的判定区域
 function addCircle(input, x, y, r)
 	local ret = {x = x, y = y, r = r, sr = r*r}
 	initNode(ret)
@@ -119,6 +134,7 @@ function addCircle(input, x, y, r)
 	return ret
 end
 
+--增加矩形判定区域
 function addRect(input, x, y, w, h)
 	local ret = {x = x, y = y, w = w, h = h, r= x + w, b = y + h ,sr = w*h}
 	initNode(ret)
@@ -127,6 +143,7 @@ function addRect(input, x, y, w, h)
 	return ret
 end
 
+--为整个屏幕创建一个判定区域
 function addScreenMask(input)
 	local ret = {}
 	initNode(ret)
@@ -142,6 +159,7 @@ local function sc_testhit(n, x, y)
 	return (x*x+y*y < n.sr)
 end
 
+--为一个Sprite对象增加圆形判定区域
 function addSpriteCircle(input, sprite, r)
 	local ret = {
 		r = r,
@@ -171,6 +189,7 @@ local function sr_testhit(n,x,y)
 	return ((x > n.l) and (x < n.r) and (y > n.t) and (y < n.b))
 end
 
+--为一个Sprite增加矩形判定区域
 function addSpriteRect(input, sprite, w, h, anchorx, anchory)	
 	local _ax, _ay = anchorx or 0, anchory or 0
 	local _l = -w/2 - _ax * w
@@ -204,7 +223,7 @@ function addSpriteRect(input, sprite, w, h, anchorx, anchory)
 end
 
 local function translateEvent(ev, index)
-	local time = ev.time / 1000
+	local time = ev.time --/ 1000
 	local oev = {index = index, 
 		x = ev.x, y = ev.y, vx = 0, vy = 0, time = time,
 		startx = ev.x, starty = ev.y, starttime = time, }
@@ -214,6 +233,7 @@ local function translateEvent(ev, index)
 	return oev
 end
 
+--更新事件的状态，此函数会在每帧执行
 function updateEvent(ev)
 	if (ev.done) then
 		return ev
@@ -243,6 +263,7 @@ function updateEvent(ev)
 	end
 end
 
+--计算时间参数
 local function combineEvent(ev, index)
 	local oev = handlers[index]
 	
@@ -252,21 +273,22 @@ local function combineEvent(ev, index)
 	
 	local x = ev.x
 	local y = ev.y
-	local time = ev.time / 1000
+	local time = ev.time --/ 1000
 	local dt = time - oev.time
 	
 	if (dt > 0) then
-		oev.vx = (x - oev.x) / dt
-		oev.vy = (y - oev.y) / dt
+		oev.vx = (x - oev.startx) / (time - oev.starttime)
+		oev.vy = (y - oev.starty) / (time - oev.starttime)
 	end
 	oev.x = x
 	oev.y = y
 	oev.time = time
 	
-	updateEvent(oev)
+	--updateEvent(oev)
 	return oev
 end
 
+--派发事件，此函数会在出现input.touch事件后执行
 function dispatchEvent(input, ev)
 	local index = ev.index + 1
 	local type = ev.type
@@ -279,8 +301,6 @@ function dispatchEvent(input, ev)
 		while (p) do
 			if (p:testHit(ev.x, ev.y)) then
 				p:onTouchDown(ev)
-				
-				
 				ev.target = p
 				if (not (p.dragable or p.holdable)) then
 					p:onTap(ev)
@@ -288,7 +308,6 @@ function dispatchEvent(input, ev)
 				end
 				break
 			end
-		
 			p = p.prev
 		end
 		if (not ev.target) then
@@ -312,3 +331,52 @@ function dispatchEvent(input, ev)
 		end
 	end
 end
+
+--[[
+
+=======================input_ex使用说明=========================
+
+	1、创建：
+		input_ex = require("input_ex").new()
+	
+	2、创建event对象：
+		event = input_ex:addScreenMask()
+		event = input_ex:addCircle()
+		event = input_ex:addRect()
+		event = input_ex:addSpriteCircle()
+		event = input_ex:addSpriteRect()
+
+	3、给event对象的事件添加监听器：
+		event.onTap:addListener(function(event, args)
+			--TODO Add function body here 
+		end)
+
+		event包含如下事件：
+			"onTap"		- 点击，按下后并松开时触发一次
+			"onHold"	- 按住超过一秒，触发一次
+			"onDragBegin"	- 开始拖拽动作，触发一次
+			"onDragging"	- 拖拽中，每帧触发一次
+			"onDragEnd"		- 拖拽结束，触发一次
+			"onTouchDown"	- 任何情况下，按下触发一次
+			"onTouchUp"		- 任何情况下，松开触发一次
+
+		参数event是event对象本身
+
+		参数args是一个table，包含如下value：
+			isDragging - 是否处于拖拽的状态
+			starttime - 开始触摸屏幕的时间点，等同onTouchDown事件发生时的时间
+			time - 当前事件触发时的时间点
+			startx - 
+			starty - 开始触摸时，光标或手指的位置
+			x 
+			y - 当前事件触发时，光标或手指的位置
+			vx
+			vy - 当前的x，y方向的速度（平均速度，非瞬时速度）
+
+	附注：
+		不同情况下事件的执行过程：
+		按住超过一秒，抬手：onTouchDown -> onHold -> onTouchUp
+		按住并拖动拖动、抬手：onTouchDown -> onDragBegin -> onDragging(重复n次，n为拖拽的帧数) -> onDragEnd -> onTouchUp
+		按下之后，在小于一秒的时间内抬手：onTouchDown -> onTap -> onTouchUp
+
+]]--

@@ -405,6 +405,7 @@ UI的使用方法：
 	参数：
 		ccb - ccb文件的URI
 		runtime
+		input_ex - 创建需要菜单的UI必填的一项，require("input_ex").new(runtime)
 		isdebugMode - 默认为false，给true值后，使用线框绘制场景
 	返回值：
 		stage - 一个Stage2D对象，同时附加了selectorTable和sambolTable
