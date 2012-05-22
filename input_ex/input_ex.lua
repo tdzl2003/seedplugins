@@ -233,15 +233,78 @@ local function translateEvent(ev, index)
 	return oev
 end
 
+local last_ev = {}
+
+local function initArgs(ev, vx, vy)
+	last_ev.time = ev.time
+	last_ev.x = ev.x
+	last_ev.y = ev.y
+	last_ev.vx = vx or 0
+	last_ev.vy = vy or 0
+end
+
+local function calcVelocity(ev)
+	local dt = ev.time - last_ev.time
+	if dt > 0.02 then
+		ev.vx = (ev.x - last_ev.x) / dt
+		ev.vy = (ev.y - last_ev.y) / dt
+		initArgs(ev, ev.vx, ev.vy)
+	else
+		ev.vx = last_ev.vx
+		ev.vy = last_ev.vy
+	end
+	return ev
+end
+
+local function calcArgs(ev, index)
+	local oev = handlers[index]
+	if oev.done then
+		oev.vx, oev.vy = 0, 0
+		return oev 
+	end
+	oev.x, oev.y = ev.x, ev.y
+	
+	return calcVelocity(oev)
+end
+
+--计算事件参数
+local function __combineEvent(ev, index)
+	local oev = handlers[index]
+	
+	if (oev.done) then
+		return oev
+	end
+	
+	local x = ev.x
+	local y = ev.y
+	local time = ev.time
+	local dt = time - oev.time
+	--瞬时速度
+	if dt ~= 0 then
+		oev.vx = (x - oev.x) / dt
+		oev.vy = (y - oev.y) / dt
+	end
+
+	--平均速度
+--	oev.vx = (x - oev.startx) / (time - oev.starttime)
+--	oev.vy = (y - oev.starty) / (time - oev.starttime)
+	
+	oev.x = x
+	oev.y = y
+	oev.time = time
+	
+	--updateEvent(oev)
+	return oev
+end
+
 --更新事件的状态，此函数会在每帧执行
 function updateEvent(ev)
 	if (ev.done) then
 		return ev
 	end
-	
 	local t = ev.target
 	if (ev.isDragging) then
-		t:onDragging(ev)
+		t:onDragging(calcVelocity(ev))
 	else
 		local dx = ev.x - ev.startx
 		local dy = ev.y - ev.starty
@@ -263,29 +326,6 @@ function updateEvent(ev)
 	end
 end
 
---计算时间参数
-local function combineEvent(ev, index)
-	local oev = handlers[index]
-	
-	if (oev.done) then
-		return oev
-	end
-	
-	local x = ev.x
-	local y = ev.y
-	local time = ev.time
-	
-	oev.vx = (x - oev.startx) / (time - oev.starttime)
-	oev.vy = (y - oev.starty) / (time - oev.starttime)
-	
-	oev.x = x
-	oev.y = y
-	oev.time = time
-	
-	--updateEvent(oev)
-	return oev
-end
-
 --派发事件，此函数会在出现input.touch事件后执行
 function dispatchEvent(input, ev)
 	local index = ev.index
@@ -293,6 +333,7 @@ function dispatchEvent(input, ev)
 
 	if (ev.type == "down") then
 		ev = translateEvent(ev, index)
+		initArgs(ev)
 	
 		local p = input.last
 		while (p) do
@@ -314,7 +355,7 @@ function dispatchEvent(input, ev)
 		if (not handlers[index]) then
 			return
 		end
-		ev = combineEvent(ev, index)
+		ev = calcArgs(ev, index)
 		local p = ev.target
 		if (type == "up" and p) then
 			if (not ev.done and not ev.isDragging) then
