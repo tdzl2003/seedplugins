@@ -223,10 +223,10 @@ function addSpriteRect(input, sprite, w, h, anchorx, anchory)
 end
 
 local function translateEvent(ev, index)
-	local time = ev.time --/ 1000
+	local time = ev.time
 	local oev = {index = index, 
 		x = ev.x, y = ev.y, vx = 0, vy = 0, time = time,
-		startx = ev.x, starty = ev.y, starttime = time, }
+		startx = ev.x, starty = ev.y, starttime = time }
 	handlers[index] = oev
 	
 	handlers[0] = math.max(handlers[0], index)
@@ -273,13 +273,11 @@ local function combineEvent(ev, index)
 	
 	local x = ev.x
 	local y = ev.y
-	local time = ev.time --/ 1000
-	local dt = time - oev.time
+	local time = ev.time
 	
-	if (dt > 0) then
-		oev.vx = (x - oev.startx) / (time - oev.starttime)
-		oev.vy = (y - oev.starty) / (time - oev.starttime)
-	end
+	oev.vx = (x - oev.startx) / (time - oev.starttime)
+	oev.vy = (y - oev.starty) / (time - oev.starttime)
+	
 	oev.x = x
 	oev.y = y
 	oev.time = time
@@ -290,10 +288,9 @@ end
 
 --派发事件，此函数会在出现input.touch事件后执行
 function dispatchEvent(input, ev)
-	local index = ev.index + 1
+	local index = ev.index
 	local type = ev.type
 
---	print(ev.type)
 	if (ev.type == "down") then
 		ev = translateEvent(ev, index)
 	
