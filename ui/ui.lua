@@ -11,7 +11,7 @@
 --	uri
 --	input_ex
 --最后修改日期
---	2012-5-14
+--	2012-5-21
 
 local plistParser = require("plist")
 require("ui_menu")
@@ -60,20 +60,45 @@ local function numToBlendState(num)
 	end
 end
 
---设置各种属性
+--设置node的各种属性
 local function setNodeProperties(node, data)
+	--位置、旋转、缩放和Z
 	node.x, node.y = data.position[1], - data.position[2]
 	node.rotation = math.rad(data.rotation)
 	node.scalex, node.scaley = data.scaleX, data.scaleY
 	node.z = data.zOrder
+
+	--显示或隐藏
 	if data.visible then
 		node:show()
 	else
 		node:hide()
 	end
+
+	--添加进node引用表，方便外界引用
 	if data.memberVarAssignmentName ~= nil then
 		node.stage:setsymbolTable(data.memberVarAssignmentName, node)
 	end
+
+	--获取contentSize
+	node.getContentSize = function(node)
+		return data.contentSize[1], data.contentSize[2]
+	end
+
+	--获取tag
+	node.getTag = function(node)
+		return data.tag
+	end
+
+	--设置blendState
+	if data.blendFunc ~= nil then
+		local eff = display.BlendStateEffect.new()
+		eff.srcFactor = numToBlendState(data.blendFunc[1])
+		eff.destFactor = numToBlendState(data.blendFunc[2])
+		node:addEffect(eff)
+	end
+
+	--创建容器node，根据容器node的位置创建子节点
 	node.container = node:newNode()
 	local anchorX, anchorY = data.anchorPoint[1], data.anchorPoint[2]
 	if not data.isRelativeAnchorPoint  then
@@ -90,16 +115,11 @@ local function setNodeProperties(node, data)
 	end
 	node.container.x, node.container.y = -data.contentSize[1] * anchorX, data.contentSize[2] * anchorY
 
+	--debug模式的绘制
 	if debugMode_ then
 		node.container.presentation = function()
 			render2d.fillCircle(0,0,4)
 		end
-	end
-	if data.blendFunc ~= nil then
-		local eff = display.BlendStateEffect.new()
-		eff.srcFactor = numToBlendState(data.blendFunc[1])
-		eff.destFactor = numToBlendState(data.blendFunc[2])
-		node:addEffect(eff)
 	end
 end
 
@@ -141,7 +161,6 @@ local function createLayerColor(self, data)
 		render2d.fillRect(l, t, r, b)
 	end
 	local r, g, b, a = colorFromRGBA(data.color, data.opacity)
-	print(r, g, b, a)
 	node:setMaskColor(r, g, b, a)
 	setNodeProperties(node, data)
 	return node
@@ -257,7 +276,6 @@ local function createParticleSystem(self, data)
 	psd.omegaAccelVariance			= nil
 
 	psd.textureFileName	= filePath_ .. "/" .. data.spriteFile
-	print(psd.textureFileName)
 
 	local node_base = self:newNode()
 	data.blendFunc = nil
@@ -347,7 +365,6 @@ local function create(self, data)
 		local createFunc = createNodeTable[t]
 		if createFunc ~= nil then
 			node = createFunc(self, data.properties)
-			print("==create",data.class)
 		else
 			node = self:newNode()
 			print(t .. "class not supported")
@@ -405,7 +422,6 @@ UI的使用方法：
 	参数：
 		ccb - ccb文件的URI
 		runtime
-		input_ex - 创建需要菜单的UI必填的一项，require("input_ex").new(runtime)
 		isdebugMode - 默认为false，给true值后，使用线框绘制场景
 	返回值：
 		stage - 一个Stage2D对象，同时附加了selectorTable和sambolTable
@@ -426,6 +442,10 @@ local node = uiStage.symbolTable.Star
 runtime.enterFrame:addListener(function()
 	node.rotation = node.rotation + 0.05
 end)
+
+node中增加了两个获取数据的方法：
+	node:getContentSize()		--获取node的ContentSize数据
+	node:getTag()				--获取node的tag数据
 
 ]]--
 

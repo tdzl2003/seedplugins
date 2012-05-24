@@ -42,7 +42,6 @@ local function _newMenuItemImage(self, plist, args, input_ex, anchorx, anchory, 
 		node.setSelected = function(self) self:changeAction(selected[1]) end
 	end
 	node:setAnchor(anchorx, anchory)
-	print(anchorx, anchory)
 	node.enabled = enabled or true
 	local input_node
 	if type(normal[2]) == "table" then
