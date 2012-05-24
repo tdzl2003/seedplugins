@@ -81,7 +81,8 @@ local function setNodeProperties(node, data)
 	end
 
 	--获取contentSize
-	node.getContentSize = function(node)
+--	node.contentSize = data.contentSize
+	node.getContentSzie = function(node)
 		return data.contentSize[1], data.contentSize[2]
 	end
 
@@ -147,6 +148,8 @@ local function createImageRect(self, data)
 	w, h = data.contentSize[1], data.contentSize[2]
 	node = self:newImageRect(filePath_ .. "/" .. data.spriteFile, w, h)
 	node:setAnchor(data.anchorPoint[1] - 0.5, 0.5 - data.anchorPoint[2]);
+	local r, g, b, a = colorFromRGBA(data.color, data.opacity)
+	node:setMaskColor(r, g, b, a)
 	setNodeProperties(node, data)
 	return node
 end
@@ -357,7 +360,7 @@ local createNodeTable = {
 
 local function create(self, data)
 	local node
-	
+
 	if debugMode_ then
 		node = createDebugNode(self, data.properties)
 	else
@@ -443,7 +446,7 @@ runtime.enterFrame:addListener(function()
 	node.rotation = node.rotation + 0.05
 end)
 
-node中增加了两个获取数据的方法：
+node中增加了一些获取数据的属性和方法：
 	node:getContentSize()		--获取node的ContentSize数据
 	node:getTag()				--获取node的tag数据
 

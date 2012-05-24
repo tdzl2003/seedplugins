@@ -21,18 +21,6 @@ function Animation:__init__With(sheet, set, shedata, setdata, framemap, imguri)
 	self._imguri = imguri
 end
 
---flags参数的意义：
---	0 - 解释为单张的图片，1 - 按照名称解释为动画序列
-function Animation:__init__WithPlist(uri,fps,flags)
-	local flags = flags or "sprite"
-	uri = urilib.absolute(uri, 2)
-	local org = _loaded[uri]
-	if (org) then
-		self:__init_With(org._sheet, org._set)
-	else
-		self:__init__With(plist.loadPlistSheet(uri,fps,flags))
-	end
-end
 function Animation:__init__WithArray(uri,array)
 	uri = urilib.absolute(uri, 2)
 	local org = _loaded[uri]
@@ -40,6 +28,19 @@ function Animation:__init__WithArray(uri,array)
 		self:__init_With(org._sheet, org._set)
 	else
 		self:__init__With(plist.loadPlistSheet(uri,array))
+	end
+end
+
+--flags参数的意义：
+--	0 - 解释为单张的图片，1 - 按照名称解释为动画序列
+function Animation:__init__WithPlist(uri, fps, flags, array)
+	local flags = flags or "sprite"
+	uri = urilib.absolute(uri, 2)
+	local org = _loaded[uri]
+	if (org) then
+		self:__init_With(org._sheet, org._set)
+	else
+		self:__init__With(plist.loadPlistSheet(uri, fps, flags, array))
 	end
 end
 
