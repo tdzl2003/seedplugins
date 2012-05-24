@@ -1,5 +1,6 @@
 require("sprite_ex")
 require("seed_ex")
+require("lua_ex")
 local urilib = require("uri")
 local plist = require("plist")
 
@@ -11,7 +12,7 @@ function Animation:__init__()
 	error("Use newWith/newWithPlist/newWithData instead!")
 end
 
-function Animation:__init__With(sheet, set, shedata,setdata, framemap, imguri)
+function Animation:__init__With(sheet, set, shedata, setdata, framemap, imguri)
 	self._sheet = sheet
 	self._set = set
 	
@@ -20,6 +21,8 @@ function Animation:__init__With(sheet, set, shedata,setdata, framemap, imguri)
 	self._imguri = imguri
 end
 
+--flags参数的意义：
+--	0 - 解释为单张的图片，1 - 按照名称解释为动画序列
 function Animation:__init__WithPlist(uri,fps,flags)
 	local flags = flags or "sprite"
 	uri = urilib.absolute(uri, 2)
@@ -49,15 +52,36 @@ define_type("Animation", Animation)
 
 local pss = display.presentations
 pss.newSpriteWith = function(rt, ani, action)
+	local ret = nil
 	if (ani.type == Animation.type) then
 		if (ani._dt) then
-			return pss.newDSprite(rt, ani._sheet, ani._set, ani._dt, action)
+			ret = pss.newDSprite(rt, ani._sheet, ani._set, ani._dt, action)
 		else
-			return pss.newSprite(rt, ani._sheet, ani._set, action)
+			ret = pss.newSprite(rt, ani._sheet, ani._set, action)
+		end
+
+		function ret:getSize()
+			local id = ani._framemap[ret:getAction()]
+			assert(id)
+			local w, h = ani._sheet.data[id][10], ani._sheet.data[id][9] 
+			return w, h
 		end
 	end
-	return nil
+	return ret
 end
+
+--[[
+	使用newSpriteWith创建的对象，可以使用node:getSize()方法获得当前动作的宽和高
+]]--
+
+--[[
+--函数newImageRectWithAni已过时
+--请使用如下方法代替之：
+local sheet_set = Animation:newWithPlist(uri, fps, 0)
+--第三个参数的意义：0 - 解释为单张的图片，1 - 按照名称解释为动画序列
+--其为0时即相当于newImageRectWithAni
+node = self:newSpriteWith(runtime, sheet_set, action)
+]]--
 
 local unpack = table.unpack
 pss.newImageRectWithAni = function(self, name)
@@ -78,5 +102,3 @@ pss.newImageRectWithAni = function(self, name)
 	end
 	return ret
 end
-
-
