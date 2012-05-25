@@ -379,22 +379,23 @@ function loadPlistSheet(uri, fps,flag,array)
 				local dx, dy, dw, dh = matchInts(info.sourceColorRect, rectpat_tp, scale)
 				local ox, oy = matchInts(info.offset, sizepat_tp, scale)
 				local spw, sph = matchInts(info.sourceSize, sizepat_tp, scale)
-				local flag
+				local rotflag
 				local rot = info.rotated
 				
 				if rot == true then
-					flag = 5
+					rotflag = 5
 					sw, sh = sh, sw
 					dw, dh = dh, dw
 					spw, sph = sph, spw
 					dx, dy = dy, dx
 					ox, oy = oy, ox
+					dx = dx + 2 * ox
 				else
-					flag = 0
+					rotflag = 0
 				end
-				dx = dx - spw / 2 + ox
-				dy = dy - sph / 2 + oy
-				sheet[i] = {sx, sy, sx+sw, sy+sh, dx, dy, dx + dw, dy + dh, spw, sph, flag} 
+				dx = dx - spw / 2
+				dy = dy - sph / 2
+				sheet[i] = {sx, sy, sx+sw, sy+sh, dx, dy, dx + dw, dy + dh, spw, sph, rotflag} 
 			end
 		else
 			do
@@ -407,7 +408,7 @@ function loadPlistSheet(uri, fps,flag,array)
 			end
 		end
 
-		if flag == 1 then		
+		if flag == 1 then
 			local ff = 24
 			
 			if (fps) then
@@ -418,32 +419,28 @@ function loadPlistSheet(uri, fps,flag,array)
 				end
 			end
 			
-	-----------lady samurai 专用----------------			
-		if not array then 
-			local se = sets[nn]
-			if (se) then
-				table.insert(se[2],i)
-			else
-				se = {nn, {i}, 1/24}
-				table.insert(set, se)
-				sets[nn] = se
+	-----------array----------------
+			if not array then
+				local se = sets[nn]
+				if (se) then
+					table.insert(se[2],i)
+				else
+					se = {nn, {i}, 1/fps}
+					table.insert(set, se)
+					sets[nn] = se
+				end
 			end
-		end
-
+	--------------------------------
 
 		elseif flag == 0 then
-			
 			table.insert(set, {framenames[i], i, i, 1})
-		
 		else
-
 		end
-
 	end
-	-----------lady samurai 专用----------------
-		if array then 
-		set = {}
 
+	-----------array----------------
+	if array then 
+		set = {}
 		for i,v in pairs(array) do 
 			local se = {tostring(i), {}, 1/24}
 			for m,n in ipairs(v) do
@@ -455,6 +452,7 @@ function loadPlistSheet(uri, fps,flag,array)
 			end
 		end
 	end
+	--------------------------------
 
 	return display.newSheet(pnguri, sheet), display.newSpriteSet(set), sheet, set, framemap, pnguri
 end
