@@ -1,3 +1,16 @@
+--[[
+Seed 插件
+	plist
+
+	包含文件
+		plist.lua - 提供plist文件的解析功能，plist图片数据的基本处理功能
+
+	依赖组件
+		xmlParser - 解析xml的seed插件
+
+	最后修改日期
+		2012-5-25
+]]--
 local io = io
 local string = string
 local table = table

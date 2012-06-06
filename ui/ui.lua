@@ -1,17 +1,25 @@
---Seed 插件
---	ui
---包含文件
---	ui.lua - 提供通过ccb文件创建UIstage的方法
---	ui_menu.lua - 提供创建Menu（菜单框架）和MenuItem（可点击的菜单项）的方法
---依赖组件
---	plist
---	particle
---	transition
---	animation
---	uri
---	input_ex
---最后修改日期
---	2012-5-21
+--[[
+Seed 插件
+	ui
+包含文件
+	ui.lua - 提供通过ccb文件创建UIstage的方法
+	ui_menu.lua - 提供创建Menu（菜单框架）和MenuItem（可点击的菜单项）的方法
+依赖组件
+	plist
+	particle
+	transition
+	animation
+	uri
+	input_ex
+最后修改日期
+	2012-6-6
+
+更新内容
+	2012-6-6：增加了getResourceTableFromCCBFile()方法，原有的resourceTable作废
+	2012-6-4：增加了resourceTable
+
+]]--
+
 
 local plistParser = require("plist")
 require("ui_menu")
@@ -34,12 +42,13 @@ local function colorFromRGBA(color, alpha)
 	end
 end
 
---计算CCB锚点
+--计算CCB锚点，返回结果为矩形的位置与宽高
 local function calcAnchorRect(x, y, w, h, data)
 	if data.isRelativeAnchorPoint then
 		x = -data.anchorPoint[1] * w
 		y = -data.anchorPoint[2] * h
 	else
+		--需要重新观察
 		x, y = 0, 0
 	end
 	return x, y, w, h
@@ -58,6 +67,14 @@ local function numToBlendState(num)
 	elseif num == 769 then return "invSrcColor"
 	elseif num == 775 then return "invDestColor"
 	end
+end
+
+--根据flip改变imageRect的w, h属性
+local function getSizeFlipped(w, h, flipx, flipy)
+	local retw, reth = w, h
+	if flipx then retw = -retw end
+	if flipy then reth = -reth end
+	return retw, reth
 end
 
 --设置node的各种属性
@@ -82,7 +99,7 @@ local function setNodeProperties(node, data)
 
 	--获取contentSize
 --	node.contentSize = data.contentSize
-	node.getContentSzie = function(node)
+	node.getContentSize = function(node)
 		return data.contentSize[1], data.contentSize[2]
 	end
 
@@ -115,7 +132,6 @@ local function setNodeProperties(node, data)
 		end
 	end
 	node.container.x, node.container.y = -data.contentSize[1] * anchorX, data.contentSize[2] * anchorY
-
 	--debug模式的绘制
 	if debugMode_ then
 		node.container.presentation = function()
@@ -134,10 +150,17 @@ local function createSprite(self, data)
 	local node
 	local sheet_set = Animation.newWithPlist(filePath_ .. "/" .. data.spriteFramesFile, 1, 0)
 	node = self:newSpriteWith(self.stage.runtime, sheet_set, data.spriteFile)
-	node:setAnchor(data.anchorPoint[1] - 0.5, 0.5 - data.anchorPoint[2])
+	local ax, ay = data.anchorPoint[1] - 0.5, 0.5 - data.anchorPoint[2]
+	node:setFlip(data.flipX, data.flipY)
+	if data.flipX then ax = -ax end
+	if data.flipY then ay = -ay end
+	node:setAnchor(ax, ay)
+
 	setNodeProperties(node, data)
 	local r, g, b, a = colorFromRGBA(data.color, data.opacity)
-	node:setMaskColor(r, g, b, a)
+	node:setMaskColor(r, g, b)
+	node:setAlpha(a)
+--	table.insert(node.stage.resourceTable, sheet_set._imguri)
 	return node
 end
 
@@ -146,26 +169,17 @@ local function createImageRect(self, data)
 	local node
 	local w, h
 	w, h = data.contentSize[1], data.contentSize[2]
+	
 	node = self:newImageRect(filePath_ .. "/" .. data.spriteFile, w, h)
 	node:setAnchor(data.anchorPoint[1] - 0.5, 0.5 - data.anchorPoint[2]);
 	local r, g, b, a = colorFromRGBA(data.color, data.opacity)
-	node:setMaskColor(r, g, b, a)
+	node:setMaskColor(r, g, b)
+	node:setAlpha(a)
+	
+	w, h = getSizeFlipped(w, h, data.flipX, data.flipY)
+	node:setDestRect(-w / 2, -h / 2, w, h)
 	setNodeProperties(node, data)
-	return node
-end
-
-local function createLayerColor(self, data)
-	local node = self:newNode()
-	local x, y, w, h
-	w, h = data.contentSize[1], data.contentSize[2]
-	x, y, w, h = calcAnchorRect(x, y, w, h, data)
-	local l, t, r, b = x, y, x + w, y + h
-	node.presentation = function()
-		render2d.fillRect(l, t, r, b)
-	end
-	local r, g, b, a = colorFromRGBA(data.color, data.opacity)
-	node:setMaskColor(r, g, b, a)
-	setNodeProperties(node, data)
+--	table.insert(node.stage.resourceTable, filePath_ .. "/" .. data.spriteFile)
 	return node
 end
 
@@ -177,28 +191,41 @@ end
 
 local function createMenuItemImage(self, data)
 	local node
+	local ev
+	local imgUri
 	local w, h = data.contentSize[1], data.contentSize[2]
 	if data.spriteFramesFile == nil then
-		node = self:newMenuItemImage(nil,{ 
+		local ax, ay = data.anchorPoint[1] - 0.5, 0.5 - data.anchorPoint[2]
+		if data.flipX then ax = -ax end
+		if data.flipY then ay = -ay end
+
+		node, ev, imgUri = self:newMenuItemImage(nil,{ 
 			{filePath_ .. "/" .. data.spriteFileNormal, w, h},
 			{filePath_ .. "/" .. data.spriteFileSelected, w, h},
 			{filePath_ .. "/" .. data.spriteFileDisabled, w, h}},
 			self.stage.input_ex,
-			data.anchorPoint[1] - 0.5, 0.5 - data.anchorPoint[2],
-			data.selector, data.enabled)
+			ax, ay,
+			data.enabled)
+		node:setFlip(data.flipX, data.flipY)
 	else
-		node = self:newMenuItemImage(filePath_ .. "/" .. data.spriteFramesFile,{
-			{data.spriteFileNormal, w, h},
-			{data.spriteFileSelected, w, h},
-			{data.spriteFileDisabled, w, h}},
+		local tw, th = getSizeFlipped(w, h, data.flipX, data.flipY)
+		
+		node, ev, imgUri = self:newMenuItemImage(filePath_ .. "/" .. data.spriteFramesFile,{
+			{data.spriteFileNormal, {w, h}, {-tw / 2, -th / 2, tw, th}},
+			{data.spriteFileSelected, {w, h},{-tw / 2, -th / 2, tw, th}},
+			{data.spriteFileDisabled, {w, h},{-tw / 2, -th / 2, tw, th}}},
 			self.stage.input_ex,
 			data.anchorPoint[1] - 0.5, 0.5 - data.anchorPoint[2],
-			data.selector, data.enabled)
+			data.enabled)
 	end
+	local selector = node.stage.selectorTable
+	selector[data.selector] = ev
 	setNodeProperties(node, data)
+	for k, v in pairs(imgUri) do
+--		table.insert(node.stage.resourceTable, v)
+	end
 	return node
 end
-
 
 local function createBMFont(self, data)
 	local node = self:newNode()
@@ -267,14 +294,13 @@ local function createParticleSystem(self, data)
 	
 	psd.blendFuncSource				= data.blendFunc[1]
 	psd.blendFuncDestination		= data.blendFunc[2]
-
-								   
+						   
 	psd.minRadius					= data.startRadius
 	psd.minRadiusVariance			= data.startRadiusVar
 	psd.maxRadius					= data.endRadius
 	psd.maxRadiusVariance			= data.endRadiusVar
-	psd.rotatePerSecond				= rotatePerSecond
-	psd.rotatePerSecondVariance		= rotatePerSecondVar
+	psd.rotatePerSecond				= data.rotatePerSecond
+	psd.rotatePerSecondVariance		= data.rotatePerSecondVar
 	psd.omegaAcceleration			= nil
 	psd.omegaAccelVariance			= nil
 
@@ -291,27 +317,86 @@ local function createParticleSystem(self, data)
 	return node_base
 end
 
+function setLayerProperties(node, data, drawable)
+	--位置、缩放和Z
+	node.x, node.y = data.position[1], - data.position[2]
+	node.scalex, node.scaley = data.scaleX, data.scaleY
+	node.z = data.zOrder
+	node.layer = node:newNode()
+
+	if data.isRelativeAnchorPoint then
+		node.layer.x, node.layer.y = 0, 0
+	else
+		node.layer.x, node.layer.y = data.contentSize[1] * data.anchorPoint[1], -data.contentSize[2] * data.anchorPoint[2]
+	end
+
+	local x, y, w, h = 0, 0, data.contentSize[1], -data.contentSize[2]
+	x = -data.anchorPoint[1] * w
+	y = -data.anchorPoint[2] * h
+
+	node.layer.rotation = math.rad(data.rotation)
+
+	--显示或隐藏
+	if data.visible then
+		node:show()
+	else
+		node:hide()
+	end
+	
+	if drawable then
+		node.layer:setMaskColor(colorFromRGBA(data.color, data.opacity))
+		node.layer.presentation = function()
+			render2d.fillRect(x, y, x + w, y + h)
+		end
+	end
+
+	--添加进node引用表，方便外界引用
+	if data.memberVarAssignmentName ~= nil then
+		node.stage:setsymbolTable(data.memberVarAssignmentName, node)
+	end
+
+	--获取大小
+	node.getContentSize = function(node)
+		return data.contentSize[1], data.contentSize[2]
+	end
+
+	--获取tag
+	node.getTag = function(node)
+		return data.tag
+	end
+
+	--设置blendState
+	if data.blendFunc ~= nil then
+		local eff = display.BlendStateEffect.new()
+		eff.srcFactor = numToBlendState(data.blendFunc[1])
+		eff.destFactor = numToBlendState(data.blendFunc[2])
+		node:addEffect(eff)
+	end
+
+	--创建容器node，根据容器node的位置创建子节点
+	node.container = node.layer:newNode()
+	if drawable then node.container:setMaskColor(1,1,1,1) end
+	node.container.x, node.container.y = x, y
+end
+
+--创建容器图层
 local function createLayer(self, data)
 	local node = self:newNode()
-	local x, y, w, h
-	w, h = data.contentSize[1], data.contentSize[2]
-	x, y, w, h = calcAnchorRect(x, y, w, h, data)
-	setNodeProperties(node, data)
+	setLayerProperties(node, data)
 	return node
 end
 
+--创建颜色容器图层
+local function createLayerColor(self, data)
+	local node = self:newNode()
+	setLayerProperties(node, data, true)
+	return node
+end
+
+--创建渐变色容器图层（现阶段引擎无法支持渐变色，使用纯色代替）
 local function createLayerGradient(self, data)
 	local node = self:newNode()
-	local x, y, w, h
-	w, h = data.contentSize[1], data.contentSize[2]
-	x, y, w, h = calcAnchorRect(x, y, w, h, data)
-	local l, t, r, b = x, y, x + w, y + h
-	node.presentation = function()
-		render2d.fillRect(l, t, r, b)
-	end
-	local r, g, b, a = colorFromRGBA(data.color, data.opacity)
-	node:setMaskColor(r, g, b, a)
-	setNodeProperties(node, data)
+	setLayerProperties(node, data, true)
 	return node
 end
 
@@ -382,8 +467,6 @@ local function create(self, data)
 	return node
 end
 
-
-
 local function _newUIFromCCB(display, ccb, runtime, input_ex, isdebugMode_)
 	local data 
 	if type(ccb) == "table" then
@@ -397,6 +480,7 @@ local function _newUIFromCCB(display, ccb, runtime, input_ex, isdebugMode_)
 	debugMode_ = isdebugMode_ or false
 	width, height = data.stageWidth, data.stageHeight
 	local stage = display:newStage2D()
+--	stage:setSortMode("ascending")
 	stage.input_ex = input_ex
 	stage.runtime = runtime
 	stage.selectorTable = {}
@@ -414,6 +498,50 @@ local function _newUIFromCCB(display, ccb, runtime, input_ex, isdebugMode_)
 	camera.x, camera.y = width / 2, -height / 2
 	local node = create(stage, data.nodeGraph)
 	return stage
+end
+
+local function getResTable(t, data)
+	if data.class == "CCSprite" then
+		if data.properties.spriteFramesFile == nil then
+			table.insert(t, filePath_ .. "/" .. data.properties.spriteFile)
+		else
+			local sheet_set = Animation.newWithPlist(filePath_ .. "/" .. data.properties.spriteFramesFile, 1, 0)
+			table.insert(t, sheet_set._imguri)
+		end
+	elseif data.class == "CCMenuItemImage" then
+		if data.spriteFramesFile == nil then
+			table.insert(t, filePath_ .. "/" .. data.properties.spriteFileNormal)
+			table.insert(t, filePath_ .. "/" .. data.properties.spriteFileSelected)
+			table.insert(t, filePath_ .. "/" .. data.properties.spriteFileDisabled)
+		else
+			local sheet_set = Animation.newWithPlist(filePath_ .. "/" .. data.properties.spriteFileNormal, 1, 0)
+			table.insert(t, sheet_set._imguri)
+			sheet_set = Animation.newWithPlist(filePath_ .. "/" .. data.properties.spriteFileSelected, 1, 0)
+			table.insert(t, sheet_set._imguri)
+			sheet_set = Animation.newWithPlist(filePath_ .. "/" .. data.properties.spriteFileDisabled, 1, 0)
+			table.insert(t, sheet_set._imguri)
+		end
+	elseif data.class == "CCParticleSystem" then
+		table.insert(t, filePath_ .. "/" .. data.properties.spriteFile)
+	end
+	for i, v in ipairs(data.children) do
+		getResTable(t, v)
+	end
+end
+
+function getResourceTableFromCCB(ccb)
+	local data 
+	if type(ccb) == "table" then
+		data = ccb
+	else
+		ccb = urilib.absolute(ccb, 2)
+		filePath_ = urilib.dirname(ccb)
+		data = plistParser.parseUri(ccb)
+	end
+	local ret = {}
+	
+	getResTable(ret, data.nodeGraph)
+	return ret
 end
 
 display.newUIFromCCBFile = _newUIFromCCB
@@ -465,5 +593,22 @@ selector是一个事件，该事件会在selector所属的MenuItem被按下时触发。
 uiStage.selectorTable.pressedToMenu:addListener(function()
 	print("ToMenu")
 end)
+
+]]--
+
+--[[
+
+===========================resourceTable的详细用法=============================
+
+使用函数getResourceTableFromCCB(ccb)来预先获得图片资源列表
+
+]]--
+
+--[[
+
+===========================注意事项============================================
+
+大部分的node有一个容器对象，是其在ccb文件中的所有子节点的直接父节点，正确获得ccb中node的子节点的方法是使用node.container.firstChild。
+直接使用node.firstChild可能得到的仅仅是一个容器，或者是粒子发射器，也可能是一个带颜色的矩形node。
 
 ]]--

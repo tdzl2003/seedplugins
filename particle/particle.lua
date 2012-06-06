@@ -1,8 +1,21 @@
-
+--[[
+Seed 插件
+	particle
+	包含文件
+		ui.lua - 提供通过ccb文件创建UIstage的方法
+		ui_menu.lua - 提供创建Menu（菜单框架）和MenuItem（可点击的菜单项）的方法
+	依赖组件
+		transition
+		plist
+		lua_ex
+	最后修改日期
+		2012-6-4
+]]--
 math.randomseed(os.time())	
 local urilib = require("uri")
 local r2d = require("render2d")
 local plistParser = require("plist")
+require("lua_ex")
 
 local function numToBlendState(num)
 	if num == 0 then return "zero"
@@ -16,7 +29,7 @@ local function numToBlendState(num)
 	elseif num == 769 then return "invSrcColor"
 	elseif num == 775 then return "invDestColor"
 	else
-		print("blend func:", num, " not supported yet, setted to GL_ONE")
+		print("blend func id:", num, " not supported yet, setted it to GL_ONE")
 		return "one"
 	end
 end
@@ -124,6 +137,7 @@ local function initAttr(data, emit, parentNode)
 	
 	psd.textureFileName = emit.texture
 	
+	printTable(psd)
 	createNodePool(emit, psd, parentNode)							-- 创建对象池	
 	
 	return psd
@@ -132,10 +146,11 @@ end
 
 local tr = require("transition")
 
+--更新速度、位置、径向加速度、切向加速度
 local function updateLineVA(sx,sy,vx,vy,gx,gy,ra,ta,dt)
 	local rax,ray = 0, 0
 	local tax,tay = 0, 0
-	local angle = math.atan2 (sy, sx) 
+	local angle = math.atan2 (sy, sx)
 	rax, ray = math.cos(angle) * ra, math.sin(angle) * ra
 	tax, tay = math.cos(angle + math.pi / 2) * ta, math.sin(angle + math.pi / 2) * ta
 	vx = vx + (gx + rax + tax) * dt
@@ -166,6 +181,7 @@ local function createParticleWithGravity(emit,id,osx,osy,spd,angle,span,ss,es,sc
 	local sx,sy = 0, 0
 	local vx, vy = spd * math.cos(math.rad(angle)), spd * math.sin(math.rad(angle))
 	local ds,dr = es - ss, espin - sspin
+	
 	local dcr, dcg, dcb, dca = ecr - scr, ecg - scg, ecb - scb, eca - sca
 	
 	--确定初始状态
@@ -174,21 +190,33 @@ local function createParticleWithGravity(emit,id,osx,osy,spd,angle,span,ss,es,sc
 	emit.node[id].x, emit.node[id].y = osx, osy
 	emit.node[id].scalex, emit.node[id].scaley = ss, ss
 	emit.node[id]:setMaskColor(scr,scg,scb,sca)
-	
+	local r, g, b, a
+
 	tr.start(emit.runtime, function()
 		if(span > 0) then
 			tr.timePeriod(span, function(t, dt)
 				-- 这里要加入带有速度√、加速度√、径向加速度√、切向加速度√、颜色变化√的公式
-				emit.node[id]:setMaskColor(
-					scr + dcr * t / span,
-					scg + dcg * t / span,
-					scb + dcb * t / span)
+
+				a = sca + dca * t / span
+				if a > 0.001 then			--抵消RGB的预乘
+					r = (scr + dcr * t / span) / a
+					g = (scg + dcg * t / span) / a
+					b = (scb + dcb * t / span) / a
+				else
+					r = scr + dcr * t / span
+					g = scg + dcg * t / span
+					b = scb + dcb * t / span
+				end
+
+				emit.node[id]:setMaskColor(r, g, b, a)
 				emit.node[id]:setAlpha(sca + dca * t / span)											--color
+				
 				emit.node[id].rotation = sspin + dr * t / span
 				emit.node[id].scalex, emit.node[id].scaley = ss + ds * t / span, ss + ds * t / span 	--scale
 				sx,sy,vx,vy = updateLineVA(sx,sy,vx,vy,emit.psd.gravityx,emit.psd.gravityy,ra,ta,dt)
 				emit.node[id].x, emit.node[id].y = osx + sx, osy - sy
 			end)
+
 		end
 		emit.node[id]:hide()
 		table.insert(emit.particlesNeedActive,id)
@@ -215,16 +243,23 @@ local function createParticleWithRotation(emit,id,osx,osy,omega,omegaAccel,fai,s
 	local ds,dr = es - ss, espin - sspin
 	local dcr, dcg, dcb, dca = ecr - scr, ecg - scg, ecb - scb, eca - sca
 	span = math.abs(span)
+	local r, g, b, a
 
 	tr.start(emit.runtime, function()
 		if(span > 0) then
 			tr.timePeriod(span, function(t, dt)
 				-- 这里要加入带有角速度、相位、半径变化、颜色变化√的公式
-				emit.node[id]:setMaskColor(
-					scr + dcr * t / span,
-					scg + dcg * t / span,
-					scb + dcb * t / span)					--color
-				emit.node[id]:setAlpha(sca + dca * t / span)		--alpha
+				a = sca + dca * t / span
+				if a > 0.001 then			--抵消RGB的预乘
+					r = (scr + dcr * t / span) / a
+					g = (scg + dcg * t / span) / a
+					b = (scb + dcb * t / span) / a
+				else
+					r = scr + dcr * t / span
+					g = scg + dcg * t / span
+					b = scb + dcb * t / span
+				end
+				emit.node[id]:setMaskColor(r, g, b, a)			--color
 				emit.node[id].rotation = sspin + dr * t / span
 				emit.node[id].scalex, emit.node[id].scaley = ss + ds * t / span, ss + ds * t / span --scale
 				radius = sr + (er - sr) * t / span
@@ -329,6 +364,7 @@ local function _newParticleEmit(self, texture, data, runtime )
 	emit.node = {}									--构成粒子的node对象
 	emit.particlesNeedActive = {}					--记录粒子是否需要被激活
 	emit.imgW, emit.imgH = texW, texH				--纹理尺寸
+	data.emissionRate = math.floor(data.emissionRate or data.maxParticles / data.particleLifespan)
 	emit.period = 1 / data.emissionRate				--发射周期
 	emit.shoot_t = 0
 
@@ -355,13 +391,16 @@ local function _newParticleEmit(self, texture, data, runtime )
 	return emit
 end
 
-local function _newParticleEmitWithPlist(self, data, runtime)
-	data = plistParser.parseUri(urilib.absolute(data, 2))
-	_newParticleEmit(self, data.textureFileName .. ".png", texW, texH, data, runtime)
+local function _newParticleEmitWithPlist(self, data, runtime, textureFileName)
+	local data = plistParser.parseUri(urilib.absolute(data, 2))
+	local textureFileName = textureFileName or data.textureFileName
+	textureFileName = urilib.absolute(textureFileName, 2)
+	print(textureFileName)
+	return _newParticleEmit(self, textureFileName, data, runtime)
 end
 
 display.Stage2D.methods.newParticleEmit = _newParticleEmit
 display.Stage2D.Node.methods.newParticleEmit = _newParticleEmit
 
-display.Stage2D.methods.newParticleEmitWithPlist = _newParticleEmit
-display.Stage2D.Node.methods.newParticleEmitWithPlist = _newParticleEmit
+display.Stage2D.methods.newParticleEmitWithPlist = _newParticleEmitWithPlist
+display.Stage2D.Node.methods.newParticleEmitWithPlist = _newParticleEmitWithPlist
