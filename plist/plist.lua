@@ -9,7 +9,11 @@ Seed 插件
 		xmlParser - 解析xml的seed插件
 
 	最后修改日期
-		2012-5-25
+		2012-6-7
+	
+	更新内容
+		2012-6-7：
+			修正了当plist文件中没有指定图片的具体路径时而引发的问题。
 ]]--
 local io = io
 local string = string
@@ -345,6 +349,10 @@ local sizepat = "{(%d+), (%d+)}"
 --	fps - played frame per seconds
 --	flag -	0 action will be single frame
 --			1 action will group be name
+--  当需要被解析为动画时，需要在制作plist文件时，严格遵照plist名_动作名_方向_帧序号.png的方式命名动画帧
+--		需要注意，帧序号要求在同一个动作中位数保持一致：例如，动作帧数超过10，那么act_1, act_2就必须补全到act_01, act_02
+
+
 function loadPlistSheet(uri, fps,flag,array)
 	uri = absolute(uri, 2)
 	local suri, scale = uri, 1
@@ -361,8 +369,7 @@ function loadPlistSheet(uri, fps,flag,array)
 	local sheet = {}
 	local set = {}
 	
-	pnguri = joinuri(dir, plist.metadata.realTextureFileName) or joinuri(dir, name..'.png')
-	
+	pnguri = joinuri(dir, plist.metadata.realTextureFileName or name..'.png')
 	local frames = plist.frames
 	local framenames = table.keys(frames)
 	table.sort(framenames)

@@ -1,3 +1,24 @@
+--[[
+Seed 插件
+	animation
+
+	包含文件
+		animation.lua - 提供从plist创建sprite的方法
+
+	依赖组件
+		sprite_ex
+		seed_ex
+		lua_ex
+		uri
+		plist
+
+	最后修改日期
+		2012-6-6
+	
+	更新内容：
+		2012-6-6：
+			getSize对于Sprite动画也可以使用，但只返回第一个sheet的大小
+]]--
 require("sprite_ex")
 require("seed_ex")
 require("lua_ex")
@@ -34,7 +55,7 @@ end
 --flags参数的意义：
 --	0 - 解释为单张的图片，1 - 按照名称解释为动画序列
 function Animation:__init__WithPlist(uri, fps, flags, array)
-	local flags = flags or "sprite"
+	local flags = flags or 1
 	uri = urilib.absolute(uri, 2)
 	local org = _loaded[uri]
 	if (org) then
@@ -63,25 +84,51 @@ pss.newSpriteWith = function(rt, ani, action)
 
 		function ret:getSize()
 			local id = ani._framemap[ret:getAction()]
-			assert(id)
+			if id == nil then
+				id = 1
+			end
 			local w, h = ani._sheet.data[id][10], ani._sheet.data[id][9] 
 			return w, h
 		end
+
 	end
 	return ret
 end
 
 --[[
 	使用newSpriteWith创建的对象，可以使用node:getSize()方法获得当前动作的宽和高
+	注意：node:getSize()仅在plist被解释为单张图片时适用。
+		由于通常在动画形式的plist中，所有sheet的大小都是统一的，因此plist被解释为动画时，只能获得sheet中第一个图块的大小。。
 ]]--
 
 --[[
---函数newImageRectWithAni已过时
---请使用如下方法代替之：
-local sheet_set = Animation:newWithPlist(uri, fps, 0)
---第三个参数的意义：0 - 解释为单张的图片，1 - 按照名称解释为动画序列
---其为0时即相当于newImageRectWithAni
-node = self:newSpriteWith(runtime, sheet_set, action)
+使用说明：
+
+函数Animation:newWithPlist(uri, fps, flag)
+	参数：
+		uri - plist文件的uri地址，可以理解为路径
+		fps - 动画帧率，每秒播放多少帧
+		flag - 解析标志：0 - 解释为单张的图片，1 - 按照名称解释为动画序列
+	返回值：
+		sheet_set - 
+			sheet_set是一个table，包含如下内容：
+				_sheet	图片资源分割数据表
+				_set	动作及其对应的帧序列
+				_shedata	【暂时未知】
+				_framemap	动作名称对应
+				_imguri	plist对应图片的uri
+
+函数stage/node:newSpriteWith(runtimeAgent, sheet_set, action)
+	参数：
+		runtimeAgent - runtime.Agent对象
+		sheet_set - Animation:newWithPlist()的返回值
+		action - 默认播放的动作
+	返回值:
+		Sprite对象
+
+标准用法：
+	local sheet_set = Animation.newWithPlist("res://xxx/xxxx.plist", 24, 1)
+	local node = stage:newSpriteWith(ra, sheet_set, "default_action")
 ]]--
 
 local unpack = table.unpack
