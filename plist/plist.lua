@@ -369,7 +369,9 @@ function loadPlistSheet(uri, fps,flag,array)
 	local sheet = {}
 	local set = {}
 	
-	pnguri = joinuri(dir, plist.metadata.realTextureFileName or name..'.png')
+	local pnguri = plist.metadata.realTextureFileName
+	pnguri = (pnguri and joinuri(dir, pnguri)) or joinuri(dir, name..'.png')
+
 	local frames = plist.frames
 	local framenames = table.keys(frames)
 	table.sort(framenames)
