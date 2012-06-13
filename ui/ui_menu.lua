@@ -9,9 +9,12 @@ Seed 插件
 		animation
 
 	最后修改日期
-		2012-6-4
-	
+		2012-6-8
+
 	更新内容
+		2012-6-8：增加了使用imageRect创建的menuItem的setDestRect方法
+				开放了使用imageRect创建的menuItem的三个状态的presentation，使用node.pssNormal_, pssSelected_, pssDisabled_ 来获取
+
 		2012-6-4：增加第三个返回值：所用到的图片资源列表
 ]]--
 require("animation")
@@ -33,7 +36,7 @@ display.Stage2D.Node.methods.newMenu = _newMenu
 
 	说明：
 		创建一个三态按钮，当按钮无效、有效和被按下时，有三种不同的状态
-	
+
 	参数：
 		plist - 
 		args - 
@@ -44,6 +47,7 @@ display.Stage2D.Node.methods.newMenu = _newMenu
 
 ]]--
 
+--增加一个用户需求：用户按下按键之后
 local function _newMenuItemImage(self, plist, args, input_ex, anchorx, anchory, enabled)
 	local node
 	local normal = {}
@@ -51,25 +55,32 @@ local function _newMenuItemImage(self, plist, args, input_ex, anchorx, anchory, 
 	local disabled = {}
 
 	local imguri = {}
-	
+	local auto = true
+
 	if type(args) == "table" then
 		normal = args[1]
 		selected = args[2] or args[1]
 		disabled = args[3] or args[1]
 	end
-	
+
 	if plist == nil then
 		node = self:newNode()
-		local pssNormal_ = display.presentations.newImageRect(normal[1], normal[2], normal[3])
-		local pssSelected_ = display.presentations.newImageRect(disabled[1], disabled[2], disabled[3])
-		local pssDisabled_ = display.presentations.newImageRect(selected[1], selected[2], selected[3])
-		node.presentation = pssNormal_
-		node.setNormal = function(self) self.presentation = pssNormal_ end
-		node.setDisabled = function(self) self.presentation = pssSelected_ end
-		node.setSelected = function(self) self.presentation = pssDisabled_ end
+		node.pssNormal_ = display.presentations.newImageRect(normal[1], normal[2], normal[3])
+		node.pssSelected_ = display.presentations.newImageRect(disabled[1], disabled[2], disabled[3])
+		node.pssDisabled_ = display.presentations.newImageRect(selected[1], selected[2], selected[3])
+		node.presentation = node.pssNormal_
+		node.setNormal = function(self) self.presentation = node.pssNormal_ end
+		node.setDisabled = function(self) self.presentation = node.pssSelected_ end
+		node.setSelected = function(self) self.presentation = node.pssDisabled_ end
 		imguri[1] = normal[1]
 		imguri[2] = disabled[1]
 		imguri[3] = selected[1]
+		--使用设置目的矩形的方式实现翻转
+		node.setDestRect = function(self, l, t, w, h)
+			self.pssNormal_:setDestRect(l, t, w, h)
+			self.pssSelected_:setDestRect(l, t, w, h)
+			self.pssDisabled_:setDestRect(l, t, w, h)
+		end
 	else
 		local data = Animation.newWithPlist(plist, 1, 0)
 		node = self:newSpriteWith(self.stage.runtime, data, normal[1])
@@ -91,12 +102,12 @@ local function _newMenuItemImage(self, plist, args, input_ex, anchorx, anchory, 
 	ev = event.Dispatcher.new()
 	--input_node.dragable = true
 	input_node.onTap:addListener(ev)
-	
+
 	input_node.onTouchDown:addListener(function()
-		node:setSelected()
+		if auto then node:setSelected() end
 	end)
 	input_node.onTouchUp:addListener(function()
-		node:setNormal()
+		if auto then node:setNormal() end
 	end)
 
 	node.setEnabled = function(self, value)
@@ -121,4 +132,5 @@ node包含如下方法：
 ]]--
 
 display.Stage2D.Node.methods.newMenuItemImage = _newMenuItemImage
+display.Stage2D.methods.newMenuItemImage = _newMenuItemImage
 
