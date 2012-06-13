@@ -11,6 +11,7 @@ Seed 插件
 	animation
 	uri
 	input_ex
+	bmFont
 最后修改日期
 	2012-6-8
 
@@ -26,6 +27,8 @@ require("ui_menu")
 require("particle")
 require("transition")
 require("animation")
+require("bmFnt")
+
 local urilib = require("uri")
 local filePath_
 
@@ -247,12 +250,6 @@ local function createMenuItemImage(self, data)
 	return node
 end
 
-local function createBMFont(self, data)
-	local node = self:newNode()
-	setNodeProperties(node, data)
-	return node
-end
-
 local function createParticleSystem(self, data)
 	local texture = nil
 
@@ -421,8 +418,15 @@ local function createLayerGradient(self, data)
 end
 
 --创建bmFnt
-local function createBmFnt(self, data)
-	
+local function createLabelBMFont(self, data)
+	printTable(data)
+	local node = self:newLabelWithString(data.string, data.fontFile)
+	node:setAnchor(data.anchorPoint[1] - 0.5, 0.5 - data.anchorPoint[2]);
+	local r, g, b, a = colorFromRGBA(data.color, data.opacity)
+	node:setMaskColor(r, g, b)
+	node:setAlpha(a)
+	setNodeProperties(node, data)
+	return node
 end
 
 local function createCCSprite(self, data)

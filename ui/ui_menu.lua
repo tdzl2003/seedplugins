@@ -38,12 +38,13 @@ display.Stage2D.Node.methods.newMenu = _newMenu
 		创建一个三态按钮，当按钮无效、有效和被按下时，有三种不同的状态
 
 	参数：
-		plist - 
-		args - 
-		input_ex - 
-		anchorx - 
-		anchory - 
-		enabled - 
+		plist - 资源图所属plist文件，如果没有，填nil，则视作使用三张单独的png图片创建三态按钮
+		args - args是一个table，如果plist为nil，{ {普通状态按钮的图片, 宽, 高}, {选中状态按钮的图片, 宽, 高}, {无效状态按钮的图片, 宽, 高} }
+				否则，args的内容为 { {普通状态按钮的图片在plist中的命名}, {选中状态按钮的图片在plist中的命名}, {无效状态按钮的图片在plist中的命名} }
+		input_ex - input_ex对象
+		anchorx - 锚点x
+		anchory - 锚点y
+		enabled - 是否启用
 
 ]]--
 
@@ -69,9 +70,9 @@ local function _newMenuItemImage(self, plist, args, input_ex, anchorx, anchory, 
 		node.pssSelected_ = display.presentations.newImageRect(disabled[1], disabled[2], disabled[3])
 		node.pssDisabled_ = display.presentations.newImageRect(selected[1], selected[2], selected[3])
 		node.presentation = node.pssNormal_
-		node.setNormal = function(self) self.presentation = self.pssNormal_ end
-		node.setDisabled = function(self) self.presentation = self.pssSelected_ end
-		node.setSelected = function(self) self.presentation = self.pssDisabled_ end
+		node.setNormal = function(self) self.presentation = node.pssNormal_ end
+		node.setDisabled = function(self) self.presentation = node.pssSelected_ end
+		node.setSelected = function(self) self.presentation = node.pssDisabled_ end
 		imguri[1] = normal[1]
 		imguri[2] = disabled[1]
 		imguri[3] = selected[1]
