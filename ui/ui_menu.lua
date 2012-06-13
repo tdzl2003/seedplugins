@@ -69,9 +69,9 @@ local function _newMenuItemImage(self, plist, args, input_ex, anchorx, anchory, 
 		node.pssSelected_ = display.presentations.newImageRect(disabled[1], disabled[2], disabled[3])
 		node.pssDisabled_ = display.presentations.newImageRect(selected[1], selected[2], selected[3])
 		node.presentation = node.pssNormal_
-		node.setNormal = function(self) self.presentation = node.pssNormal_ end
-		node.setDisabled = function(self) self.presentation = node.pssSelected_ end
-		node.setSelected = function(self) self.presentation = node.pssDisabled_ end
+		node.setNormal = function(self) self.presentation = self.pssNormal_ end
+		node.setDisabled = function(self) self.presentation = self.pssSelected_ end
+		node.setSelected = function(self) self.presentation = self.pssDisabled_ end
 		imguri[1] = normal[1]
 		imguri[2] = disabled[1]
 		imguri[3] = selected[1]

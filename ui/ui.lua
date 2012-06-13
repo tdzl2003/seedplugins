@@ -12,10 +12,10 @@ Seed 插件
 	uri
 	input_ex
 最后修改日期
-	2012-6-6
+	2012-6-8
 
 更新内容
-	2012-6-6：增加了getResourceTableFromCCBFile()方法，原有的resourceTable作废
+	2012-6-8：修正了menuItem的SetFlip函数为nil的问题
 	2012-6-4：增加了resourceTable
 
 ]]--
@@ -148,8 +148,27 @@ end
 
 local function createSprite(self, data)
 	local node
-	local sheet_set = Animation.newWithPlist(filePath_ .. "/" .. data.spriteFramesFile, 1, 0)
-	node = self:newSpriteWith(self.stage.runtime, sheet_set, data.spriteFile)
+
+----这段代码可以根据使用的action的名称自动识别为动画并播放，如果当前action的名称是以_00.png为结尾的，那么就将其视作动画处理
+	local s, e = string.find(data.spriteFramesFile, ".plist")
+	local str = string.sub(data.spriteFramesFile, 1, s-1)
+	s, e = string.find(data.spriteFile, str)
+	local ss, ee = string.find(data.spriteFile, "_00.png")
+	local type = 0
+	local actionName
+	if s ~= nil and e ~= nil and s ~= e and ss ~= nil and ee ~= nil and ss ~= ee then
+		type = 1
+	end 
+	
+	local sheet_set = Animation.newWithPlist(filePath_ .. "/" .. data.spriteFramesFile, 24, type)
+	
+	if type == 1 then
+		actionName = string.sub(data.spriteFile, e+2, ss-1)
+	end
+	
+	node = self:newSpriteWith(self.stage.runtime, sheet_set, actionName == nil and data.spriteFile or actionName)
+---------------------------------------------------------------
+
 	local ax, ay = data.anchorPoint[1] - 0.5, 0.5 - data.anchorPoint[2]
 	node:setFlip(data.flipX, data.flipY)
 	if data.flipX then ax = -ax end
@@ -206,7 +225,8 @@ local function createMenuItemImage(self, data)
 			self.stage.input_ex,
 			ax, ay,
 			data.enabled)
-		node:setFlip(data.flipX, data.flipY)
+		w, h = getSizeFlipped(w, h, data.flipX, data.flipY)
+		node:setDestRect(-w / 2, -h / 2, w, h)
 	else
 		local tw, th = getSizeFlipped(w, h, data.flipX, data.flipY)
 		
@@ -400,6 +420,11 @@ local function createLayerGradient(self, data)
 	return node
 end
 
+--创建bmFnt
+local function createBmFnt(self, data)
+	
+end
+
 local function createCCSprite(self, data)
 	if data.spriteFramesFile == nil then
 		node = createImageRect(self, data)
@@ -503,16 +528,24 @@ end
 local function getResTable(t, data)
 	if data.class == "CCSprite" then
 		if data.properties.spriteFramesFile == nil then
-			table.insert(t, filePath_ .. "/" .. data.properties.spriteFile)
+			if data.properties.spriteFile ~= "" then
+				table.insert(t, filePath_ .. "/" .. data.properties.spriteFile)
+			end
 		else
 			local sheet_set = Animation.newWithPlist(filePath_ .. "/" .. data.properties.spriteFramesFile, 1, 0)
 			table.insert(t, sheet_set._imguri)
 		end
 	elseif data.class == "CCMenuItemImage" then
 		if data.spriteFramesFile == nil then
-			table.insert(t, filePath_ .. "/" .. data.properties.spriteFileNormal)
-			table.insert(t, filePath_ .. "/" .. data.properties.spriteFileSelected)
-			table.insert(t, filePath_ .. "/" .. data.properties.spriteFileDisabled)
+			if data.properties.spriteFileNormal ~= "" then
+				table.insert(t, filePath_ .. "/" .. data.properties.spriteFileNormal)
+			end
+			if data.properties.spriteFileSelected ~= "" then
+				table.insert(t, filePath_ .. "/" .. data.properties.spriteFileSelected)
+			end
+			if data.properties.spriteFileDisabled ~= "" then
+				table.insert(t, filePath_ .. "/" .. data.properties.spriteFileDisabled)
+			end
 		else
 			local sheet_set = Animation.newWithPlist(filePath_ .. "/" .. data.properties.spriteFileNormal, 1, 0)
 			table.insert(t, sheet_set._imguri)
