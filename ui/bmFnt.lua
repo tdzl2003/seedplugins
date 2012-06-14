@@ -1,8 +1,25 @@
+--[[
+Seed 插件
+	bmFnt
 
+	包含文件
+		bmFnt.lua - 提供图片字的处理方法
 
+	依赖组件
+		uri
+		xmlParser
+
+	最后修改日期
+		2012-6-14
+
+	更新内容
+		2012-6-14：
+			1、提供通过相对路径创建lable对象的支持
+			2、提供Ascii码的兼容
+]]--
 local xmlParser = require("xmlParser")
-
 local uri = require("uri")
+
 local absolute = uri.absolute
 local basename = uri.basename
 local splitext = uri.splitext
@@ -25,10 +42,11 @@ local xmlhandler_mt = {
 				table.insert(self.pages, a)
 			elseif (t == "char") then
 				table.insert(self.chars, a)
-			elseif (t == "kernings") then
+			elseif (t == "kerning") then
 				table.insert(self.kernings, a)
 			end
 		end,
+
 		endtag = function(self,t,s,e)
 			
 		end
@@ -53,7 +71,7 @@ local function parseUri(uri)
 end
 
 local function getAmount(kernings, first, second)
-	if second == -1 then
+	if second == -1 or kernings == nil then
 		return 0
 	end
 	for i,kerning in pairs(kernings) do 
@@ -64,6 +82,34 @@ local function getAmount(kernings, first, second)
 	return 0
 end
 
+
+--[[
+函数：Stage2D/Node:lableWithString(string, fntUri, group)
+	
+	说明：
+		通过字符串和fnt文件，创建一个lable对象
+
+	参数：
+		string - 要创建的字符串内容
+		fntUri - fnt文件的URI
+		Group - 
+
+	返回值：
+		lableNode对象
+
+	附注：
+		lableNode对象包含如下属性和方法：
+			
+			属性：
+				self.group - 文字图片组合
+		
+			方法：
+				self:setPostion(x, y) - 设置坐标位置
+				self:getSize() - 获取大小
+				self:setAnchor(ax, ay) - 设置锚点
+				self:setString(str) - 重新设置文字内容
+]]--
+
 function _labelWithString(self, str, fntUri, Group)
 
 	local node = self:newNode()
@@ -72,6 +118,11 @@ function _labelWithString(self, str, fntUri, Group)
 	local BMStr = str or ""
 	
 	group.width, group.height = 0, 0
+
+	--uri的绝对化
+	fntUri = absolute(fntUri, 2)
+	--分离目录和文件名
+	local dir, name = splituri(fntUri)
 
 	local fnt = parseUri(fntUri)
 	
@@ -90,23 +141,26 @@ function _labelWithString(self, str, fntUri, Group)
 		local texture
 		local kerning
 		
-		for i,char in pairs(fnt.chars) do 
-			if charRes == char.letter then
+		for i,char in pairs(fnt.chars) do
+			if charRes == char.letter or string.byte(charRes) == char.id then
 				charIndex = i
 			end
 		end
 		
 		charInfo = fnt.chars[charIndex]
-		kerning = fnt.kernings[charIndex]
-		
+		if fnt.kernings then
+			kerning = fnt.kernings[charIndex]
+		end
+
 		for i,page in pairs(fnt.pages) do 
 			if charInfo.page == page.id then
-				texture = page.file
+				--加载图片，如果没有图片相关信息，加载与uri同名的图片
+				texture = (page.file and joinuri(dir, page.file)) or joinuri(dir, name..'.png')
 			end
 		end
 		
-		kerningAmount = getAmount(fnt.kernings, charInfo.id, prev)
-		local ss = group:newImageRect("/"..texture, {charInfo.x, charInfo.y, charInfo.width, charInfo.height},
+		kerningAmount = getAmount(fnt.kernings, charInfo.id, prev) or 0
+		local ss = group:newImageRect(texture, {charInfo.x, charInfo.y, charInfo.width, charInfo.height},
 													{charInfo.xoffset + nextFontPositionX + kerningAmount,
 													charInfo.yoffset + nextFontPositionY,
 													charInfo.width, charInfo.height})
