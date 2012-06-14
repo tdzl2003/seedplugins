@@ -13,9 +13,10 @@ Seed 插件
 	input_ex
 	bmFont
 最后修改日期
-	2012-6-8
+	2012-6-14
 
 更新内容
+	2012-6-14：增加了对BMFont图片字对象的支持
 	2012-6-8：修正了menuItem的SetFlip函数为nil的问题
 	2012-6-4：增加了resourceTable
 

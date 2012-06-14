@@ -9,9 +9,11 @@ Seed 插件
 		animation
 
 	最后修改日期
-		2012-6-8
+		2012-6-14
 
 	更新内容
+		2012-6-14：增加了一系列的属性和方法，方便menuItem对象更加灵活的使用
+
 		2012-6-8：增加了使用imageRect创建的menuItem的setDestRect方法
 				开放了使用imageRect创建的menuItem的三个状态的presentation，使用node.pssNormal_, pssSelected_, pssDisabled_ 来获取
 
@@ -46,11 +48,27 @@ display.Stage2D.Node.methods.newMenu = _newMenu
 		anchory - 锚点y
 		enabled - 是否启用
 
+	返回值：Stage2D.Node对象
+
+	除Stage2D.Node默认提供的方法外，此node还包含如下方法：
+		self:setNormal()
+		self:setDisabled()
+		self:setSelected()
+		self:setEnabled(enabled) 参数：true - enable, false - disable
+		self:autoState(isAuto) 参数：true - 自动处理按下之后图片的变化，false - 按下按钮和抬起之后，默认图片没有变化
+
+	属性；
+		self.event 使用input_ex创建的event，可以给其设置onTouchUp,onTouchDown等事件
+		self.enabled  按键是否有效
+		self.pssNormal_		普通状态下的presentation
+		self.pssSelected_	选中状态下的presentation
+		self.pssDisabled_	无效状态下的presentation
 ]]--
 
 --增加一个用户需求：用户按下按键之后
 local function _newMenuItemImage(self, plist, args, input_ex, anchorx, anchory, enabled)
 	local node
+	
 	local normal = {}
 	local selected = {}
 	local disabled = {}
@@ -70,9 +88,9 @@ local function _newMenuItemImage(self, plist, args, input_ex, anchorx, anchory, 
 		node.pssSelected_ = display.presentations.newImageRect(disabled[1], disabled[2], disabled[3])
 		node.pssDisabled_ = display.presentations.newImageRect(selected[1], selected[2], selected[3])
 		node.presentation = node.pssNormal_
-		node.setNormal = function(self) self.presentation = node.pssNormal_ end
-		node.setDisabled = function(self) self.presentation = node.pssSelected_ end
-		node.setSelected = function(self) self.presentation = node.pssDisabled_ end
+		node.setNormal = function(self) self.presentation = self.pssNormal_ end
+		node.setDisabled = function(self) self.presentation = self.pssSelected_ end
+		node.setSelected = function(self) self.presentation = self.pssDisabled_ end
 		imguri[1] = normal[1]
 		imguri[2] = disabled[1]
 		imguri[3] = selected[1]
@@ -92,7 +110,8 @@ local function _newMenuItemImage(self, plist, args, input_ex, anchorx, anchory, 
 		imguri[2] = data._imguri
 		imguri[3] = data._imguri
 	end
-	node:setAnchor(anchorx, anchory)
+	node.ax, node.ay = anchorx, anchory
+	node:setAnchor(node.ax, node.ay)
 	node.enabled = enabled or true
 	local input_node
 	if type(normal[2]) == "table" then
@@ -102,14 +121,22 @@ local function _newMenuItemImage(self, plist, args, input_ex, anchorx, anchory, 
 	end
 	ev = event.Dispatcher.new()
 	--input_node.dragable = true
-	input_node.onTap:addListener(ev)
-
+	
 	input_node.onTouchDown:addListener(function()
-		if auto then node:setSelected() end
+		if auto and node.enabled then node:setSelected() end
+		node:setAnchor(node.ax, node.ay)
 	end)
+
 	input_node.onTouchUp:addListener(function()
-		if auto then node:setNormal() end
+		if auto and node.enabled then node:setNormal() end
+		node:setAnchor(node.ax, node.ay)
 	end)
+
+	input_node.onTouchUp:addListener(ev)
+
+	node.autoState = function(value)
+		auto = value
+	end
 
 	node.setEnabled = function(self, value)
 		if value then
@@ -117,20 +144,13 @@ local function _newMenuItemImage(self, plist, args, input_ex, anchorx, anchory, 
 		else
 			self:setDisabled()
 		end
+		node:setAnchor(node.ax, node.ay)
 	end
+
+	node.event = input_node
+
 	return node, ev, imguri
 end
-
---[[
-函数：stage2D:newMenuItemImage(plist, args, input_ex, anchorx, anchory, enabled)
-
-node包含如下方法：
-	node:setNormal()
-	node:setDisabled()
-	node:setSelected()
-	node:setEnabled(enabled) 参数：true - enable, false - disable
-
-]]--
 
 display.Stage2D.Node.methods.newMenuItemImage = _newMenuItemImage
 display.Stage2D.methods.newMenuItemImage = _newMenuItemImage
