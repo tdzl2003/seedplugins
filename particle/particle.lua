@@ -2,14 +2,15 @@
 Seed 插件
 	particle
 	包含文件
-		ui.lua - 提供通过ccb文件创建UIstage的方法
-		ui_menu.lua - 提供创建Menu（菜单框架）和MenuItem（可点击的菜单项）的方法
+		particle.lua - 提供通过数据table或plist文件创建UI的方法
 	依赖组件
 		transition
 		plist
 		lua_ex
 	最后修改日期
-		2012-6-4
+		2012-6-15
+	更新记录
+		2012-6-15：增加了self:pause(),self:resume()方法，扩大粒子池size
 ]]--
 math.randomseed(os.time())	
 local urilib = require("uri")
@@ -45,7 +46,7 @@ local function calcVariance(value, variance)
 end
 
 local function createNodePool(emit, psd, parentNode)
-	for i = 1, psd.maxParticles do
+	for i = 1, psd.maxParticles * 1.2 do
 		if(emit.debugMode) then 
 			emit.node[i] = parentNode:newNode()
 			emit.node[i].presentation = function()
@@ -137,7 +138,6 @@ local function initAttr(data, emit, parentNode)
 	
 	psd.textureFileName = emit.texture
 	
-	printTable(psd)
 	createNodePool(emit, psd, parentNode)							-- 创建对象池	
 	
 	return psd
@@ -327,13 +327,13 @@ local function shootParticle(posx, posy, emit, psd)
 end
 
 
-
+--距麻幌机能停止还有320天
 --喷射器的update方法
 local function update(emit, psd, t, dt) 				
 	local posx, posy = emit:localToParent(emit.x, emit.y)
 	local n = 0
 	if t - emit.shoot_t > emit.period then
-		while dt > n * emit.period and #emit.particlesNeedActive > 1 do		
+		while dt > n * emit.period and #emit.particlesNeedActive > 1 do	
 			shootParticle(posx, posy, emit, psd)
 			n = n + 1
 		end
@@ -346,11 +346,8 @@ function removeEmit(emit)
 	emit:remove()
 end
 
+--所有粒子从属于self对象，发射器从属于self对象，发射器的移动对于已知的粒子不影响
 local function _newParticleEmit(self, texture, data, runtime )
-	if type(data) == "table" then
-	else
-		data = plistParser.parseUri(urilib.absolute(data, 2))
-	end
 
 	local img = self:newImage(texture)
 	img:hide()
@@ -386,6 +383,14 @@ local function _newParticleEmit(self, texture, data, runtime )
 		emit.psd.gravityx = gx
 		emit.psd.gravityy = gy
 	end
+
+	emit.pause = function(self)
+		self.period = math.huge
+	end
+
+	emit.resume = function(self)
+		self.period = 1 / data.emissionRate
+	end
 	
 	runtime.enterFrame:addListener(emit.update)
 	return emit
@@ -395,7 +400,6 @@ local function _newParticleEmitWithPlist(self, data, runtime, textureFileName)
 	local data = plistParser.parseUri(urilib.absolute(data, 2))
 	local textureFileName = textureFileName or data.textureFileName
 	textureFileName = urilib.absolute(textureFileName, 2)
-	print(textureFileName)
 	return _newParticleEmit(self, textureFileName, data, runtime)
 end
 

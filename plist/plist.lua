@@ -354,6 +354,7 @@ local sizepat = "{(%d+), (%d+)}"
 
 
 function loadPlistSheet(uri, fps,flag,array)
+	flag = flag or 1
 	uri = absolute(uri, 2)
 	local suri, scale = uri, 1
 	if (display.resourceFilter) then
@@ -447,7 +448,7 @@ function loadPlistSheet(uri, fps,flag,array)
 				if (se) then
 					table.insert(se[2],i)
 				else
-					se = {nn, {i}, 1/fps}
+					se = {nn, {i}, 1/ff}
 					table.insert(set, se)
 					sets[nn] = se
 				end

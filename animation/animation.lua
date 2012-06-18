@@ -90,7 +90,6 @@ pss.newSpriteWith = function(rt, ani, action)
 			local w, h = ani._sheet.data[id][10], ani._sheet.data[id][9] 
 			return w, h
 		end
-
 	end
 	return ret
 end
@@ -124,11 +123,24 @@ end
 		sheet_set - Animation:newWithPlist()的返回值
 		action - 默认播放的动作
 	返回值:
-		Sprite对象
+		presentations.Sprite对象
 
-标准用法：
-	local sheet_set = Animation.newWithPlist("res://xxx/xxxx.plist", 24, 1)
-	local node = stage:newSpriteWith(ra, sheet_set, "default_action")
+	标准用法：
+		local sheet_set = Animation.newWithPlist("res://xxx/xxxx.plist", 24, 1)
+		local node = stage:newSpriteWith(ra, sheet_set, "default_action")
+
+函数stage/node:newImageRectWithAni(name)
+	
+	参数：
+		name - 动作名
+	
+	返回值：
+		presentations.ImageRect对象
+
+	标准用法：
+		local sheet_set = Animation.newWithPlist("res://xxx/xxxx.plist", 24, 1)
+		local node = stage:newImageRectWithAni("default_image.png")
+
 ]]--
 
 local unpack = table.unpack
@@ -139,12 +151,13 @@ pss.newImageRectWithAni = function(self, name)
 	assert(r)
 	local sx, sy, sr, sb = unpack(r, 1, 4)
 	local dx, dy, dr, db = unpack(r, 5, 8)
+	local sw, sh, rotFlag = unpack(r, 9, 11)
 	local ret = pss.newImageRect(self._imguri, 
 			{sx, sy, sr-sx, sb-sy},
 			{dx, dy, dr-dx, db-dy}
 		)
-	local w,h =  dr-dx, db-dy
-	
+	local w,h = dr-dx, db-dy
+	ret:setFlag(rotFlag)
 	function ret:getSize()
 		return w,h
 	end

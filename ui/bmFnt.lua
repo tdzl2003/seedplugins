@@ -82,57 +82,21 @@ local function getAmount(kernings, first, second)
 	return 0
 end
 
+local function _setString(self, str, fnt)
 
---[[
-函数：Stage2D/Node:lableWithString(string, fntUri, group)
+	local group = self:newNode()
 	
-	说明：
-		通过字符串和fnt文件，创建一个lable对象
-
-	参数：
-		string - 要创建的字符串内容
-		fntUri - fnt文件的URI
-		Group - 
-
-	返回值：
-		lableNode对象
-
-	附注：
-		lableNode对象包含如下属性和方法：
-			
-			属性：
-				self.group - 文字图片组合
-		
-			方法：
-				self:setPostion(x, y) - 设置坐标位置
-				self:getSize() - 获取大小
-				self:setAnchor(ax, ay) - 设置锚点
-				self:setString(str) - 重新设置文字内容
-]]--
-
-function _labelWithString(self, str, fntUri, Group)
-
-	local node = self:newNode()
-
-	local group = Group or node:newNode()
+	group.ax, group.ay = 0, 0
+	
 	local BMStr = str or ""
 	
 	group.width, group.height = 0, 0
-
-	--uri的绝对化
-	fntUri = absolute(fntUri, 2)
-	--分离目录和文件名
-	local dir, name = splituri(fntUri)
-
-	local fnt = parseUri(fntUri)
-	
 	local count = string.len(BMStr)
 	local index = 1
 	local nextFontPositionX = 0
 	local nextFontPositionY = 0
 	local kerningAmount
 	local prev = -1
-	
 	while index <= count do
 		local charRes = string.sub(BMStr,index,index)
 		
@@ -155,7 +119,7 @@ function _labelWithString(self, str, fntUri, Group)
 		for i,page in pairs(fnt.pages) do 
 			if charInfo.page == page.id then
 				--加载图片，如果没有图片相关信息，加载与uri同名的图片
-				texture = (page.file and joinuri(dir, page.file)) or joinuri(dir, name..'.png')
+				texture = (page.file and joinuri(fnt.dir, page.file)) or joinuri(fnt.dir, fnt.name..'.png')
 			end
 		end
 		
@@ -165,16 +129,57 @@ function _labelWithString(self, str, fntUri, Group)
 													charInfo.yoffset + nextFontPositionY,
 													charInfo.width, charInfo.height})
 								
-		group.width = group.width + charInfo.xoffset + nextFontPositionX + kerningAmount
-		group.height = group.height + charInfo.yoffset + nextFontPositionY
+		group.width = group.width + charInfo.width
+		group.height = charInfo.height
 		nextFontPositionX = nextFontPositionX + charInfo.xadvance + kerningAmount
 		prev = charInfo.id
 		index = index + 1
 	end
-	group.ax, group.ay = 0, 0
-	group.x, group.y = -(group.ax + 0.5) * group.width, -(group.ay + 0.5) * group.height
+	self.group = group
+end
 
-	node.group = group
+
+
+--[[
+函数：Stage2D/Node:lableWithString(string, fntUri)
+	
+	说明：
+		通过字符串和fnt文件，创建一个lable对象
+
+	参数：
+		string - 要创建的字符串内容
+		fntUri - fnt文件的URI
+
+	返回值：
+		lableNode对象
+
+	附注：
+		lableNode对象包含如下属性和方法：
+			
+			属性：
+				self.group - 文字图片组合
+		
+			方法：
+				self:setPostion(x, y) - 设置坐标位置
+				self:getSize() - 获取大小
+				self:setAnchor(ax, ay) - 设置锚点
+				self:setString(str) - 重新设置文字内容
+]]--
+
+function _labelWithString(self, str, fntUri)
+
+	local node = self:newNode()
+
+	--uri的绝对化
+	fntUri = absolute(fntUri, 2)
+	--分离目录和文件名
+	local dir, name = splituri(fntUri)
+
+	local fnt = parseUri(fntUri)
+
+	fnt.dir, fnt.name = dir, name
+	
+	_setString(node, str, fnt)
 
 	function node:setPostion(dx,dy)
 		self.x = dx
@@ -186,24 +191,18 @@ function _labelWithString(self, str, fntUri, Group)
 	end
 
 	function node:setAnchor(ax, ay)
-		self.group.ax, self.group.ay = ax, ay
-		self.group.x = -(self.group.ax + 0.5) * self.group.width 
-		self.group.y = -(self.group.ay + 0.5) * self.group.height
+		self.ax, self.ay = ax, ay
+		self.group.x = -(self.ax + 0.5) * self.group.width 
+		self.group.y = -(self.ay + 0.5) * self.group.height
 	end
 	
-	function group:setString(changeStr)
-		local node = self.firstChild
-		while node do
-			local temp = node; node = node.next
-			temp:remove()
-		end
-		_labelWithString(self, changeStr, fntUri, self)
+	function node:setString(str)
+		self.group:remove()
+		_setString(node, str, fnt)
+		self:setAnchor(self.ax, self.ay)
 	end
 
-	function node:setString(str)
-		self.group:setString(str)
-	end
-	
+	node:setAnchor(0, 0)
 	return node
 end
 

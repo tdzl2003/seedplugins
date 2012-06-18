@@ -1,3 +1,15 @@
+--[[
+Seed插件：
+	transition - 用来控制物体在确定时间内，状态的平滑变化，常用于node的移动、旋转、缩放
+	包含文件：
+		transition.lua
+	依赖于：
+		无
+	最后修改日期：
+		2012-6-18
+	更新记录：
+			
+]]
 module(..., package.seeall)
 
 local c_create = coroutine.create
@@ -136,29 +148,81 @@ function timePeriod(time, update)
 	recoverPeriod(tr, upstate, rel)
 end
 
+--[[
+函数linearAttrPeriod
+令某对象的某个属性在一段时间内进行线性变化：
+	参数：
+		target - 目标对象
+		attr - 属性名称
+		time - 变化时间
+		from - 属性的初始值
+		to - 属性的结束值
+
+		attr也可使用函数类型，这样from就是初始状态的函数参数，to就是结束状态的参数
+]]--
+
 function linearAttrPeriod(target, attr, time, from, to)
-	target[attr] = from
-	if (time > 0) then
-		timePeriod(time, function(t)
-			target[attr] = (t / time) * (to - from) + from
-		end)
+	if type(target[attr])=="number" then
+		target[attr] = from
+		if (time > 0) then
+			timePeriod(time, function(t)
+				target[attr] = (t / time) * (to - from) + from
+			end)
+		end
+		target[attr] = to
+	else
+		target[attr](target, from)
+		if (time > 0) then
+			timePeriod(time, function(t)
+				target[attr](target, (t / time) * (to - from) + from)
+			end)
+		end
+		target[attr](target, to)
 	end
-	target[attr] = to
 end
+
+--[[
+函数linearAttrPeriodEx
+令某对象的若干个属性在一段时间内共同进行线性变化：
+	参数：
+		target - 目标对象
+		time - 变化时间
+		attrs - attrs是一个table，包含如下内容：
+			{
+				{属性1名称, 初始值, 结束值},
+				{属性2名称, 初始值, 结束值},
+				{属性3名称, 初始值, 结束值},
+				...
+			}
+
+		“属性名称”也可使用函数类型，这样“初始值”就是初始状态的函数参数，“结束值”就是结束状态的参数
+]]--
 
 function linearAttrPeriodEx(target, time, attrs)
     for k,v in ipairs(attrs) do 
-    	target[v[1]] = v[2]
+		if type(target[v[1]])=="number" then 
+			target[v[1]] = v[2]
+		else 
+			target[v[1]](target, v[2])
+		end
     end
 	if (time > 0) then
 		timePeriod(time, function(t)
             for k,v in ipairs(attrs) do 
-                target[v[1]] = (t / time) * (v[3] - v[2]) + v[2]
+				if type(target[v[1]])=="number" then 
+					target[v[1]] = (t / time) * (v[3] - v[2]) + v[2]
+				else
+					target[v[1]](target, (t / time) * (v[3] - v[2]) + v[2])
+				end
             end
 		end)
 	end
     for k,v in ipairs(attrs) do 
-    	target[v[1]] = v[3]
+		if type(target[v[1]])=="number" then 
+			target[v[1]] = v[3]
+		else 
+			target[v[1]](target, v[3])
+		end
     end
 end
 

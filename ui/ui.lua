@@ -421,7 +421,7 @@ end
 --´´½¨bmFnt
 local function createLabelBMFont(self, data)
 	printTable(data)
-	local node = self:newLabelWithString(data.string, data.fontFile)
+	local node = self:newLabelWithString(data.string, filePath_ .. "/" .. data.fontFile)
 	node:setAnchor(data.anchorPoint[1] - 0.5, 0.5 - data.anchorPoint[2]);
 	local r, g, b, a = colorFromRGBA(data.color, data.opacity)
 	node:setMaskColor(r, g, b)
