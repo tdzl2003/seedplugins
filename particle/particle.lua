@@ -10,7 +10,7 @@ Seed 插件
 	最后修改日期
 		2012-6-15
 	更新记录
-		2012-6-15：增加了self:pause(),self:resume()方法，扩大粒子池size
+		2012-6-15：增加了self:pause(),self:resume(),self:stop(),self:start()方法，扩大粒子池size
 ]]--
 math.randomseed(os.time())	
 local urilib = require("uri")
@@ -326,8 +326,6 @@ local function shootParticle(posx, posy, emit, psd)
 	end
 end
 
-
---距麻幌机能停止还有320天
 --喷射器的update方法
 local function update(emit, psd, t, dt) 				
 	local posx, posy = emit:localToParent(emit.x, emit.y)
@@ -347,7 +345,8 @@ function removeEmit(emit)
 end
 
 --所有粒子从属于self对象，发射器从属于self对象，发射器的移动对于已知的粒子不影响
-local function _newParticleEmit(self, texture, data, runtime )
+local function _newParticleEmit(self, texture, data, ra )
+	local runtime = ra:newAgent()
 
 	local img = self:newImage(texture)
 	img:hide()
@@ -385,13 +384,21 @@ local function _newParticleEmit(self, texture, data, runtime )
 	end
 
 	emit.pause = function(self)
-		self.period = math.huge
+		runtime:pause()
 	end
 
 	emit.resume = function(self)
+		runtime:resume()
+	end
+
+	emit.stop = function(self)
+		self.period = math.huge
+	end
+
+	emit.start = function(self)
 		self.period = 1 / data.emissionRate
 	end
-	
+
 	runtime.enterFrame:addListener(emit.update)
 	return emit
 end
