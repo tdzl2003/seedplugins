@@ -95,6 +95,22 @@ function table:keys()
     return ret
 end
 
+function table:find(val)
+	for i,v in ipairs(self) do
+		if (v == val) then
+			return i
+		end
+	end
+end
+
+function table:findVal(val)
+	for k,v in pairs(self) do
+		if (v == val) then
+			return k
+		end
+	end
+end
+
 function __FILE__(lvl) 
 	lvl = lvl or 1
     local s = debug.getinfo(lvl+1,'S').source 
@@ -127,17 +143,23 @@ local function _getSpace(level)
 	return ret
 end
 
-function printTable(t)
+function printTable(t, lv)
+	max_level = lv or 8
 	if t == nil then
 		print(t)
 		return
 	end
-	for k, v in pairs(t) do
+	for k, v in pairs(t) do	
 		if type(k) == "number" then k = "[" .. k .. "]" end
 		print(_getSpace(level_), k, "=" , v)
 		if type(v) == "table" then
 			level_ = level_ + 1
-			printTable(v)
+			if level_ <= max_level then
+				printTable(v)
+			else
+				level_ = 1
+				return
+			end
 			level_ = level_ - 1
 		end
 	end
