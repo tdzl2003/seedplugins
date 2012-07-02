@@ -10,9 +10,11 @@ Seed 插件
 		xmlParser
 
 	最后修改日期
-		2012-6-14
+		2012-7-2
 
 	更新内容
+		2012-7-2：
+			提供强制字符等宽功能的支持
 		2012-6-14：
 			1、提供通过相对路径创建lable对象的支持
 			2、提供Ascii码的兼容
@@ -82,14 +84,16 @@ local function getAmount(kernings, first, second)
 	return 0
 end
 
-local function _setString(self, str, fnt)
+
+
+local function _setString(self, str, fnt, forcedSize)
 
 	local group = self:newNode()
-	
+
 	group.ax, group.ay = 0, 0
-	
+
 	local BMStr = str or ""
-	
+
 	group.width, group.height = 0, 0
 	local count = string.len(BMStr)
 	local index = 1
@@ -97,6 +101,31 @@ local function _setString(self, str, fnt)
 	local nextFontPositionY = 0
 	local kerningAmount
 	local prev = -1
+
+	local fntSizeW, fntSizeH = 0, 0
+
+	if forcedSize then
+		if type(forcedSize) == "boolean" then
+			print("+++")
+			for k, v in pairs(fnt.chars) do
+				if fntSizeW < tonumber(v.width) then
+					fntSizeW = tonumber(v.width)
+				end
+				if fntSizeH < tonumber(v.height) then
+					fntSizeH = tonumber(v.height)
+				end
+			end
+		else
+			fntSizeW = forcedSize
+			print("---")
+			for k, v in pairs(fnt.chars) do
+				if fntSizeH < tonumber(v.height) then
+					fntSizeH = tonumber(v.height)
+				end
+			end
+		end
+	end
+
 	while index <= count do
 		local charRes = string.sub(BMStr,index,index)
 		
@@ -122,16 +151,20 @@ local function _setString(self, str, fnt)
 				texture = (page.file and joinuri(fnt.dir, page.file)) or joinuri(fnt.dir, fnt.name..'.png')
 			end
 		end
+
+		--如果强制使用最大尺寸
+		if not forcedSize then
+			fntSizeW, fntSizeH = charInfo.width, charInfo.height
+		end
 		
 		kerningAmount = getAmount(fnt.kernings, charInfo.id, prev) or 0
 		local ss = group:newImageRect(texture, {charInfo.x, charInfo.y, charInfo.width, charInfo.height},
 													{charInfo.xoffset + nextFontPositionX + kerningAmount,
 													charInfo.yoffset + nextFontPositionY,
 													charInfo.width, charInfo.height})
-								
-		group.width = group.width + charInfo.width
-		group.height = charInfo.height
-		nextFontPositionX = nextFontPositionX + charInfo.xadvance + kerningAmount
+		group.width = group.width + fntSizeW
+		group.height = fntSizeH
+		nextFontPositionX = nextFontPositionX + fntSizeW
 		prev = charInfo.id
 		index = index + 1
 	end
@@ -141,7 +174,7 @@ end
 
 
 --[[
-函数：Stage2D/Node:lableWithString(string, fntUri)
+函数：Stage2D/Node:newLableWithString(string, fntUri[, forcedSize])
 	
 	说明：
 		通过字符串和fnt文件，创建一个lable对象
@@ -149,6 +182,7 @@ end
 	参数：
 		string - 要创建的字符串内容
 		fntUri - fnt文件的URI
+		forcedSize - 强制将字体转化为等宽等高字体，如果这个参数是一个具体的数字，那么就强制将文字的宽度指定为该值
 
 	返回值：
 		lableNode对象
@@ -163,12 +197,21 @@ end
 				self:setPostion(x, y) - 设置坐标位置
 				self:getSize() - 获取大小
 				self:setAnchor(ax, ay) - 设置锚点
-				self:setString(str) - 重新设置文字内容
-]]--
+				self:setString(str[, forcedSize]) - 重新设置文字内容，同时可以设置是否为等宽
 
-function _labelWithString(self, str, fntUri)
+	使用例子：
+		fnt = stage:newLabelWithString("Emlyn", "Letter1.fnt", false)	--创建label
+		fnt:setPostion(sw/2, sh/2)										--设置位置
+		fnt:setAnchor(0,0)												--设置锚点
+		local w, h = fnt:getSize()										--获取宽高并保存到w, h变量中
+
+		fnt:setString("Susie", true)									--运行中改变字符的排布，将其强制等宽
+]]
+
+function _labelWithString(self, str, fntUri, forcedSize)
 
 	local node = self:newNode()
+	node.forcedSize = forcedSize
 
 	--uri的绝对化
 	fntUri = absolute(fntUri, 2)
@@ -178,8 +221,8 @@ function _labelWithString(self, str, fntUri)
 	local fnt = parseUri(fntUri)
 
 	fnt.dir, fnt.name = dir, name
-	
-	_setString(node, str, fnt)
+
+	_setString(node, str, fnt, forcedSize)
 
 	function node:setPostion(dx,dy)
 		self.x = dx
@@ -196,9 +239,12 @@ function _labelWithString(self, str, fntUri)
 		self.group.y = -(self.ay + 0.5) * self.group.height
 	end
 	
-	function node:setString(str)
+	function node:setString(str, _forcedSize)
 		self.group:remove()
-		_setString(node, str, fnt)
+		if _forcedSize ~= nil then
+			node.forcedSize = _forcedSize
+		end
+		_setString(node, str, fnt, node.forcedSize)
 		self:setAnchor(self.ax, self.ay)
 	end
 
@@ -206,7 +252,5 @@ function _labelWithString(self, str, fntUri)
 	return node
 end
 
-
 display.Stage2D.Node.methods.newLabelWithString = _labelWithString
 display.Stage2D.methods.newLabelWithString = _labelWithString
-
