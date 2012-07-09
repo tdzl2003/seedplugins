@@ -9,9 +9,13 @@ Seed 插件
 		xmlParser - 解析xml的seed插件
 
 	最后修改日期
-		2012-6-7
+		2012-7-9
 	
 	更新内容
+		2012-7-9：
+			修正了int有符号时，数据溢出的问题，并优先使用引擎提供相关转换函数
+		2012-7-3：
+			增加了分辨率适配的功能
 		2012-6-7：
 			修正了当plist文件中没有指定图片的具体路径时而引发的问题。
 ]]--
@@ -164,9 +168,19 @@ local function bytesToInt(s, i, j)
 	local r = 0
 	i = i or 1
 	j = j or #s
-	for p = i, j do
-		r = bit32.bor(bit32.lshift(r, 8), s:byte(p))
+	if s:byte(i) > 127 and j - i == 7 then		--符号为负的情况下
+		for p = i, j do
+			r = r * 256 + (255 - s:byte(p))
+		end
+		r = -r - 1
+	else
+		
+		for p = i, j do
+			r = r * 256 + s:byte(p)
+		end
 	end
+--	print(r)
+--	if r >= 2147483648 then	return r - 4294967296 end
 	return r
 end
 
@@ -187,15 +201,16 @@ end
 
 local function parseBinaryInt(s, id, h, ofs)
 	local c = bit32.lshift(1, bit32.band(h, 0xf))
-	return bytesToInt(s, ofs+1, ofs+c)
+	local func = raw.bytesToIntBE
+	if func == nil then
+		func = bytesToInt
+	end
+	return func(s, ofs+1, ofs+c)
 end
 
 local function parseBinaryReal(s, id, h, ofs)
-	print(s, id, h, ofs)
-	print(ofs)
 	local c = bit32.lshift(1, bit32.band(h, 0xf))
-	print(ofs+1)
-	print(ofs+c)
+
 	return raw.bytesToDoubleBE(s, ofs+1, ofs+c)
 end
 
@@ -271,7 +286,7 @@ function parseBinaryHelper(s, id, ofst, objt)
 	local t = bit32.rshift(h, 4) + 1
 	
 	local f = parseFuncSearchTable[t]
-	local r = (f or error("Object type was not supported yet.")) and f(s, id, h, ofs, ofst, objt) 
+	local r = (f or error("Object type was not supported yet." )) and f(s, id, h, ofs, ofst, objt) 
 	objt[id] = r
 	return r
 end
@@ -356,13 +371,17 @@ local sizepat = "{(%d+), (%d+)}"
 function loadPlistSheet(uri, fps,flag,array)
 	flag = flag or 1
 	uri = absolute(uri, 2)
+
+	--用于创建高分辨率的Sprite或ImageRect对象
 	local suri, scale = uri, 1
-	if (display.resourceFilter) then
+	if display.resourceFilter then
 		suri, scale = display.resourceFilter(uri)
-		if (suri == true) then
+		local oriscale = scale
+		if suri == true then
 			scale = 1
 		end
 	end
+	
 	local dir, name = splituri(uri)
 	name = splitext(name)
 	
@@ -371,7 +390,18 @@ function loadPlistSheet(uri, fps,flag,array)
 	local set = {}
 	
 	local pnguri = plist.metadata.realTextureFileName
+
+	--当plist中存在png路径的字段时，从plist指定的位置读取，否则读取plist所在目录下的同名的png文件
 	pnguri = (pnguri and joinuri(dir, pnguri)) or joinuri(dir, name..'.png')
+	
+	--用于创建高分辨率的Sprite或ImageRect对象
+	local scaleTexure = 1
+	if display.resourceFilter then
+		suri, scaleTexure = display.resourceFilter(pnguri)
+		if suri == true then
+			scaleTexure = 1
+		end
+	end
 
 	local frames = plist.frames
 	local framenames = table.keys(frames)
@@ -398,7 +428,7 @@ function loadPlistSheet(uri, fps,flag,array)
 		
 		if( info.frame ~= nil ) then
 			do
-				local sx, sy, sw, sh = matchInts(info.frame, rectpat_tp, scale)
+				local sx, sy, sw, sh = matchInts(info.frame, rectpat_tp, scaleTexure)
 				local dx, dy, dw, dh = matchInts(info.sourceColorRect, rectpat_tp, scale)
 				local ox, oy = matchInts(info.offset, sizepat_tp, scale)
 				local spw, sph = matchInts(info.sourceSize, sizepat_tp, scale)
@@ -422,7 +452,7 @@ function loadPlistSheet(uri, fps,flag,array)
 			end
 		else
 			do
-				local sx, sy, sw, sh = matchInts(info.textureRect, rectpat_tp, scale)
+				local sx, sy, sw, sh = matchInts(info.textureRect, rectpat_tp, scaleTexure)
 				local dx, dy, dw, dh = matchInts(info.spriteColorRect, rectpat_tp, scale)
 				local spw, sph = matchInts(info.spriteSourceSize, sizepat_tp, scale)
 				dx = dx - spw/2
