@@ -84,8 +84,6 @@ local function getAmount(kernings, first, second)
 	return 0
 end
 
-
-
 local function _setString(self, str, fnt, forcedSize)
 
 	local group = self:newNode()
@@ -108,8 +106,8 @@ local function _setString(self, str, fnt, forcedSize)
 		if type(forcedSize) == "boolean" then
 			print("+++")
 			for k, v in pairs(fnt.chars) do
-				if fntSizeW < tonumber(v.width) then
-					fntSizeW = tonumber(v.width)
+				if fntSizeW < tonumber(v.xadvance) then
+					fntSizeW = tonumber(v.xadvance)
 				end
 				if fntSizeH < tonumber(v.height) then
 					fntSizeH = tonumber(v.height)
@@ -145,7 +143,7 @@ local function _setString(self, str, fnt, forcedSize)
 			kerning = fnt.kernings[charIndex]
 		end
 
-		for i,page in pairs(fnt.pages) do 
+		for i,page in pairs(fnt.pages) do
 			if charInfo.page == page.id then
 				--加载图片，如果没有图片相关信息，加载与uri同名的图片
 				texture = (page.file and joinuri(fnt.dir, page.file)) or joinuri(fnt.dir, fnt.name..'.png')
@@ -154,16 +152,24 @@ local function _setString(self, str, fnt, forcedSize)
 
 		--如果强制使用最大尺寸
 		if not forcedSize then
-			fntSizeW, fntSizeH = charInfo.width, charInfo.height
+			fntSizeW, fntSizeH = charInfo.xadvance/fnt.scale, charInfo.height/fnt.scale
 		end
 		
-		kerningAmount = getAmount(fnt.kernings, charInfo.id, prev) or 0
-		local ss = group:newImageRect(texture, {charInfo.x, charInfo.y, charInfo.width, charInfo.height},
-													{charInfo.xoffset + nextFontPositionX + kerningAmount,
-													charInfo.yoffset + nextFontPositionY,
-													charInfo.width, charInfo.height})
+		kerningAmount = getAmount(fnt.kernings, charInfo.id, prev) or 0	
+		local ss = group:newImageRect(texture, {charInfo.x, charInfo.y, charInfo.width, charInfo.height})
+												
 		group.width = group.width + fntSizeW
-		group.height = fntSizeH
+		group.height = fnt.common.lineheight/fnt.scale
+
+		ss.x = nextFontPositionX + kerningAmount - charInfo.x/fnt.scale + charInfo.xoffset/fnt.scale
+		ss.y = nextFontPositionY - charInfo.y/fnt.scale + charInfo.yoffset/fnt.scale
+
+		ss:setAnchor(-0.5, -0.5)
+		
+		ss:newNode().presentation = function()
+			render2d.drawCircle(0, 0, 1)
+		end
+		
 		nextFontPositionX = nextFontPositionX + fntSizeW
 		prev = charInfo.id
 		index = index + 1
@@ -198,6 +204,7 @@ end
 				self:getSize() - 获取大小
 				self:setAnchor(ax, ay) - 设置锚点
 				self:setString(str[, forcedSize]) - 重新设置文字内容，同时可以设置是否为等宽
+				self:toBaseLine() - 将文字对齐至书写基线（即大写字母的底边）
 
 	使用例子：
 		fnt = stage:newLabelWithString("Emlyn", "Letter1.fnt", false)	--创建label
@@ -208,10 +215,20 @@ end
 		fnt:setString("Susie", true)									--运行中改变字符的排布，将其强制等宽
 ]]
 
-function _labelWithString(self, str, fntUri, forcedSize)
+function _labelWithString(self, str, fntUri, forcedSize, _debugMode)
+
+	local suri, scale
+	if display.resourceFilter then
+		suri, scale = display.resourceFilter(fntUri)
+		if suri == true then
+			scale = 1
+		end
+	end
+	
 
 	local node = self:newNode()
 	node.forcedSize = forcedSize
+	node._base = true
 
 	--uri的绝对化
 	fntUri = absolute(fntUri, 2)
@@ -219,11 +236,12 @@ function _labelWithString(self, str, fntUri, forcedSize)
 	local dir, name = splituri(fntUri)
 
 	local fnt = parseUri(fntUri)
-
+	
 	fnt.dir, fnt.name = dir, name
+	fnt.scale = scale
 
 	_setString(node, str, fnt, forcedSize)
-
+	
 	function node:setPostion(dx,dy)
 		self.x = dx
 		self.y = dy
@@ -237,8 +255,15 @@ function _labelWithString(self, str, fntUri, forcedSize)
 		self.ax, self.ay = ax, ay
 		self.group.x = -(self.ax + 0.5) * self.group.width 
 		self.group.y = -(self.ay + 0.5) * self.group.height
+		_base = false
 	end
-	
+
+	function node:toBaseLine()
+		self.group.x = -(self.ax + 0.5) * self.group.width  
+		self.group.y = -fnt.common.base/fnt.scale
+		_base = true
+	end
+
 	function node:setString(str, _forcedSize)
 		self.group:remove()
 		if _forcedSize ~= nil then
@@ -246,9 +271,19 @@ function _labelWithString(self, str, fntUri, forcedSize)
 		end
 		_setString(node, str, fnt, node.forcedSize)
 		self:setAnchor(self.ax, self.ay)
+		if self._base then self:toBaseLine() end
+	end
+
+	if _debugMode then
+		local _debugNode = node:newNode()
+		_debugNode:setMaskColor(1, 0, 1)
+		_debugNode.presentation = function()
+			render2d.drawRect(node.group.x, node.group.y, node.group.x + node.group.width, node.group.y + node.group.height)
+		end
 	end
 
 	node:setAnchor(0, 0)
+	node:toBaseLine()
 	return node
 end
 
