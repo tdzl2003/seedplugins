@@ -111,6 +111,14 @@ function table:findVal(val)
 	end
 end
 
+function table:clone()
+	local ret = {}
+	for k,v in pairs(self) do
+		ret[k] = v
+	end
+	return ret
+end
+
 function __FILE__(lvl) 
 	lvl = lvl or 1
     local s = debug.getinfo(lvl+1,'S').source 
@@ -163,5 +171,34 @@ function printTable(t, lv)
 			level_ = level_ - 1
 		end
 	end
+end
+
+
+function getGlobal(name, _initTbl)
+	local pkg, rn = name:match("(.+)%.(%w*)")
+	if (pkg) then
+		pkg = getGlobal(pkg, _initTbl)
+		if (not pkg) then
+			return nil
+		end
+	else
+		pkg = _G
+		rn = name
+	end
+	if (_initTbl and not pkg[rn]) then
+		pkg[rn] = {}
+	end
+	return pkg[rn]
+end
+
+function setGlobal(name, val)
+	local pkg, rn = name:match("(.+)%.(%w*)")
+	if (pkg) then
+		pkg = getGlobal(pkg, true)
+	else
+		pkg = _G
+		rn = name
+	end
+	pkg[rn] = val
 end
 

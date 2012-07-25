@@ -18,6 +18,24 @@ local function _init_newfuncs(clazz, methods)
 
 		end
 	end
+	
+	local super = clazz.super
+	
+	while (super) do
+		for k,v in pairs(super.methods) do
+			if (type(k) == 'string' and is_function(v) and
+				k:sub(1, 8) == '__init__') then
+				local n = 'new'..k:sub(9)
+				clazz[n] = clazz[n] or function(...)
+					local obj = {}
+					setmetatable(obj, clazz)
+					return v(obj, ...) or obj
+				end
+
+			end
+		end
+		super = super.super
+	end
 
 	clazz.new = clazz.new or function()
 		local obj = {}
@@ -26,21 +44,21 @@ local function _init_newfuncs(clazz, methods)
 	end
 end
 
-function define_type(name, methods, statics)
-	local ret = statics or  {}
-	
-	ret.name = name
-	ret.methods = methods
-	ret.__index = methods
-	ret.__index.type = ret
-	ret.__tostring = ret.__tostring or _dumpobj
-	_init_newfuncs(ret, methods)
-	
-	load(name..'=...')(ret)
-	return ret
+local function isDerived(thiz, super)
+	repeat
+		if (thiz == super) then
+			return true
+		end
+		thiz = thiz.super
+	until not thiz
+	return false
 end
 
 function extend_type(name, methods, super, statics)
+	if (type(super) == 'string') then
+		super = getGlobal(super) or require(super)
+	end
+	
 	local ret = statics or  {}
 	setmetatable(methods, super)
 	
@@ -50,8 +68,17 @@ function extend_type(name, methods, super, statics)
 	ret.__index = methods
 	ret.__index.type = ret
 	ret.__tostring = ret.__tostring or _dumpobj
+	ret.isDerived = isDerived
 	_init_newfuncs(ret, methods)
 	
-	load(name..'=...')(ret)
+	if (name) then
+		setGlobal(name, ret)
+	end
 	return ret
 end
+
+function define_type(name, methods, statics)
+	return extend_type(name, methods, nil, statics)
+end
+
+
