@@ -10,15 +10,22 @@ Seed 插件
 		xmlParser
 
 	最后修改日期
-		2012-7-2
+		2012-7-30
 
 	更新内容
+		2012-7-30：
+			1、增加了设置文字水平间距的功能
+		2012-7-17：
+			1、修正字符串宽高的问题
+			2、增加新方法：self:toBaseLine()
+			3、增加分辨率适配的功能
 		2012-7-2：
 			提供强制字符等宽功能的支持
 		2012-6-14：
 			1、提供通过相对路径创建lable对象的支持
 			2、提供Ascii码的兼容
 ]]--
+
 local xmlParser = require("xmlParser")
 local uri = require("uri")
 
@@ -85,7 +92,9 @@ local function getAmount(kernings, first, second)
 end
 
 local function _setString(self, str, fnt, forcedSize)
-
+	if type(str) ~= "string" then
+		str = tostring(str)
+	end
 	local group = self:newNode()
 
 	group.ax, group.ay = 0, 0
@@ -101,24 +110,23 @@ local function _setString(self, str, fnt, forcedSize)
 	local prev = -1
 
 	local fntSizeW, fntSizeH = 0, 0
-
+	local fntSpaceX, fntSpaceY = fnt.info.spacing:match("%d+")
+	
 	if forcedSize then
 		if type(forcedSize) == "boolean" then
-			print("+++")
 			for k, v in pairs(fnt.chars) do
-				if fntSizeW < tonumber(v.xadvance) then
-					fntSizeW = tonumber(v.xadvance)
+				if fntSizeW < tonumber(v.xadvance)/fnt.scale then
+					fntSizeW = tonumber(v.xadvance)/fnt.scale
 				end
-				if fntSizeH < tonumber(v.height) then
-					fntSizeH = tonumber(v.height)
+				if fntSizeH < tonumber(v.height)/fnt.scale then
+					fntSizeH = tonumber(v.height)/fnt.scale
 				end
 			end
 		else
 			fntSizeW = forcedSize
-			print("---")
 			for k, v in pairs(fnt.chars) do
-				if fntSizeH < tonumber(v.height) then
-					fntSizeH = tonumber(v.height)
+				if fntSizeH < tonumber(v.height)/fnt.scale then
+					fntSizeH = tonumber(v.height)/fnt.scale
 				end
 			end
 		end
@@ -126,10 +134,20 @@ local function _setString(self, str, fnt, forcedSize)
 
 	while index <= count do
 		local charRes = string.sub(BMStr,index,index)
+
+		if charRes:byte(1) < 20 then
+			if charRes:byte(1) == 10 then
+				--todo：支持换行
+				charRes = "."
+			else
+				charRes = "."
+			end
+		end
 		
 		local charIndex
 		local charInfo
 		local texture
+		local texScale
 		local kerning
 		
 		for i,char in pairs(fnt.chars) do
@@ -137,8 +155,12 @@ local function _setString(self, str, fnt, forcedSize)
 				charIndex = i
 			end
 		end
-		
+
 		charInfo = fnt.chars[charIndex]
+		if not charInfo then
+			print("cannot found char:", charRes)
+			return
+		end
 		if fnt.kernings then
 			kerning = fnt.kernings[charIndex]
 		end
@@ -147,6 +169,13 @@ local function _setString(self, str, fnt, forcedSize)
 			if charInfo.page == page.id then
 				--加载图片，如果没有图片相关信息，加载与uri同名的图片
 				texture = (page.file and joinuri(fnt.dir, page.file)) or joinuri(fnt.dir, fnt.name..'.png')
+				local suri
+				if display.resourceFilter then
+					suri, texScale = display.resourceFilter(texture)
+					if suri == true then
+						texScale = 1
+					end
+				end
 			end
 		end
 
@@ -156,28 +185,26 @@ local function _setString(self, str, fnt, forcedSize)
 		end
 		
 		kerningAmount = getAmount(fnt.kernings, charInfo.id, prev) or 0	
-		local ss = group:newImageRect(texture, {charInfo.x, charInfo.y, charInfo.width, charInfo.height})
+		local ss = group:newImageRect(texture, {charInfo.x/texScale, charInfo.y/texScale, charInfo.width/texScale, charInfo.height/texScale})
 												
-		group.width = group.width + fntSizeW
-		group.height = fnt.common.lineheight/fnt.scale
+		group.width = group.width + fntSizeW + fntSpaceX
+		group.height = fnt.info.size/fnt.scale --+ fntSpaceY
+		--group.height = fnt.common.lineheight/fnt.scale
 
-		ss.x = nextFontPositionX + kerningAmount - charInfo.x/fnt.scale + charInfo.xoffset/fnt.scale
-		ss.y = nextFontPositionY - charInfo.y/fnt.scale + charInfo.yoffset/fnt.scale
+		--		下一个文字所在位置												文字水平偏移量
+		ss.x = nextFontPositionX + kerningAmount - charInfo.x/fnt.scale + charInfo.xoffset/fnt.scale + fntSpaceX
+		ss.y = nextFontPositionY - charInfo.y/fnt.scale + charInfo.yoffset/fnt.scale --+ fntSpaceY
+
+		ss.scalex, ss.scaley = ss.scalex/fnt.scale, ss.scaley/fnt.scale
 
 		ss:setAnchor(-0.5, -0.5)
 		
-		ss:newNode().presentation = function()
-			render2d.drawCircle(0, 0, 1)
-		end
-		
-		nextFontPositionX = nextFontPositionX + fntSizeW
+		nextFontPositionX = nextFontPositionX + fntSizeW/texScale + fntSpaceX
 		prev = charInfo.id
 		index = index + 1
 	end
 	self.group = group
 end
-
-
 
 --[[
 函数：Stage2D/Node:newLableWithString(string, fntUri[, forcedSize])
@@ -218,12 +245,7 @@ end
 function _labelWithString(self, str, fntUri, forcedSize, _debugMode)
 
 	local suri, scale
-	if display.resourceFilter then
-		suri, scale = display.resourceFilter(fntUri)
-		if suri == true then
-			scale = 1
-		end
-	end
+	
 	
 
 	local node = self:newNode()
@@ -234,6 +256,14 @@ function _labelWithString(self, str, fntUri, forcedSize, _debugMode)
 	fntUri = absolute(fntUri, 2)
 	--分离目录和文件名
 	local dir, name = splituri(fntUri)
+
+	if display.resourceFilter then
+		suri, scale = display.resourceFilter(fntUri)
+		if suri == true then
+			scale = 1
+		end
+	end
+	print(suri)
 
 	local fnt = parseUri(fntUri)
 	
@@ -255,13 +285,13 @@ function _labelWithString(self, str, fntUri, forcedSize, _debugMode)
 		self.ax, self.ay = ax, ay
 		self.group.x = -(self.ax + 0.5) * self.group.width 
 		self.group.y = -(self.ay + 0.5) * self.group.height
-		_base = false
+		self._base = false
 	end
 
 	function node:toBaseLine()
 		self.group.x = -(self.ax + 0.5) * self.group.width  
 		self.group.y = -fnt.common.base/fnt.scale
-		_base = true
+		self._base = true
 	end
 
 	function node:setString(str, _forcedSize)
