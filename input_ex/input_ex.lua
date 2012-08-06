@@ -2,14 +2,18 @@
 Seed 插件
 	input_ex
 
-	包含文件
+	包含文件：
 		input_ex.lua - 提供各种按钮或其他对象的点击、长按、拖拽等事件
 
-	依赖组件
+	依赖组件：
 		无
 
-	最后修改日期
-		2012-5-22
+	最后修改日期：
+		2012-8-6
+
+	更新记录：
+		2012-8-6：
+			当触发onTouchUp事件时，事件的参数args.x, args.y会更新为当前光标位置。
 
 ]]--
 
@@ -330,6 +334,8 @@ end
 function dispatchEvent(input, ev)
 	local index = ev.index
 	local type = ev.type
+	--这两个变量的作用，在onTouchUp的时候能够使第二个参数的field：x, y为当前光标所在位置
+	local x, y = ev.x, ev.y
 
 	if (ev.type == "down") then
 		ev = translateEvent(ev, index)
@@ -364,6 +370,7 @@ function dispatchEvent(input, ev)
 			if (ev.isDragging) then
 				p:onDragEnd(ev)
 			end
+			ev.x, ev.y = x, y
 			p:onTouchUp(ev)
 			handlers[index] = nil
 		end
@@ -391,10 +398,10 @@ end
 
 		event包含如下事件：
 			"onTap"		- 点击，按下后并松开时触发一次
-			"onHold"	- 按住超过一秒，触发一次
-			"onDragBegin"	- 开始拖拽动作，触发一次
-			"onDragging"	- 拖拽中，每帧触发一次
-			"onDragEnd"		- 拖拽结束，触发一次
+			"onHold"	- 按住超过一秒，触发一次，需要将holdable设为true
+			"onDragBegin"	- 开始拖拽动作，触发一次，需要将dragable设为true
+			"onDragging"	- 拖拽中，每帧触发一次，需要将dragable设为true
+			"onDragEnd"		- 拖拽结束，触发一次，需要将dragable设为true
 			"onTouchDown"	- 任何情况下，按下触发一次
 			"onTouchUp"		- 任何情况下，松开触发一次
 
