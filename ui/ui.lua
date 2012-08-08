@@ -11,14 +11,20 @@ Seed 插件
 	animation
 	uri
 	input_ex
-	bmFont
+	bmFnt
 最后修改日期
-	2012-6-14
+	2012-8-8
 
 更新内容
+	2012-8-8：兼容1.02版的粒子插件
+	2012-8-6：优化性能，plist动画信息只需加载一次。
+	2012-7-24：增加了imageRect的旋转翻转
+	2012-7-6：去除了setDestRect的使用
+	2012-6-18：可以使用node.emit引用到发射器
 	2012-6-14：增加了对BMFont图片字对象的支持
 	2012-6-8：修正了menuItem的SetFlip函数为nil的问题
 	2012-6-4：增加了resourceTable
+
 
 ]]--
 
@@ -150,10 +156,13 @@ local function createNode(self, data)
 	return node
 end
 
+local sheet_set = {}			--已加载的sheet_set表
+
 local function createSprite(self, data)
 	local node
 
-----这段代码可以根据使用的action的名称自动识别为动画并播放，如果当前action的名称是以_00.png为结尾的，那么就将其视作动画处理
+-----------------------------------------------------------------------------------------------------------------------------
+----这段代码可以根据使用的action的名称自动识别为动画并播放，如果当前action的名称是以_00.png或_01.png为结尾的，那么就将其视作动画处理
 	local s, e = string.find(data.spriteFramesFile, ".plist")
 	local str = string.sub(data.spriteFramesFile, 1, s-1)
 	s, e = string.find(data.spriteFile, str)
@@ -163,15 +172,20 @@ local function createSprite(self, data)
 	if s ~= nil and e ~= nil and s ~= e and ss ~= nil and ee ~= nil and ss ~= ee then
 		type = 1
 	end 
-	
-	local sheet_set = Animation.newWithPlist(filePath_ .. "/" .. data.spriteFramesFile, 24, type)
-	
+
+	--如果没有找到sheet_set那么加载。保证每个plist只被解析一次
+	if not sheet_set[data.spriteFramesFile] then
+		sheet_set[data.spriteFramesFile] = Animation.newWithPlist(filePath_ .. "/" .. data.spriteFramesFile, 24, type)
+	end
+
 	if type == 1 then
 		actionName = string.sub(data.spriteFile, e+2, ss-1)
 	end
 	
-	node = self:newSpriteWith(self.stage.runtime, sheet_set, actionName == nil and data.spriteFile or actionName)
----------------------------------------------------------------
+	node = self:newSpriteWith(self.stage.runtime, sheet_set[data.spriteFramesFile], actionName == nil and data.spriteFile or actionName)
+
+--此段代码与cocosBuilder编辑器严重不兼容，最终发布时考虑去除
+-----------------------------------------------------------------------------------------------------------------------------
 
 	local ax, ay = data.anchorPoint[1] - 0.5, 0.5 - data.anchorPoint[2]
 	node:setFlip(data.flipX, data.flipY)
@@ -183,7 +197,6 @@ local function createSprite(self, data)
 	local r, g, b, a = colorFromRGBA(data.color, data.opacity)
 	node:setMaskColor(r, g, b)
 	node:setAlpha(a)
---	table.insert(node.stage.resourceTable, sheet_set._imguri)
 	return node
 end
 
@@ -194,15 +207,19 @@ local function createImageRect(self, data)
 	w, h = data.contentSize[1], data.contentSize[2]
 	
 	node = self:newImageRect(filePath_ .. "/" .. data.spriteFile, w, h)
-	node:setAnchor(data.anchorPoint[1] - 0.5, 0.5 - data.anchorPoint[2]);
+	local ax, ay = data.anchorPoint[1] - 0.5, 0.5 - data.anchorPoint[2];
 	local r, g, b, a = colorFromRGBA(data.color, data.opacity)
 	node:setMaskColor(r, g, b)
 	node:setAlpha(a)
-	
+	local flag = 0
+	if data.flipX then flag = flag + 1 end
+	if data.flipY then flag = flag + 2 end
+	node:setFlag(flag)
+	if data.flipX then ax = -ax end
+	if data.flipY then ay = -ay end
+	node:setAnchor(ax, ay)
 	w, h = getSizeFlipped(w, h, data.flipX, data.flipY)
-	node:setDestRect(-w / 2, -h / 2, w, h)
 	setNodeProperties(node, data)
---	table.insert(node.stage.resourceTable, filePath_ .. "/" .. data.spriteFile)
 	return node
 end
 
@@ -230,7 +247,6 @@ local function createMenuItemImage(self, data)
 			ax, ay,
 			data.enabled)
 		w, h = getSizeFlipped(w, h, data.flipX, data.flipY)
-		node:setDestRect(-w / 2, -h / 2, w, h)
 	else
 		local tw, th = getSizeFlipped(w, h, data.flipX, data.flipY)
 		
@@ -245,9 +261,6 @@ local function createMenuItemImage(self, data)
 	local selector = node.stage.selectorTable
 	selector[data.selector] = ev
 	setNodeProperties(node, data)
-	for k, v in pairs(imgUri) do
---		table.insert(node.stage.resourceTable, v)
-	end
 	return node
 end
 
@@ -264,7 +277,7 @@ local function createParticleSystem(self, data)
 	psd.particleLifespanVariance	= data.lifeVar
 								   
 	psd.sourcePositionx				= data.position[1]
-	psd.sourcePositiony				= -data.position[2]
+	psd.sourcePositiony				= data.position[2]
 	psd.sourcePositionVariancex		= data.posVar[1]
 	psd.sourcePositionVariancey		= data.posVar[2]
 								   
@@ -325,12 +338,13 @@ local function createParticleSystem(self, data)
 	psd.textureFileName	= filePath_ .. "/" .. data.spriteFile
 
 	local node_base = self:newNode()
-	data.blendFunc = nil
 	setNodeProperties(node_base, data)
 	
 	psd.sourcePositionx, psd.sourcePositiony = 0, 0
-	local node = node_base:newParticleEmit(psd.textureFileName, psd, self.stage.runtime)
+	local node = node_base:newParticleEmit(psd, self.stage.runtime, psd.textureFileName, 0, node_base)
+
 	node.x, node.y = 0, 0
+	node_base.emit = node
 
 	return node_base
 end
@@ -420,13 +434,12 @@ end
 
 --创建bmFnt
 local function createLabelBMFont(self, data)
-	printTable(data)
-	local node = self:newLabelWithString(data.string, filePath_ .. "/" .. data.fontFile)
-	node:setAnchor(data.anchorPoint[1] - 0.5, 0.5 - data.anchorPoint[2]);
+	local node = self:newLabelWithString(data.string, filePath_ .. "/" .. data.fontFile, false, true)
 	local r, g, b, a = colorFromRGBA(data.color, data.opacity)
 	node:setMaskColor(r, g, b)
 	node:setAlpha(a)
 	setNodeProperties(node, data)
+	node:setAnchor(data.anchorPoint[1] - 0.5, 0.5 - data.anchorPoint[2]);
 	return node
 end
 
@@ -501,6 +514,10 @@ local function _newUIFromCCB(display, ccb, runtime, input_ex, isdebugMode_)
 	local data 
 	if type(ccb) == "table" then
 		data = ccb
+		if not ccb.filepath then
+			error("ccb table must take a property: \"filepath\"")
+		end
+		filePath_ = ccb.filepath
 	else
 		ccb = urilib.absolute(ccb, 2)
 		filePath_ = urilib.dirname(ccb)
@@ -571,6 +588,9 @@ function getResourceTableFromCCB(ccb)
 	local data 
 	if type(ccb) == "table" then
 		data = ccb
+		if data.properties.spriteFile ~= "" then
+			table.insert(t, filePath_ .. "/" .. data.properties.spriteFile)
+		end
 	else
 		ccb = urilib.absolute(ccb, 2)
 		filePath_ = urilib.dirname(ccb)
@@ -597,7 +617,12 @@ UI的使用方法：
 		stage.selectorTable - 记录了UI里所有的selector，可以使用stage.selectorTable["selector名称"]来引用
 		stage.symbolTable - 记录了UI里所有取了名字的Node，可以使用stage.symbolTable["node名称"]来引用相应的Node
 
-]]--
+	注意！：
+		为兼容Cocos2d格式，使用该方法创建出的stage经过了一次坐标转换，
+		不建议直接使用本stage创建node，如果想要为它创建node，其node的y坐标必须为负数。
+		建议游戏中非ui的部分用新的stage来创建。
+
+]]
 
 --[[
 
@@ -616,7 +641,7 @@ node中增加了一些获取数据的属性和方法：
 	node:getContentSize()		--获取node的ContentSize数据
 	node:getTag()				--获取node的tag数据
 
-]]--
+]]
 
 --[[
 
@@ -632,7 +657,7 @@ uiStage.selectorTable.pressedToMenu:addListener(function()
 	print("ToMenu")
 end)
 
-]]--
+]]
 
 --[[
 
@@ -640,7 +665,7 @@ end)
 
 使用函数getResourceTableFromCCB(ccb)来预先获得图片资源列表
 
-]]--
+]]
 
 --[[
 
@@ -649,4 +674,4 @@ end)
 大部分的node有一个容器对象，是其在ccb文件中的所有子节点的直接父节点，正确获得ccb中node的子节点的方法是使用node.container.firstChild。
 直接使用node.firstChild可能得到的仅仅是一个容器，或者是粒子发射器，也可能是一个带颜色的矩形node。
 
-]]--
+]]
