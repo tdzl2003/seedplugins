@@ -1,29 +1,29 @@
 --[[
-Seed ²å¼þ
+Seed æ’ä»¶
 	bmFnt
 
-	°üº¬ÎÄ¼þ
-		bmFnt.lua - Ìá¹©Í¼Æ¬×ÖµÄ´¦Àí·½·¨
+	åŒ…å«æ–‡ä»¶
+		bmFnt.lua - æä¾›å›¾ç‰‡å­—çš„å¤„ç†æ–¹æ³•
 
-	ÒÀÀµ×é¼þ
+	ä¾èµ–ç»„ä»¶
 		uri
 		xmlParser
 
-	×îºóÐÞ¸ÄÈÕÆÚ
+	æœ€åŽä¿®æ”¹æ—¥æœŸ
 		2012-7-30
 
-	¸üÐÂÄÚÈÝ
-		2012-7-30£º
-			1¡¢Ôö¼ÓÁËÉèÖÃÎÄ×ÖË®Æ½¼ä¾àµÄ¹¦ÄÜ
-		2012-7-17£º
-			1¡¢ÐÞÕý×Ö·û´®¿í¸ßµÄÎÊÌâ
-			2¡¢Ôö¼ÓÐÂ·½·¨£ºself:toBaseLine()
-			3¡¢Ôö¼Ó·Ö±æÂÊÊÊÅäµÄ¹¦ÄÜ
-		2012-7-2£º
-			Ìá¹©Ç¿ÖÆ×Ö·ûµÈ¿í¹¦ÄÜµÄÖ§³Ö
-		2012-6-14£º
-			1¡¢Ìá¹©Í¨¹ýÏà¶ÔÂ·¾¶´´½¨lable¶ÔÏóµÄÖ§³Ö
-			2¡¢Ìá¹©AsciiÂëµÄ¼æÈÝ
+	æ›´æ–°å†…å®¹
+		2012-7-30ï¼š
+			1ã€å¢žåŠ äº†è®¾ç½®æ–‡å­—æ°´å¹³é—´è·çš„åŠŸèƒ½
+		2012-7-17ï¼š
+			1ã€ä¿®æ­£å­—ç¬¦ä¸²å®½é«˜çš„é—®é¢˜
+			2ã€å¢žåŠ æ–°æ–¹æ³•ï¼šself:toBaseLine()
+			3ã€å¢žåŠ åˆ†è¾¨çŽ‡é€‚é…çš„åŠŸèƒ½
+		2012-7-2ï¼š
+			æä¾›å¼ºåˆ¶å­—ç¬¦ç­‰å®½åŠŸèƒ½çš„æ”¯æŒ
+		2012-6-14ï¼š
+			1ã€æä¾›é€šè¿‡ç›¸å¯¹è·¯å¾„åˆ›å»ºlableå¯¹è±¡çš„æ”¯æŒ
+			2ã€æä¾›Asciiç çš„å…¼å®¹
 ]]--
 
 local xmlParser = require("xmlParser")
@@ -137,7 +137,7 @@ local function _setString(self, str, fnt, forcedSize)
 
 		if charRes:byte(1) < 20 then
 			if charRes:byte(1) == 10 then
-				--todo£ºÖ§³Ö»»ÐÐ
+				--todoï¼šæ”¯æŒæ¢è¡Œ
 				charRes = "."
 			else
 				charRes = "."
@@ -164,34 +164,42 @@ local function _setString(self, str, fnt, forcedSize)
 		if fnt.kernings then
 			kerning = fnt.kernings[charIndex]
 		end
-
-		for i,page in pairs(fnt.pages) do
-			if charInfo.page == page.id then
-				--¼ÓÔØÍ¼Æ¬£¬Èç¹ûÃ»ÓÐÍ¼Æ¬Ïà¹ØÐÅÏ¢£¬¼ÓÔØÓëuriÍ¬ÃûµÄÍ¼Æ¬
-				texture = (page.file and joinuri(fnt.dir, page.file)) or joinuri(fnt.dir, fnt.name..'.png')
-				local suri
-				if display.resourceFilter then
-					suri, texScale = display.resourceFilter(texture)
-					if suri == true then
+		texScale = charInfo.texScale
+		if (not texScale) then
+			for i,page in pairs(fnt.pages) do
+				if charInfo.page == page.id then
+					--åŠ è½½å›¾ç‰‡ï¼Œå¦‚æžœæ²¡æœ‰å›¾ç‰‡ç›¸å…³ä¿¡æ¯ï¼ŒåŠ è½½ä¸ŽuriåŒåçš„å›¾ç‰‡
+					texture = (page.file and joinuri(fnt.dir, page.file)) or joinuri(fnt.dir, fnt.name..'.png')
+					local suri
+					if display.resourceFilter then
+						suri, texScale = display.resourceFilter(texture)
+						if suri == true then
+							texScale = 1
+						end
+					else
 						texScale = 1
 					end
 				end
 			end
+			charInfo.texScale = texScale
 		end
 
-		--Èç¹ûÇ¿ÖÆÊ¹ÓÃ×î´ó³ß´ç
+		--å¦‚æžœå¼ºåˆ¶ä½¿ç”¨æœ€å¤§å°ºå¯¸
 		if not forcedSize then
 			fntSizeW, fntSizeH = charInfo.xadvance/fnt.scale, charInfo.height/fnt.scale
 		end
 		
 		kerningAmount = getAmount(fnt.kernings, charInfo.id, prev) or 0	
-		local ss = group:newImageRect(texture, {charInfo.x/texScale, charInfo.y/texScale, charInfo.width/texScale, charInfo.height/texScale})
+		local ps = charInfo.presentation or display.presentations.newImageRect(texture, {charInfo.x/texScale, charInfo.y/texScale, charInfo.width/texScale, charInfo.height/texScale})
+		charInfo.presentation = ps
+		local ss = group:newNode()
+		ss.presentation = ps
 												
 		group.width = group.width + fntSizeW + fntSpaceX
 		group.height = fnt.info.size/fnt.scale --+ fntSpaceY
 		--group.height = fnt.common.lineheight/fnt.scale
 
-		--		ÏÂÒ»¸öÎÄ×ÖËùÔÚÎ»ÖÃ												ÎÄ×ÖË®Æ½Æ«ÒÆÁ¿
+		--		ä¸‹ä¸€ä¸ªæ–‡å­—æ‰€åœ¨ä½ç½®												æ–‡å­—æ°´å¹³åç§»é‡
 		ss.x = nextFontPositionX + kerningAmount - charInfo.x/fnt.scale + charInfo.xoffset/fnt.scale + fntSpaceX
 		ss.y = nextFontPositionY - charInfo.y/fnt.scale + charInfo.yoffset/fnt.scale --+ fntSpaceY
 
@@ -207,56 +215,54 @@ local function _setString(self, str, fnt, forcedSize)
 end
 
 --[[
-º¯Êý£ºStage2D/Node:newLableWithString(string, fntUri[, forcedSize])
+å‡½æ•°ï¼šStage2D/Node:newLableWithString(string, fntUri[, forcedSize])
 	
-	ËµÃ÷£º
-		Í¨¹ý×Ö·û´®ºÍfntÎÄ¼þ£¬´´½¨Ò»¸ölable¶ÔÏó
+	è¯´æ˜Žï¼š
+		é€šè¿‡å­—ç¬¦ä¸²å’Œfntæ–‡ä»¶ï¼Œåˆ›å»ºä¸€ä¸ªlableå¯¹è±¡
 
-	²ÎÊý£º
-		string - Òª´´½¨µÄ×Ö·û´®ÄÚÈÝ
-		fntUri - fntÎÄ¼þµÄURI
-		forcedSize - Ç¿ÖÆ½«×ÖÌå×ª»¯ÎªµÈ¿íµÈ¸ß×ÖÌå£¬Èç¹ûÕâ¸ö²ÎÊýÊÇÒ»¸ö¾ßÌåµÄÊý×Ö£¬ÄÇÃ´¾ÍÇ¿ÖÆ½«ÎÄ×ÖµÄ¿í¶ÈÖ¸¶¨Îª¸ÃÖµ
+	å‚æ•°ï¼š
+		string - è¦åˆ›å»ºçš„å­—ç¬¦ä¸²å†…å®¹
+		fntUri - fntæ–‡ä»¶çš„URI
+		forcedSize - å¼ºåˆ¶å°†å­—ä½“è½¬åŒ–ä¸ºç­‰å®½ç­‰é«˜å­—ä½“ï¼Œå¦‚æžœè¿™ä¸ªå‚æ•°æ˜¯ä¸€ä¸ªå…·ä½“çš„æ•°å­—ï¼Œé‚£ä¹ˆå°±å¼ºåˆ¶å°†æ–‡å­—çš„å®½åº¦æŒ‡å®šä¸ºè¯¥å€¼
 
-	·µ»ØÖµ£º
-		lableNode¶ÔÏó
+	è¿”å›žå€¼ï¼š
+		lableNodeå¯¹è±¡
 
-	¸½×¢£º
-		lableNode¶ÔÏó°üº¬ÈçÏÂÊôÐÔºÍ·½·¨£º
+	é™„æ³¨ï¼š
+		lableNodeå¯¹è±¡åŒ…å«å¦‚ä¸‹å±žæ€§å’Œæ–¹æ³•ï¼š
 			
-			ÊôÐÔ£º
-				self.group - ÎÄ×ÖÍ¼Æ¬×éºÏ
+			å±žæ€§ï¼š
+				self.group - æ–‡å­—å›¾ç‰‡ç»„åˆ
 		
-			·½·¨£º
-				self:setPostion(x, y) - ÉèÖÃ×ø±êÎ»ÖÃ
-				self:getSize() - »ñÈ¡´óÐ¡
-				self:setAnchor(ax, ay) - ÉèÖÃÃªµã
-				self:setString(str[, forcedSize]) - ÖØÐÂÉèÖÃÎÄ×ÖÄÚÈÝ£¬Í¬Ê±¿ÉÒÔÉèÖÃÊÇ·ñÎªµÈ¿í
-				self:toBaseLine() - ½«ÎÄ×Ö¶ÔÆëÖÁÊéÐ´»ùÏß£¨¼´´óÐ´×ÖÄ¸µÄµ×±ß£©
+			æ–¹æ³•ï¼š
+				self:setPostion(x, y) - è®¾ç½®åæ ‡ä½ç½®
+				self:getSize() - èŽ·å–å¤§å°
+				self:setAnchor(ax, ay) - è®¾ç½®é”šç‚¹
+				self:setString(str[, forcedSize]) - é‡æ–°è®¾ç½®æ–‡å­—å†…å®¹ï¼ŒåŒæ—¶å¯ä»¥è®¾ç½®æ˜¯å¦ä¸ºç­‰å®½
+				self:toBaseLine() - å°†æ–‡å­—å¯¹é½è‡³ä¹¦å†™åŸºçº¿ï¼ˆå³å¤§å†™å­—æ¯çš„åº•è¾¹ï¼‰
 
-	Ê¹ÓÃÀý×Ó£º
-		fnt = stage:newLabelWithString("Emlyn", "Letter1.fnt", false)	--´´½¨label
-		fnt:setPostion(sw/2, sh/2)										--ÉèÖÃÎ»ÖÃ
-		fnt:setAnchor(0,0)												--ÉèÖÃÃªµã
-		local w, h = fnt:getSize()										--»ñÈ¡¿í¸ß²¢±£´æµ½w, h±äÁ¿ÖÐ
+	ä½¿ç”¨ä¾‹å­ï¼š
+		fnt = stage:newLabelWithString("Emlyn", "Letter1.fnt", false)	--åˆ›å»ºlabel
+		fnt:setPostion(sw/2, sh/2)										--è®¾ç½®ä½ç½®
+		fnt:setAnchor(0,0)												--è®¾ç½®é”šç‚¹
+		local w, h = fnt:getSize()										--èŽ·å–å®½é«˜å¹¶ä¿å­˜åˆ°w, hå˜é‡ä¸­
 
-		fnt:setString("Susie", true)									--ÔËÐÐÖÐ¸Ä±ä×Ö·ûµÄÅÅ²¼£¬½«ÆäÇ¿ÖÆµÈ¿í
+		fnt:setString("Susie", true)									--è¿è¡Œä¸­æ”¹å˜å­—ç¬¦çš„æŽ’å¸ƒï¼Œå°†å…¶å¼ºåˆ¶ç­‰å®½
 ]]
 
-function _labelWithString(self, str, fntUri, forcedSize, _debugMode)
+local function _labelWithString(self, str, fntUri, forcedSize, _debugMode)
 
 	local suri, scale
-	
-	
-
 	local node = self:newNode()
 	node.forcedSize = forcedSize
 	node._base = true
 
-	--uriµÄ¾ø¶Ô»¯
+	--uriçš„ç»å¯¹åŒ–
 	fntUri = absolute(fntUri, 2)
-	--·ÖÀëÄ¿Â¼ºÍÎÄ¼þÃû
+	--åˆ†ç¦»ç›®å½•å’Œæ–‡ä»¶å
 	local dir, name = splituri(fntUri)
 
+	scale = 1
 	if display.resourceFilter then
 		suri, scale = display.resourceFilter(fntUri)
 		if suri == true then
@@ -272,7 +278,7 @@ function _labelWithString(self, str, fntUri, forcedSize, _debugMode)
 
 	_setString(node, str, fnt, forcedSize)
 	
-	function node:setPostion(dx,dy)
+	function node:setPostion(dx, dy)
 		self.x = dx
 		self.y = dy
 	end

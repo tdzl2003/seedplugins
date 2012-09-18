@@ -8,8 +8,9 @@ Seed 插件
 		plist
 		lua_ex
 	最后修改日期
-		2012-8-8
+		2012-8-10
 	更新记录
+		2012-8-10：修正了粒子的径向加速度与法向加速度的计算方法，修正了粒子的大小计算方法，与cocos2d兼容
 		2012-8-8：增加了手动指定粒子父节点的功能，兼容ccb。
 		2012-8-3：重构、提升效率、增加调节粒子浓度的方法
 		2012-6-15：增加了self:pause(),self:resume(),self:stop(),self:start()方法，扩大粒子池size
@@ -40,6 +41,17 @@ end
 --根据平均值和抖动范围计算最终值，可以加到数学库里
 local function calcVariance(value, variance)
 	return value + (math.random() - 0.5) * variance * 2
+end
+
+local function getTextureSize(size)
+	local ret = 0
+	for i = 1, 12 do
+		ret = math.pow(2, i)
+		if ret > size then
+			return ret
+		end
+	end
+	return size
 end
 
 --初始化粒子系统所有属性，参数有效性检查都在这里进行
@@ -209,10 +221,15 @@ local function _newParticleEmit(self, data, runtimeAgent, texture, preHeat, fath
 	--粒子的大小，在数据中的表现形式是像素
 	local pps
 	local ppsWidth
+	local anchorx, anchory = 0, 0
 	 
 	if texture and os.exists(texture) then
 		pps = display.presentations.newImage(texture)	-- particle presentation
-		ppsWidth = nil
+		local nodeGetW = emit:newNode()
+		nodeGetW.presentation = pps
+		ppsWidth = math.max(getTextureSize(nodeGetW.width), 1)
+		anchorx, anchory = (ppsWidth/nodeGetW.width) * 0.5 - 0.5, (ppsWidth/nodeGetW.width) * 0.5 - 0.5
+		nodeGetW:remove()
 	else
 		pps = function()
 			render2d.fillRect(-20, -20, 20, 20)			--如果图片不存在，粒子的表现形式就是一个40x40像素的矩形
@@ -220,7 +237,6 @@ local function _newParticleEmit(self, data, runtimeAgent, texture, preHeat, fath
 		ppsWidth = 40
 	end
 	
-
 	local function createParticle(st)
 		keyInx = keyInx + 1
 		local particle = stage:newNode()
@@ -228,12 +244,11 @@ local function _newParticleEmit(self, data, runtimeAgent, texture, preHeat, fath
 		
 		particle.presentation = pps
 
-		if not ppsWidth then
-			ppsWidth = particle.width
-		end
-		if ppsWidth <= 0 then ppsWidth = 1 end
 		
-		local osx, osy = emit.x + calcVariance(psd.sourcePositionx, psd.sourcePositionVariancex), emit.y + calcVariance(psd.sourcePositiony, psd.sourcePositionVariancey)
+		--粒子初始位置
+		local osx, osy = emit.x + psd.sourcePositionx, emit.y + psd.sourcePositiony
+		--发射器的喷口位置，注意与粒子初始位置区分
+		local osxvar, osyvar = calcVariance(0, psd.sourcePositionVariancex), calcVariance(0, psd.sourcePositionVariancey)
 		particle.x, particle.y = osx, osy
 		local key = keyInx
 
@@ -259,11 +274,12 @@ local function _newParticleEmit(self, data, runtimeAgent, texture, preHeat, fath
 
 		local lastt = st
 		local sx, sy = 0, 0
+
 		local function _update(t, dt)
 			t = t - st
 			dt = t - lastt
 			if t >= lifeSpan then
-				particleTable[key] = nil
+				particleTable[particle] = nil
 				particle:remove()
 				return
 			end
@@ -289,7 +305,7 @@ local function _newParticleEmit(self, data, runtimeAgent, texture, preHeat, fath
 			local ddt = dt / times
 
 			for i = 1, times do					-- 模拟粒子运动的迭代方法
-				angle = math.atan2(sy, sx)		-- 从发射器位置到粒子当前位置的方位角
+				angle = math.atan2(sy + osyvar, sx + osxvar)		-- 从发射器位置到粒子当前位置的方位角
 
 				rax, ray = math.cos(angle) * ra, math.sin(angle) * ra		--沿着粒子发射出去的方向（从发射器位置到粒子当前位置的方向）的加速度
 				tax, tay = math.cos(angle + math.pi / 2) * ta, math.sin(angle + math.pi / 2) * ta	--垂直于粒子所在位置方向的加速度
@@ -298,21 +314,21 @@ local function _newParticleEmit(self, data, runtimeAgent, texture, preHeat, fath
 				sx, sy = sx + vx * ddt, sy + vy * ddt
 				i = i + 1
 			end
-			particle.x, particle.y = osx + sx, osy - sy
+			particle.x, particle.y = osx + osxvar + sx, osy - osyvar - sy
 			lastt = t
 		end
 
 		local function _updateFast(t, dt)
 			t = t - st
 			if t >= lifeSpan then
-				particleTable[key] = nil
+				particleTable[particle] = nil
 				particle:remove()
 				return
 			end
 			life = t/lifeSpan
 
 			--运动，无径向与切向加速度时，可以使用快速算法
-			particle.x, particle.y = osx + vx * t + gx * t * t / 2, osy - (vy * t + gy * t * t / 2)
+			particle.x, particle.y = osx + osxvar + vx * t + gx * t * t / 2, osy - osyvar - (vy * t + gy * t * t / 2)
 
 			--自旋
 			particle.rotation = sRot + (eRot - sRot) * life
@@ -334,7 +350,7 @@ local function _newParticleEmit(self, data, runtimeAgent, texture, preHeat, fath
 		local function _updateR(t, dt)
 			t = t - st
 			if t >= lifeSpan then
-				particleTable[key] = nil
+				particleTable[particle] = nil
 				particle:remove()
 				return
 			end
@@ -343,7 +359,7 @@ local function _newParticleEmit(self, data, runtimeAgent, texture, preHeat, fath
 			--圆周运动			
 			theta = angle + math.pi + omega * t
 			r = sR + (eR - sR) * life
-			particle.x, particle.y = osx + math.cos(theta)*r, osy - (math.sin(theta) * r)
+			particle.x, particle.y = osx + osxvar + math.cos(theta)*r, osy - osyvar - (math.sin(theta) * r)
 
 			--自旋
 			particle.rotation = sRot + (eRot - sRot) * life
@@ -363,7 +379,7 @@ local function _newParticleEmit(self, data, runtimeAgent, texture, preHeat, fath
 		else
 			particle.update = _updateFast
 		end
-		return particle, key
+		return particle
 	end
 
 	local function preHeatFunc(particle, t)
@@ -373,18 +389,19 @@ local function _newParticleEmit(self, data, runtimeAgent, texture, preHeat, fath
 	end
 
 	local emitT = 0
-	
+	local period = 0
+	if emitRate > 0 then
+		period = 1 / emitRate
+	else
+		period = math.huge
+	end
+
 	local function createParticles(t, dt)
-		local i = 1
 		emitT = emitT + dt
-		if emitRate <= 0 then
-			return
-		end
-		while i / emitRate < emitT do
-			local p, key = createParticle(t - (dt - i / emitRate))
-			particleTable[key] = p
-			i = i + 1
-			emitT = 0
+		while period < emitT do
+			local p = createParticle(t - (emitT - period))
+			particleTable[p] = p
+			emitT = emitT - period
 		end
 	end
 
@@ -433,6 +450,7 @@ local function _newParticleEmit(self, data, runtimeAgent, texture, preHeat, fath
 		local maxParticles = psd.maxParticles * density
 		if maxParticles >= 10 and maxParticles <= 5000 then
 			emitRate = maxParticles / avgLifespan
+			period = 1 / emitRate
 			return true
 		end
 		return false

@@ -1,24 +1,31 @@
 --[[
-Seed ²å¼ş
+Seed æ’ä»¶
 	plist
 
-	°üº¬ÎÄ¼ş
-		plist.lua - Ìá¹©plistÎÄ¼şµÄ½âÎö¹¦ÄÜ£¬plistÍ¼Æ¬Êı¾İµÄ»ù±¾´¦Àí¹¦ÄÜ
+	åŒ…å«æ–‡ä»¶
+		plist.lua - æä¾›plistæ–‡ä»¶çš„è§£æåŠŸèƒ½ï¼Œplistå›¾ç‰‡æ•°æ®çš„åŸºæœ¬å¤„ç†åŠŸèƒ½
 
-	ÒÀÀµ×é¼ş
-		xmlParser - ½âÎöxmlµÄseed²å¼ş
+	ä¾èµ–ç»„ä»¶
+		xmlParser - è§£æxmlçš„seedæ’ä»¶
 
-	×îºóĞŞ¸ÄÈÕÆÚ
-		2012-7-9
+	æœ€åä¿®æ”¹æ—¥æœŸ
+		2012-9-18
 	
-	¸üĞÂÄÚÈİ
-		2012-7-9£º
-			ĞŞÕıÁËintÓĞ·ûºÅÊ±£¬Êı¾İÒç³öµÄÎÊÌâ£¬²¢ÓÅÏÈÊ¹ÓÃÒıÇæÌá¹©Ïà¹Ø×ª»»º¯Êı
-		2012-7-3£º
-			Ôö¼ÓÁË·Ö±æÂÊÊÊÅäµÄ¹¦ÄÜ
-		2012-6-7£º
-			ĞŞÕıÁËµ±plistÎÄ¼şÖĞÃ»ÓĞÖ¸¶¨Í¼Æ¬µÄ¾ßÌåÂ·¾¶Ê±¶øÒı·¢µÄÎÊÌâ¡£
+	æ›´æ–°å†…å®¹
+		2012-9-18ï¼š
+			åˆ©ç”¨ç¼“å­˜æœºåˆ¶ï¼Œæå‡è§£æåŠ¨ç”»plistçš„é€Ÿåº¦
+		2012-7-9ï¼š
+			ä¿®æ­£äº†intæœ‰ç¬¦å·æ—¶ï¼Œæ•°æ®æº¢å‡ºçš„é—®é¢˜ï¼Œå¹¶ä¼˜å…ˆä½¿ç”¨å¼•æ“æä¾›ç›¸å…³è½¬æ¢å‡½æ•°
+		2012-7-3ï¼š
+			å¢åŠ äº†åˆ†è¾¨ç‡é€‚é…çš„åŠŸèƒ½
+		2012-6-7ï¼š
+			ä¿®æ­£äº†å½“plistæ–‡ä»¶ä¸­æ²¡æœ‰æŒ‡å®šå›¾ç‰‡çš„å…·ä½“è·¯å¾„æ—¶è€Œå¼•å‘çš„é—®é¢˜ã€‚
+
+	TODO
+		ä¸‹ä¸€æ¬¡æ›´æ–°ä¼šå°†loadPlistSheet(uri, fps,flag,array)æ•´åˆè¿›animationæ’ä»¶ä¸­
 ]]--
+local lua_ex = require("lua_ex")
+local newWeakValueTable = newWeakValueTable
 local io = io
 local string = string
 local table = table
@@ -168,7 +175,7 @@ local function bytesToInt(s, i, j)
 	local r = 0
 	i = i or 1
 	j = j or #s
-	if s:byte(i) > 127 and j - i == 7 then		--·ûºÅÎª¸ºµÄÇé¿öÏÂ
+	if s:byte(i) > 127 and j - i == 7 then		--ç¬¦å·ä¸ºè´Ÿçš„æƒ…å†µä¸‹
 		for p = i, j do
 			r = r * 256 + (255 - s:byte(p))
 		end
@@ -334,7 +341,7 @@ local function _parseUri(uri)
 	return parse(s)
 end
 
---½âÎöplistÊı¾İ,·µ»Øtable
+--è§£æplistæ•°æ®,è¿”å›table
 function parseUri(uri)
 	return _parseUri(absolute(uri, 2))
 end
@@ -358,21 +365,21 @@ local rectpat = "{{(%d+), (%d+)}, {(%d+), (%d+)}}"
 local sizepat = "{(%d+), (%d+)}"
 
 
---plist¶¯»­
+--pliståŠ¨ç”»
 -- params:
 --	uri - plist file URI
 --	fps - played frame per seconds
 --	flag -	0 action will be single frame
 --			1 action will group be name
---  µ±ĞèÒª±»½âÎöÎª¶¯»­Ê±£¬ĞèÒªÔÚÖÆ×÷plistÎÄ¼şÊ±£¬ÑÏ¸ñ×ñÕÕplistÃû_¶¯×÷Ãû_·½Ïò_Ö¡ĞòºÅ.pngµÄ·½Ê½ÃüÃû¶¯»­Ö¡
---		ĞèÒª×¢Òâ£¬Ö¡ĞòºÅÒªÇóÔÚÍ¬Ò»¸ö¶¯×÷ÖĞÎ»Êı±£³ÖÒ»ÖÂ£ºÀıÈç£¬¶¯×÷Ö¡Êı³¬¹ı10£¬ÄÇÃ´act_1, act_2¾Í±ØĞë²¹È«µ½act_01, act_02
-
+--  å½“éœ€è¦è¢«è§£æä¸ºåŠ¨ç”»æ—¶ï¼Œéœ€è¦åœ¨åˆ¶ä½œplistæ–‡ä»¶æ—¶ï¼Œä¸¥æ ¼éµç…§plistå_åŠ¨ä½œå_æ–¹å‘_å¸§åºå·.pngçš„æ–¹å¼å‘½ååŠ¨ç”»å¸§
+--		éœ€è¦æ³¨æ„ï¼Œå¸§åºå·è¦æ±‚åœ¨åŒä¸€ä¸ªåŠ¨ä½œä¸­ä½æ•°ä¿æŒä¸€è‡´ï¼šä¾‹å¦‚ï¼ŒåŠ¨ä½œå¸§æ•°è¶…è¿‡10ï¼Œé‚£ä¹ˆact_1, act_2å°±å¿…é¡»è¡¥å…¨åˆ°act_01, act_02
+local _loaded = newWeakValueTable()
 
 function loadPlistSheet(uri, fps,flag,array)
 	flag = flag or 1
 	uri = absolute(uri, 2)
 
-	--ÓÃÓÚ´´½¨¸ß·Ö±æÂÊµÄSprite»òImageRect¶ÔÏó
+	--ç”¨äºåˆ›å»ºé«˜åˆ†è¾¨ç‡çš„Spriteæˆ–ImageRectå¯¹è±¡
 	local suri, scale = uri, 1
 	if display.resourceFilter then
 		suri, scale = display.resourceFilter(uri)
@@ -385,16 +392,20 @@ function loadPlistSheet(uri, fps,flag,array)
 	local dir, name = splituri(uri)
 	name = splitext(name)
 	
-	local plist = _parseUri(uri)
+	local plist = _loaded[uri]
+	if not plist then 
+		plist = _parseUri(uri)
+		_loaded[uri] = plist
+	end
 	local sheet = {}
 	local set = {}
 	
 	local pnguri = plist.metadata.realTextureFileName
 
-	--µ±plistÖĞ´æÔÚpngÂ·¾¶µÄ×Ö¶ÎÊ±£¬´ÓplistÖ¸¶¨µÄÎ»ÖÃ¶ÁÈ¡£¬·ñÔò¶ÁÈ¡plistËùÔÚÄ¿Â¼ÏÂµÄÍ¬ÃûµÄpngÎÄ¼ş
+	--å½“plistä¸­å­˜åœ¨pngè·¯å¾„çš„å­—æ®µæ—¶ï¼Œä»plistæŒ‡å®šçš„ä½ç½®è¯»å–ï¼Œå¦åˆ™è¯»å–plistæ‰€åœ¨ç›®å½•ä¸‹çš„åŒåçš„pngæ–‡ä»¶
 	pnguri = (pnguri and joinuri(dir, pnguri)) or joinuri(dir, name..'.png')
 	
-	--ÓÃÓÚ´´½¨¸ß·Ö±æÂÊµÄSprite»òImageRect¶ÔÏó
+	--ç”¨äºåˆ›å»ºé«˜åˆ†è¾¨ç‡çš„Spriteæˆ–ImageRectå¯¹è±¡
 	local scaleTexure = 1
 	if display.resourceFilter then
 		suri, scaleTexure = display.resourceFilter(pnguri)
