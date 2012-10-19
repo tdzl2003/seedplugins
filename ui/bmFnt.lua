@@ -10,9 +10,11 @@ Seed 插件
 		xmlParser
 
 	最后修改日期
-		2012-7-30
+		2012-10-19
 
 	更新内容
+		2012-10-19：
+			1、优化了设置文字的执行效率
 		2012-7-30：
 			1、增加了设置文字水平间距的功能
 		2012-7-17：
@@ -90,6 +92,8 @@ local function getAmount(kernings, first, second)
 	end
 	return 0
 end
+
+local fntTextureScale = {}
 
 local function _setString(self, str, fnt, forcedSize)
 	if type(str) ~= "string" then
@@ -170,14 +174,19 @@ local function _setString(self, str, fnt, forcedSize)
 				if charInfo.page == page.id then
 					--加载图片，如果没有图片相关信息，加载与uri同名的图片
 					texture = (page.file and joinuri(fnt.dir, page.file)) or joinuri(fnt.dir, fnt.name..'.png')
-					local suri
-					if display.resourceFilter then
-						suri, texScale = display.resourceFilter(texture)
-						if suri == true then
+					if fntTextureScale[texture] then
+						texScale = fntTextureScale[texture]
+					else
+						local suri
+						if display.resourceFilter then
+							suri, texScale = display.resourceFilter(texture)
+							if suri == true then
+								texScale = 1
+							end
+						else
 							texScale = 1
 						end
-					else
-						texScale = 1
+						fntTextureScale[texture] = texScale
 					end
 				end
 			end
