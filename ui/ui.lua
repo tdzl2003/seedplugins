@@ -1,10 +1,10 @@
 --[[
-Seed ²å¼ş
+Seed æ’ä»¶
 	ui
-°üº¬ÎÄ¼ş
-	ui.lua - Ìá¹©Í¨¹ıccbÎÄ¼ş´´½¨UIstageµÄ·½·¨
-	ui_menu.lua - Ìá¹©´´½¨Menu£¨²Ëµ¥¿ò¼Ü£©ºÍMenuItem£¨¿Éµã»÷µÄ²Ëµ¥Ïî£©µÄ·½·¨
-ÒÀÀµ×é¼ş
+åŒ…å«æ–‡ä»¶
+	ui.lua - æä¾›é€šè¿‡ccbæ–‡ä»¶åˆ›å»ºUIstageçš„æ–¹æ³•
+	ui_menu.lua - æä¾›åˆ›å»ºMenuï¼ˆèœå•æ¡†æ¶ï¼‰å’ŒMenuItemï¼ˆå¯ç‚¹å‡»çš„èœå•é¡¹ï¼‰çš„æ–¹æ³•
+ä¾èµ–ç»„ä»¶
 	plist
 	particle
 	transition
@@ -12,18 +12,19 @@ Seed ²å¼ş
 	uri
 	input_ex
 	bmFnt
-×îºóĞŞ¸ÄÈÕÆÚ
-	2012-8-8
+æœ€åä¿®æ”¹æ—¥æœŸ
+	2012-10-30
 
-¸üĞÂÄÚÈİ
-	2012-8-8£º¼æÈİ1.02°æµÄÁ£×Ó²å¼ş
-	2012-8-6£ºÓÅ»¯ĞÔÄÜ£¬plist¶¯»­ĞÅÏ¢Ö»Ğè¼ÓÔØÒ»´Î¡£
-	2012-7-24£ºÔö¼ÓÁËimageRectµÄĞı×ª·­×ª
-	2012-7-6£ºÈ¥³ıÁËsetDestRectµÄÊ¹ÓÃ
-	2012-6-18£º¿ÉÒÔÊ¹ÓÃnode.emitÒıÓÃµ½·¢ÉäÆ÷
-	2012-6-14£ºÔö¼ÓÁË¶ÔBMFontÍ¼Æ¬×Ö¶ÔÏóµÄÖ§³Ö
-	2012-6-8£ºĞŞÕıÁËmenuItemµÄSetFlipº¯ÊıÎªnilµÄÎÊÌâ
-	2012-6-4£ºÔö¼ÓÁËresourceTable
+æ›´æ–°å†…å®¹
+	2012-10-30ï¼šä¿®æ­£äº†éƒ¨åˆ†èµ„æºæ— æ³•é‡Šæ”¾çš„é—®é¢˜
+	2012-8-8ï¼šå…¼å®¹1.02ç‰ˆçš„ç²’å­æ’ä»¶
+	2012-8-6ï¼šä¼˜åŒ–æ€§èƒ½ï¼ŒpliståŠ¨ç”»ä¿¡æ¯åªéœ€åŠ è½½ä¸€æ¬¡ã€‚
+	2012-7-24ï¼šå¢åŠ äº†imageRectçš„æ—‹è½¬ç¿»è½¬
+	2012-7-6ï¼šå»é™¤äº†setDestRectçš„ä½¿ç”¨
+	2012-6-18ï¼šå¯ä»¥ä½¿ç”¨node.emitå¼•ç”¨åˆ°å‘å°„å™¨
+	2012-6-14ï¼šå¢åŠ äº†å¯¹BMFontå›¾ç‰‡å­—å¯¹è±¡çš„æ”¯æŒ
+	2012-6-8ï¼šä¿®æ­£äº†menuItemçš„SetFlipå‡½æ•°ä¸ºnilçš„é—®é¢˜
+	2012-6-4ï¼šå¢åŠ äº†resourceTable
 
 
 ]]--
@@ -43,7 +44,7 @@ local screenW, screenH = display.getContentSize()
 local width, height = 480, 320
 local debugMode_ = false
 
--- ´ÓRGB±íºÍalphaÖĞ»ñÈ¡ÑÕÉ«
+-- ä»RGBè¡¨å’Œalphaä¸­è·å–é¢œè‰²
 local function colorFromRGBA(color, alpha)
 	if color == nil then
 		return 1, 0, 0, 0.5
@@ -52,19 +53,19 @@ local function colorFromRGBA(color, alpha)
 	end
 end
 
---¼ÆËãCCBÃªµã£¬·µ»Ø½á¹ûÎª¾ØĞÎµÄÎ»ÖÃÓë¿í¸ß
+--è®¡ç®—CCBé”šç‚¹ï¼Œè¿”å›ç»“æœä¸ºçŸ©å½¢çš„ä½ç½®ä¸å®½é«˜
 local function calcAnchorRect(x, y, w, h, data)
 	if data.isRelativeAnchorPoint then
 		x = -data.anchorPoint[1] * w
 		y = -data.anchorPoint[2] * h
 	else
-		--ĞèÒªÖØĞÂ¹Û²ì
+		--éœ€è¦é‡æ–°è§‚å¯Ÿ
 		x, y = 0, 0
 	end
 	return x, y, w, h
 end
 
---¸ù¾İÊı×Ö²éÕÒBlendStateµÄÖµ
+--æ ¹æ®æ•°å­—æŸ¥æ‰¾BlendStateçš„å€¼
 local function numToBlendState(num)
 	if num == 0 then return "zero"
 	elseif num == 1 then return "one"
@@ -79,7 +80,7 @@ local function numToBlendState(num)
 	end
 end
 
---¸ù¾İflip¸Ä±äimageRectµÄw, hÊôĞÔ
+--æ ¹æ®flipæ”¹å˜imageRectçš„w, hå±æ€§
 local function getSizeFlipped(w, h, flipx, flipy)
 	local retw, reth = w, h
 	if flipx then retw = -retw end
@@ -87,38 +88,38 @@ local function getSizeFlipped(w, h, flipx, flipy)
 	return retw, reth
 end
 
---ÉèÖÃnodeµÄ¸÷ÖÖÊôĞÔ
+--è®¾ç½®nodeçš„å„ç§å±æ€§
 local function setNodeProperties(node, data)
-	--Î»ÖÃ¡¢Ğı×ª¡¢Ëõ·ÅºÍZ
+	--ä½ç½®ã€æ—‹è½¬ã€ç¼©æ”¾å’ŒZ
 	node.x, node.y = data.position[1], - data.position[2]
 	node.rotation = math.rad(data.rotation)
 	node.scalex, node.scaley = data.scaleX, data.scaleY
 	node.z = data.zOrder
 
-	--ÏÔÊ¾»òÒş²Ø
+	--æ˜¾ç¤ºæˆ–éšè—
 	if data.visible then
 		node:show()
 	else
 		node:hide()
 	end
 
-	--Ìí¼Ó½ønodeÒıÓÃ±í£¬·½±ãÍâ½çÒıÓÃ
+	--æ·»åŠ è¿›nodeå¼•ç”¨è¡¨ï¼Œæ–¹ä¾¿å¤–ç•Œå¼•ç”¨
 	if data.memberVarAssignmentName ~= nil then
 		node.stage:setsymbolTable(data.memberVarAssignmentName, node)
 	end
 
-	--»ñÈ¡contentSize
+	--è·å–contentSize
 --	node.contentSize = data.contentSize
 	node.getContentSize = function(node)
 		return data.contentSize[1], data.contentSize[2]
 	end
 
-	--»ñÈ¡tag
+	--è·å–tag
 	node.getTag = function(node)
 		return data.tag
 	end
 
-	--ÉèÖÃblendState
+	--è®¾ç½®blendState
 	if data.blendFunc ~= nil then
 		local eff = display.BlendStateEffect.new()
 		eff.srcFactor = numToBlendState(data.blendFunc[1])
@@ -126,7 +127,7 @@ local function setNodeProperties(node, data)
 		node:addEffect(eff)
 	end
 
-	--´´½¨ÈİÆ÷node£¬¸ù¾İÈİÆ÷nodeµÄÎ»ÖÃ´´½¨×Ó½Úµã
+	--åˆ›å»ºå®¹å™¨nodeï¼Œæ ¹æ®å®¹å™¨nodeçš„ä½ç½®åˆ›å»ºå­èŠ‚ç‚¹
 	node.container = node:newNode()
 	local anchorX, anchorY = data.anchorPoint[1], data.anchorPoint[2]
 	if not data.isRelativeAnchorPoint  then
@@ -142,7 +143,7 @@ local function setNodeProperties(node, data)
 		end
 	end
 	node.container.x, node.container.y = -data.contentSize[1] * anchorX, data.contentSize[2] * anchorY
-	--debugÄ£Ê½µÄ»æÖÆ
+	--debugæ¨¡å¼çš„ç»˜åˆ¶
 	if debugMode_ then
 		node.container.presentation = function()
 			render2d.fillCircle(0,0,4)
@@ -156,13 +157,12 @@ local function createNode(self, data)
 	return node
 end
 
-local sheet_set = {}			--ÒÑ¼ÓÔØµÄsheet_set±í
 
 local function createSprite(self, data)
 	local node
 
 -----------------------------------------------------------------------------------------------------------------------------
-----Õâ¶Î´úÂë¿ÉÒÔ¸ù¾İÊ¹ÓÃµÄactionµÄÃû³Æ×Ô¶¯Ê¶±ğÎª¶¯»­²¢²¥·Å£¬Èç¹ûµ±Ç°actionµÄÃû³ÆÊÇÒÔ_00.png»ò_01.pngÎª½áÎ²µÄ£¬ÄÇÃ´¾Í½«ÆäÊÓ×÷¶¯»­´¦Àí
+----è¿™æ®µä»£ç å¯ä»¥æ ¹æ®ä½¿ç”¨çš„actionçš„åç§°è‡ªåŠ¨è¯†åˆ«ä¸ºåŠ¨ç”»å¹¶æ’­æ”¾ï¼Œå¦‚æœå½“å‰actionçš„åç§°æ˜¯ä»¥_00.pngæˆ–_01.pngä¸ºç»“å°¾çš„ï¼Œé‚£ä¹ˆå°±å°†å…¶è§†ä½œåŠ¨ç”»å¤„ç†
 	local s, e = string.find(data.spriteFramesFile, ".plist")
 	local str = string.sub(data.spriteFramesFile, 1, s-1)
 	s, e = string.find(data.spriteFile, str)
@@ -173,18 +173,18 @@ local function createSprite(self, data)
 		type = 1
 	end 
 
-	--Èç¹ûÃ»ÓĞÕÒµ½sheet_setÄÇÃ´¼ÓÔØ¡£±£Ö¤Ã¿¸öplistÖ»±»½âÎöÒ»´Î
-	if not sheet_set[data.spriteFramesFile] then
-		sheet_set[data.spriteFramesFile] = Animation.newWithPlist(filePath_ .. "/" .. data.spriteFramesFile, 24, type)
+	--å¦‚æœæ²¡æœ‰æ‰¾åˆ°sheet_seté‚£ä¹ˆåŠ è½½ã€‚ä¿è¯æ¯ä¸ªpliståªè¢«è§£æä¸€æ¬¡
+	if not self.stage.sheet_set[data.spriteFramesFile] then
+		self.stage.sheet_set[data.spriteFramesFile] = Animation.newWithPlist(filePath_ .. "/" .. data.spriteFramesFile, 24, type)
 	end
 
 	if type == 1 then
 		actionName = string.sub(data.spriteFile, e+2, ss-1)
 	end
 	
-	node = self:newSpriteWith(self.stage.runtime, sheet_set[data.spriteFramesFile], actionName == nil and data.spriteFile or actionName)
+	node = self:newSpriteWith(self.stage.runtime, self.stage.sheet_set[data.spriteFramesFile], actionName == nil and data.spriteFile or actionName)
 
---´Ë¶Î´úÂëÓëcocosBuilder±à¼­Æ÷ÑÏÖØ²»¼æÈİ£¬×îÖÕ·¢²¼Ê±¿¼ÂÇÈ¥³ı
+--æ­¤æ®µä»£ç ä¸cocosBuilderç¼–è¾‘å™¨ä¸¥é‡ä¸å…¼å®¹ï¼Œæœ€ç»ˆå‘å¸ƒæ—¶è€ƒè™‘å»é™¤
 -----------------------------------------------------------------------------------------------------------------------------
 
 	local ax, ay = data.anchorPoint[1] - 0.5, 0.5 - data.anchorPoint[2]
@@ -350,7 +350,7 @@ local function createParticleSystem(self, data)
 end
 
 function setLayerProperties(node, data, drawable)
-	--Î»ÖÃ¡¢Ëõ·ÅºÍZ
+	--ä½ç½®ã€ç¼©æ”¾å’ŒZ
 	node.x, node.y = data.position[1], - data.position[2]
 	node.scalex, node.scaley = data.scaleX, data.scaleY
 	node.z = data.zOrder
@@ -368,7 +368,7 @@ function setLayerProperties(node, data, drawable)
 
 	node.layer.rotation = math.rad(data.rotation)
 
-	--ÏÔÊ¾»òÒş²Ø
+	--æ˜¾ç¤ºæˆ–éšè—
 	if data.visible then
 		node:show()
 	else
@@ -382,22 +382,22 @@ function setLayerProperties(node, data, drawable)
 		end
 	end
 
-	--Ìí¼Ó½ønodeÒıÓÃ±í£¬·½±ãÍâ½çÒıÓÃ
+	--æ·»åŠ è¿›nodeå¼•ç”¨è¡¨ï¼Œæ–¹ä¾¿å¤–ç•Œå¼•ç”¨
 	if data.memberVarAssignmentName ~= nil then
 		node.stage:setsymbolTable(data.memberVarAssignmentName, node)
 	end
 
-	--»ñÈ¡´óĞ¡
+	--è·å–å¤§å°
 	node.getContentSize = function(node)
 		return data.contentSize[1], data.contentSize[2]
 	end
 
-	--»ñÈ¡tag
+	--è·å–tag
 	node.getTag = function(node)
 		return data.tag
 	end
 
-	--ÉèÖÃblendState
+	--è®¾ç½®blendState
 	if data.blendFunc ~= nil then
 		local eff = display.BlendStateEffect.new()
 		eff.srcFactor = numToBlendState(data.blendFunc[1])
@@ -405,36 +405,36 @@ function setLayerProperties(node, data, drawable)
 		node:addEffect(eff)
 	end
 
-	--´´½¨ÈİÆ÷node£¬¸ù¾İÈİÆ÷nodeµÄÎ»ÖÃ´´½¨×Ó½Úµã
+	--åˆ›å»ºå®¹å™¨nodeï¼Œæ ¹æ®å®¹å™¨nodeçš„ä½ç½®åˆ›å»ºå­èŠ‚ç‚¹
 	node.container = node.layer:newNode()
 	if drawable then node.container:setMaskColor(1,1,1,1) end
 	node.container.x, node.container.y = x, y
 end
 
---´´½¨ÈİÆ÷Í¼²ã
+--åˆ›å»ºå®¹å™¨å›¾å±‚
 local function createLayer(self, data)
 	local node = self:newNode()
 	setLayerProperties(node, data)
 	return node
 end
 
---´´½¨ÑÕÉ«ÈİÆ÷Í¼²ã
+--åˆ›å»ºé¢œè‰²å®¹å™¨å›¾å±‚
 local function createLayerColor(self, data)
 	local node = self:newNode()
 	setLayerProperties(node, data, true)
 	return node
 end
 
---´´½¨½¥±äÉ«ÈİÆ÷Í¼²ã£¨ÏÖ½×¶ÎÒıÇæÎŞ·¨Ö§³Ö½¥±äÉ«£¬Ê¹ÓÃ´¿É«´úÌæ£©
+--åˆ›å»ºæ¸å˜è‰²å®¹å™¨å›¾å±‚ï¼ˆç°é˜¶æ®µå¼•æ“æ— æ³•æ”¯æŒæ¸å˜è‰²ï¼Œä½¿ç”¨çº¯è‰²ä»£æ›¿ï¼‰
 local function createLayerGradient(self, data)
 	local node = self:newNode()
 	setLayerProperties(node, data, true)
 	return node
 end
 
---´´½¨bmFnt
+--åˆ›å»ºbmFnt
 local function createLabelBMFont(self, data)
-	local node = self:newLabelWithString(data.string, filePath_ .. "/" .. data.fontFile, false, true)
+	local node = self:newLabelWithString(data.string, filePath_ .. "/" .. data.fontFile, false, false)
 	local r, g, b, a = colorFromRGBA(data.color, data.opacity)
 	node:setMaskColor(r, g, b)
 	node:setAlpha(a)
@@ -510,7 +510,7 @@ local function create(self, data)
 	return node
 end
 
-local function _newUIFromCCB(display, ccb, runtime, input_ex, isdebugMode_)
+local function _newUIFromCCB(display, ccb, rta, input_ex, isdebugMode_)
 	local data 
 	if type(ccb) == "table" then
 		data = ccb
@@ -529,9 +529,10 @@ local function _newUIFromCCB(display, ccb, runtime, input_ex, isdebugMode_)
 	local stage = display:newStage2D()
 --	stage:setSortMode("ascending")
 	stage.input_ex = input_ex
-	stage.runtime = runtime
+	stage.runtime = rta
 	stage.selectorTable = {}
 	stage.symbolTable = {}
+	stage.sheet_set = {}
 	stage.setsymbolTable = function(self, _name, _node)
 		if _node == nil then
 			error("node cannot be nil")
@@ -544,6 +545,8 @@ local function _newUIFromCCB(display, ccb, runtime, input_ex, isdebugMode_)
 	stage.camera = camera
 	camera.x, camera.y = width / 2, -height / 2
 	local node = create(stage, data.nodeGraph)
+
+	--stage.remove = removeCCB
 	return stage
 end
 
@@ -606,52 +609,52 @@ display.newUIFromCCBFile = _newUIFromCCB
 
 --[[
 
-UIµÄÊ¹ÓÃ·½·¨£º
-Ê¹ÓÃdisplay:newUIFromCCBFile(ccb, runtime, input_ex, isdebugMode)À´´´½¨
-	²ÎÊı£º
-		ccb - ccbÎÄ¼şµÄURI
+UIçš„ä½¿ç”¨æ–¹æ³•ï¼š
+ä½¿ç”¨display:newUIFromCCBFile(ccb, runtime, input_ex, isdebugMode)æ¥åˆ›å»º
+	å‚æ•°ï¼š
+		ccb - ccbæ–‡ä»¶çš„URI
 		runtime
-		isdebugMode - Ä¬ÈÏÎªfalse£¬¸øtrueÖµºó£¬Ê¹ÓÃÏß¿ò»æÖÆ³¡¾°
-	·µ»ØÖµ£º
-		stage - Ò»¸öStage2D¶ÔÏó£¬Í¬Ê±¸½¼ÓÁËselectorTableºÍsambolTable
-		stage.selectorTable - ¼ÇÂ¼ÁËUIÀïËùÓĞµÄselector£¬¿ÉÒÔÊ¹ÓÃstage.selectorTable["selectorÃû³Æ"]À´ÒıÓÃ
-		stage.symbolTable - ¼ÇÂ¼ÁËUIÀïËùÓĞÈ¡ÁËÃû×ÖµÄNode£¬¿ÉÒÔÊ¹ÓÃstage.symbolTable["nodeÃû³Æ"]À´ÒıÓÃÏàÓ¦µÄNode
+		isdebugMode - é»˜è®¤ä¸ºfalseï¼Œç»™trueå€¼åï¼Œä½¿ç”¨çº¿æ¡†ç»˜åˆ¶åœºæ™¯
+	è¿”å›å€¼ï¼š
+		stage - ä¸€ä¸ªStage2Då¯¹è±¡ï¼ŒåŒæ—¶é™„åŠ äº†selectorTableå’ŒsambolTable
+		stage.selectorTable - è®°å½•äº†UIé‡Œæ‰€æœ‰çš„selectorï¼Œå¯ä»¥ä½¿ç”¨stage.selectorTable["selectoråç§°"]æ¥å¼•ç”¨
+		stage.symbolTable - è®°å½•äº†UIé‡Œæ‰€æœ‰å–äº†åå­—çš„Nodeï¼Œå¯ä»¥ä½¿ç”¨stage.symbolTable["nodeåç§°"]æ¥å¼•ç”¨ç›¸åº”çš„Node
 
-	×¢Òâ£¡£º
-		Îª¼æÈİCocos2d¸ñÊ½£¬Ê¹ÓÃ¸Ã·½·¨´´½¨³öµÄstage¾­¹ıÁËÒ»´Î×ø±ê×ª»»£¬
-		²»½¨ÒéÖ±½ÓÊ¹ÓÃ±¾stage´´½¨node£¬Èç¹ûÏëÒªÎªËü´´½¨node£¬ÆänodeµÄy×ø±ê±ØĞëÎª¸ºÊı¡£
-		½¨ÒéÓÎÏ·ÖĞ·ÇuiµÄ²¿·ÖÓÃĞÂµÄstageÀ´´´½¨¡£
+	æ³¨æ„ï¼ï¼š
+		ä¸ºå…¼å®¹Cocos2dæ ¼å¼ï¼Œä½¿ç”¨è¯¥æ–¹æ³•åˆ›å»ºå‡ºçš„stageç»è¿‡äº†ä¸€æ¬¡åæ ‡è½¬æ¢ï¼Œ
+		ä¸å»ºè®®ç›´æ¥ä½¿ç”¨æœ¬stageåˆ›å»ºnodeï¼Œå¦‚æœæƒ³è¦ä¸ºå®ƒåˆ›å»ºnodeï¼Œå…¶nodeçš„yåæ ‡å¿…é¡»ä¸ºè´Ÿæ•°ã€‚
+		å»ºè®®æ¸¸æˆä¸­éuiçš„éƒ¨åˆ†ç”¨æ–°çš„stageæ¥åˆ›å»ºã€‚
 
 ]]
 
 --[[
 
-===========================symbolTableµÄÏêÏ¸ÓÃ·¨===============================
+===========================symbolTableçš„è¯¦ç»†ç”¨æ³•===============================
 
-Í¨¹ı¡°symbolTable.nodeName¡±¿ÉÒÔÒıÓÃµ½ÔÚccb±à¼­Æ÷ÖĞÒÔ¡°nodeName¡±ÃüÃûµÄ½Úµã
-¿ÉÒÔ¶ÔÆäÖ´ĞĞ¸÷ÖÖÖîÈçĞı×ª¡¢Æ½ÒÆ¡¢ÔöÉ¾×Ó½ÚµãµÈ¸÷ÖÖ²Ù×÷
-ÈçÏÂµÄÀı×Ó¼´ÈÃÒ»¸öÃûÎªStarµÄ½Úµã²»Í£Ğı×ª£º
+é€šè¿‡â€œsymbolTable.nodeNameâ€å¯ä»¥å¼•ç”¨åˆ°åœ¨ccbç¼–è¾‘å™¨ä¸­ä»¥â€œnodeNameâ€å‘½åçš„èŠ‚ç‚¹
+å¯ä»¥å¯¹å…¶æ‰§è¡Œå„ç§è¯¸å¦‚æ—‹è½¬ã€å¹³ç§»ã€å¢åˆ å­èŠ‚ç‚¹ç­‰å„ç§æ“ä½œ
+å¦‚ä¸‹çš„ä¾‹å­å³è®©ä¸€ä¸ªåä¸ºStarçš„èŠ‚ç‚¹ä¸åœæ—‹è½¬ï¼š
 
 local node = uiStage.symbolTable.Star
 runtime.enterFrame:addListener(function()
 	node.rotation = node.rotation + 0.05
 end)
 
-nodeÖĞÔö¼ÓÁËÒ»Ğ©»ñÈ¡Êı¾İµÄÊôĞÔºÍ·½·¨£º
-	node:getContentSize()		--»ñÈ¡nodeµÄContentSizeÊı¾İ
-	node:getTag()				--»ñÈ¡nodeµÄtagÊı¾İ
+nodeä¸­å¢åŠ äº†ä¸€äº›è·å–æ•°æ®çš„å±æ€§å’Œæ–¹æ³•ï¼š
+	node:getContentSize()		--è·å–nodeçš„ContentSizeæ•°æ®
+	node:getTag()				--è·å–nodeçš„tagæ•°æ®
 
 ]]
 
 --[[
 
-===========================selectorTableµÄÏêÏ¸ÓÃ·¨=============================
+===========================selectorTableçš„è¯¦ç»†ç”¨æ³•=============================
 
-Í¨¹ı¡°selectorTable.selectorName¡±»ò¡°selectorTable["selectorName"]¡±¿ÉÒÔÒıÓÃµ½ÒÔ¡°selectorName¡±ÃüÃûµÄselector
-selectorÊÇÒ»¸öÊÂ¼ş£¬¸ÃÊÂ¼ş»áÔÚselectorËùÊôµÄMenuItem±»°´ÏÂÊ±´¥·¢¡£
-Ê¹ÓÃ·½·¨Í¬ÆäËûÊÂ¼ş£¬¼´selector:addListener(callbackFunction)
-ÈçÏÂµÄÀı×Ó¼´ÈÃÒ»¸öÃûÎª¡°pressedToMenu¡±µÄselector±»´¥·¢Ê±£¬´òÓ¡"ToMenu"×Ö·û´®
-£¨ÓĞĞ©selectorµÄÃû³Æ£¬Èç¡°pressedToMenu:¡±ÖĞ°üº¬luaµÄÔËËã·û¡°:¡±£¬ÕâÊ±Ö»ÄÜÊ¹ÓÃselectorTable["pressedToMenu:"]À´ÒıÓÃ£©
+é€šè¿‡â€œselectorTable.selectorNameâ€æˆ–â€œselectorTable["selectorName"]â€å¯ä»¥å¼•ç”¨åˆ°ä»¥â€œselectorNameâ€å‘½åçš„selector
+selectoræ˜¯ä¸€ä¸ªäº‹ä»¶ï¼Œè¯¥äº‹ä»¶ä¼šåœ¨selectoræ‰€å±çš„MenuItemè¢«æŒ‰ä¸‹æ—¶è§¦å‘ã€‚
+ä½¿ç”¨æ–¹æ³•åŒå…¶ä»–äº‹ä»¶ï¼Œå³selector:addListener(callbackFunction)
+å¦‚ä¸‹çš„ä¾‹å­å³è®©ä¸€ä¸ªåä¸ºâ€œpressedToMenuâ€çš„selectorè¢«è§¦å‘æ—¶ï¼Œæ‰“å°"ToMenu"å­—ç¬¦ä¸²
+ï¼ˆæœ‰äº›selectorçš„åç§°ï¼Œå¦‚â€œpressedToMenu:â€ä¸­åŒ…å«luaçš„è¿ç®—ç¬¦â€œ:â€ï¼Œè¿™æ—¶åªèƒ½ä½¿ç”¨selectorTable["pressedToMenu:"]æ¥å¼•ç”¨ï¼‰
 
 uiStage.selectorTable.pressedToMenu:addListener(function()
 	print("ToMenu")
@@ -661,17 +664,17 @@ end)
 
 --[[
 
-===========================resourceTableµÄÏêÏ¸ÓÃ·¨=============================
+===========================resourceTableçš„è¯¦ç»†ç”¨æ³•=============================
 
-Ê¹ÓÃº¯ÊıgetResourceTableFromCCB(ccb)À´Ô¤ÏÈ»ñµÃÍ¼Æ¬×ÊÔ´ÁĞ±í
+ä½¿ç”¨å‡½æ•°getResourceTableFromCCB(ccb)æ¥é¢„å…ˆè·å¾—å›¾ç‰‡èµ„æºåˆ—è¡¨
 
 ]]
 
 --[[
 
-===========================×¢ÒâÊÂÏî============================================
+===========================æ³¨æ„äº‹é¡¹===========================
 
-´ó²¿·ÖµÄnodeÓĞÒ»¸öÈİÆ÷¶ÔÏó£¬ÊÇÆäÔÚccbÎÄ¼şÖĞµÄËùÓĞ×Ó½ÚµãµÄÖ±½Ó¸¸½Úµã£¬ÕıÈ·»ñµÃccbÖĞnodeµÄ×Ó½ÚµãµÄ·½·¨ÊÇÊ¹ÓÃnode.container.firstChild¡£
-Ö±½ÓÊ¹ÓÃnode.firstChild¿ÉÄÜµÃµ½µÄ½ö½öÊÇÒ»¸öÈİÆ÷£¬»òÕßÊÇÁ£×Ó·¢ÉäÆ÷£¬Ò²¿ÉÄÜÊÇÒ»¸ö´øÑÕÉ«µÄ¾ØĞÎnode¡£
+å¤§éƒ¨åˆ†çš„nodeæœ‰ä¸€ä¸ªå®¹å™¨å¯¹è±¡ï¼Œæ˜¯å…¶åœ¨ccbæ–‡ä»¶ä¸­çš„æ‰€æœ‰å­èŠ‚ç‚¹çš„ç›´æ¥çˆ¶èŠ‚ç‚¹ï¼Œæ­£ç¡®è·å¾—ccbä¸­nodeçš„å­èŠ‚ç‚¹çš„æ–¹æ³•æ˜¯ä½¿ç”¨node.container.firstChildã€‚
+ç›´æ¥ä½¿ç”¨node.firstChildå¯èƒ½å¾—åˆ°çš„ä»…ä»…æ˜¯ä¸€ä¸ªå®¹å™¨ï¼Œæˆ–è€…æ˜¯ç²’å­å‘å°„å™¨ï¼Œä¹Ÿå¯èƒ½æ˜¯ä¸€ä¸ªå¸¦é¢œè‰²çš„çŸ©å½¢nodeã€‚
 
 ]]

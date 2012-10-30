@@ -9,11 +9,22 @@ Seed 插件
 		无
 
 	最后修改日期：
-		2012-8-6
+		2012-10-30
 
 	更新记录：
+		2012-10-30:
+			修正了因addSpriteRect、addSpriteCircle导致相关node的资源无法被释放的问题
+			
+		2012-9-17:
+			可以通过input_ex.runtime获取到runtimeAgent
 		2012-8-6：
 			当触发onTouchUp事件时，事件的参数args.x, args.y会更新为当前光标位置。
+
+	特别注意：
+		1、场景中不能同时使用多个input_ex！
+		2、创建input_ex使用的runtimeAgent对象应当使用director.load()中创建的rta，具体使用方法是：
+			local rta = ...
+			local input_ex = require("input_ex").new(rta)
 
 ]]--
 
@@ -21,13 +32,17 @@ module(..., package.seeall)
 local event = require("event")
 
 local updateEvent
-local handlers = {}
-handlers[0] = 1
+local handlers
 
 --新建一个input_ex对象
 function new(runtime)
-	local ret = {
-	}
+	assert(not handlers, "")
+
+	handlers = {}
+	handlers[0] = 1
+
+	local ret = {}
+
 	setmetatable(ret, {__index = input_ex})
 	local function tl(ev)
 		ret:dispatchEvent(ev)
@@ -47,15 +62,19 @@ function new(runtime)
 	runtime.enterFrame:addEventListener(el)
 	
 	local e2 = function()
+		
 		ret:remove()
+		print("input_ex removed")
 	end
 	runtime.destroy:addEventListener(e2)
 	
 	function ret.remove()
+		handlers = nil
 		input.touch:removeEventListener(tl)
 		runtime.enterFrame:removeEventListener(el)
 		runtime.destroy:removeEventListener(e2)
 	end
+	--ret.runtime = runtime			--可以通过input_ex对象获取到runtimeAgent
 	return ret
 end
 
@@ -216,7 +235,9 @@ function addSpriteRect(input, sprite, w, h, anchorx, anchory)
 	initNode(ret)
 	local oldremove = sprite.remove
 	sprite.remove = function()
+		
 		if (ret.host) then
+			print("node be removed")
 			ret.host:removeNode(ret)
 		end
 		oldremove(sprite)
