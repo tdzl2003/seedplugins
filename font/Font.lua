@@ -7,11 +7,13 @@ Seed插件：字体和文本
 	依赖组件：
 		seed_ex
 		uri
+		xmlParser
 
 	最后修改日期：
 		2012-11-29
 	
 	更新记录：
+		2012-11-29：增加了xml格式字体文件的支持，使用Font.newWithXml(uri)来创建
 		2012-11-29：正式第一版
 
 	使用方法：
@@ -33,10 +35,10 @@ Seed插件：字体和文本
 
 	注意事项：
 		1、需要至少0.2.4版本的Seed引擎（build 124以上）
-		2、目前暂不支持使用xml格式的fnt文件，只支持文本格式的fnt
 ]]
 
 require("seed_ex")
+local xmlParser = require("xmlParser")
 
 local urilib = require("uri")
 
@@ -60,7 +62,16 @@ function Font:__init__WithUri(uri)
 	if (ext == '.fnt') then
 		self:__init__(loadFntFile(uri))
 	end
+end
 
+function Font:__init__WithXml(uri)
+	--TODO: 防重复加载。
+	uri = urilib.absolute(uri, 3)
+	
+	local ext = urilib.extension(uri)
+	if (ext == '.fnt') then
+		self:__init__(loadXmlFntFile(uri))
+	end
 end
 
 function Font:generateRenderer(text, lineHeight)
@@ -216,7 +227,52 @@ function loadFntFile(uri)
 
 	fd:close()
 
+	printTable(ret)
+
 	return ret
+end
+
+function loadXmlFntFile(uri)
+
+	local charTables = {}
+
+	local xmlhandler_mt = {
+		__index = {
+			starttag = function(self,t,a,s,e)
+				if (t == "font") then
+					self.pages = {}
+					self.chars = {}
+				elseif (t == "common") then
+					self.lineHeight = a.lineheight
+					self.base = a.base
+					self.pageCount = a.pages
+				elseif (t == "page") then
+					local file = urilib.normjoin(urilib.dirname(uri), a.file)
+					self.pages[a.id+1] = resource.loadTexture(file)
+				elseif (t == "char") then
+					table.insert(charTables, a)
+				end
+			end,
+			endtag = nop
+		}
+	}
+
+	local h = {}
+	setmetatable(h, xmlhandler_mt)
+	local f = io.open(uri, "r")
+	local s = f:read()
+	xmlParser.parse(h, s)
+	f:close()
+
+	for i,args in ipairs(charTables) do
+		local charR = generateCharRenderer(args, h.pages)
+		h.chars[tonumber(args.id)] = charR
+	end
+
+	print("--------------")
+	printTable(h)
+	return h
+
 end
 
 _G.Font = define_type("Font", Font)
