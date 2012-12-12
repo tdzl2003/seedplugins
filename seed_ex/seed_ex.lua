@@ -1,5 +1,22 @@
+--[[
+Seed基础插件：seed_ex
+
+	版本：
+		0.2
+
+	最后修改日期：
+		2012-12-12
+	
+	更新记录：
+		2012-12-12：
+			可以支持Fangus框架
+]]
+
 require("lua_ex")
 local stringize = require("stringize")
+local classes = {}
+local weakClasses = newWeakValueTable()
+local Class
 
 local function _dumpobj(obj)
 	return "Object " .. (obj.type.name or "(noname)") .. "\n" .. (stringize(obj) or '')
@@ -56,8 +73,10 @@ end
 
 function extend_type(name, methods, super, statics)
 	if (type(super) == 'string') then
-		super = getGlobal(super) or require(super)
+		super = requireClass(super)
 	end
+	
+	assert(name)
 	
 	local ret = statics or  {}
 	setmetatable(methods, super)
@@ -66,14 +85,20 @@ function extend_type(name, methods, super, statics)
 	ret.super = super
 	ret.methods = methods
 	ret.__index = methods
-	ret.__index.type = ret
+	methods.type = ret
 	ret.__tostring = ret.__tostring or _dumpobj
-	ret.isDerived = isDerived
-	_init_newfuncs(ret, methods)
+
+	ret.__call = ret.__call or _callobj
+	
+	if (Class) then
+		setmetatable(ret, Class)
+	end
 	
 	if (name) then
-		setGlobal(name, ret)
+		classes[name] = ret
+		weakClasses[name] = ret
 	end
+	
 	return ret
 end
 
@@ -82,3 +107,66 @@ function define_type(name, methods, statics)
 end
 
 
+local _Class = {}
+
+function _Class:isDerived(super)
+	local thiz = self
+	repeat
+		if (thiz == super) then
+			return true
+		end
+		thiz = thiz.super
+	until not thiz
+	return false
+end
+
+Class = define_type("Class", _Class)
+_Class.type = Class
+setmetatable(Class, {__index == _Class, __tostring = _dumpobj})
+Class.name = "Class"
+Class.type = Class
+
+function Class.__index(t, k)
+	if (type(k) == 'string') then
+		local newWith = k:match("new(%w*)")
+		if (newWith) then
+			local init = t.methods["__init__" .. newWith]
+			if (init or (newWith == '')) then
+				return function(...)
+					local obj = {}
+					setmetatable(obj, t)
+					return (init and init(obj, ...)) or obj
+				end
+			end
+		end
+	end
+	return _Class[k]
+end
+
+local function checkClass(cls)
+	local ret
+	return cls and cls.type == Class
+end
+
+function requireClass(name)
+	local ret = weakClasses[name]
+	if (ret) then
+		if (not classes[name]) then
+			classes[name] = ret
+		end
+		return ret
+	end
+	--print("loading Class " .. name)
+	ret = doscript(name) or weakClasses[name]
+	assert(ret and checkClass(ret), 'Module ' .. name.. " does not provide a class")
+	
+	classes[name] = ret
+	weakClasses[name] = ret
+	return ret
+end
+
+function releaseUnusedClasses()
+	classes = {}
+end
+
+require("director").enterModule:addListener(releaseUnusedClasses)
