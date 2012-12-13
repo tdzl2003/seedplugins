@@ -2,12 +2,15 @@
 Seed基础插件：seed_ex
 
 	版本：
-		0.2
+		0.21
 
 	最后修改日期：
-		2012-12-12
+		2012-12-13
 	
 	更新记录：
+		2012-12-13:
+			恢复了误删的函数 _callobj
+
 		2012-12-12：
 			可以支持Fangus框架
 ]]
@@ -19,7 +22,12 @@ local weakClasses = newWeakValueTable()
 local Class
 
 local function _dumpobj(obj)
-	return "Object " .. (obj.type.name or "(noname)") .. "\n" .. (stringize(obj) or '')
+	return "Object " .. (obj.type.name or "(noname)")-- .. "\n" .. (stringize(obj) or '')
+end
+
+local function _callobj(obj, ...)
+	local f = obj.__call or error("Object " .. ((obj.type and obj.type.name) or "(noname)") .. " do not have a __call method while be called.")
+	return f(obj, ...)
 end
 
 local function _init_newfuncs(clazz, methods)
