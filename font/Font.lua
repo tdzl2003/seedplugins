@@ -204,7 +204,7 @@ function loadFntFile(uri)
 	ret.chars = {}
 
 	local charTables = {}
-
+	assert(fd,"wrong Font uri")
 	for line in fd:lines() do
 		local cmd, args = parseFntLine(line)
 
@@ -227,7 +227,6 @@ function loadFntFile(uri)
 
 	fd:close()
 
-	printTable(ret)
 
 	return ret
 end
@@ -269,8 +268,8 @@ function loadXmlFntFile(uri)
 		h.chars[tonumber(args.id)] = charR
 	end
 
-	print("--------------")
-	printTable(h)
+	-- print("--------------")
+	-- printTable(h)
 	return h
 
 end
