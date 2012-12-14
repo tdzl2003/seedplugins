@@ -1,0 +1,5 @@
+
+v1.0.1 build 2 15:34 2012-12-14
+	1.Rect与Circle的render增加了参数fill,可以决定绘制实心/空心形状
+v1.0 build 1
+	1.实现基本功能

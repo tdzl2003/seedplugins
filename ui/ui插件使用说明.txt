@@ -1,0 +1,62 @@
+[1].加载ui组件
+example:
+local ui         = require("ui")
+[2].加载相应组件.指需要用到的点击形状
+目前分为共计三种形状.矩形,圆形,全屏
+example:
+local Rect       = requireClass("ui.Rect")
+local Circle     = requireClass("ui.Circle")
+local ScreenMask = requireClass("ui.ScreenMask")
+[3].注册点击
+example:
+local uinode = ui.getOrRegisterNode(rtAgent, node) --给定rtAgent与node
+local shapeRect = Rect.newWithSize(cw,ch) --给定形状
+
+uinode:withShape(shapeRect)  --挂载点击形状
+uinode:catchTap() --给定捕获类型
+shapeRect:render(fill) --绘制形状
+uinode.evTapped:addListener(function(ev) end) --设置触发事件
+[4].node移除并注销事件
+example:
+	uinode.evTapped:clearListeners()  --所有注册过的捕获类型均需注销
+	uinode:remove()
+	node:remove()
+[5].特性介绍
+	1).不用额外的声明一个input_ex对象
+	2).生命周期管理更安全，不容易出现内存泄露
+	3).子结点接受touch不会影响父结点接受drag（事件抢夺机制）
+[6].形状介绍
+	1)Rect
+		Rect.new(x,y,w,h)   --在指定坐标位置宽w,高h的形状
+		Rect.newWithSize(w,h)  --在node对应坐标点宽w,高h的形状
+		Rect.newWithRect(x, y, w, h) --在指定坐标位置宽w,高h的形状
+		Rect:render(fill) --绘制区域形状.参数fill为true时绘制实心矩形.否则绘制空心矩形
+	2)Circle
+		Circle.newWithRadius(r)  --在node对应坐标点半径r的形状
+		Circle.newWithPos(x, y, r)	--在指定坐标位置半径r的形状
+		Circle:render(fill) --绘制区域形状.参数fill为true时绘制实心圆.否则绘制空心圆
+	3)ScreenMask --全屏
+[7].捕获类型介绍
+	1)tap:
+		捕获方式:
+		:catchTap()
+		事件:
+		uinode.evTapped
+	2)touch:
+		捕获方式:
+		catchTouch()
+		事件:
+		uinode.evTouchDown --按下
+		uinode.evTouchUp --松开
+	3)drag
+		捕获方式:
+		catchDrag()
+		事件:
+		uinode.evDragBegin --拖拽开始
+		uinode.evDragEnd	--拖拽结束
+		uinode.evDragging --拖拽过程
+	4)hold 
+		捕获方式:
+		catchHold()
+		事件:
+		uinode.evHolded 
