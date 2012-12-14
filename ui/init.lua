@@ -1,6 +1,9 @@
+
 require("seed_ex")
 
 local ui = {}
+ui._VER = 2
+
 _G.ui = ui
 
 -- 记录所有直接注册的结点
