@@ -1,0 +1,2956 @@
+type = "CCB",
+name = "",
+stageWidth = 960,
+stageHeight = 640,
+data = {
+    visible = true
+    anchorEnabled = true
+    scalex = 1,
+    anchorx = -0.5,
+    width = 0,
+    y = -0,
+    x = 0,
+    scaley = 1,
+    z = 0,
+    height = 0,
+    rotate = 0,
+    anchory = 0.5,
+    tag = -1,
+},
+childs = {
+    [1] = {
+        type = "gameui.Image",
+        data = {
+            visible = false,
+            flipy = false,
+            color = {
+                [1] = 255,
+                [2] = 255,
+                [3] = 255,
+            },
+            scalex = 1,
+            image = "1-1.png",
+            blendEff = {
+                dst = "invSrcAlpha",
+                src = "one",
+            },
+            flipx = false,
+            scaley = 1,
+            anchorx = -0.5,
+            width = 960,
+            y = -0,
+            x = 0,
+            anchorEnabled = true
+            z = 0,
+            height = 640,
+            rotate = 0,
+            anchory = 0.5,
+            tag = -1,
+        },
+        name = "temp_bg",
+    },
+    [2] = {
+        childs = {
+            [1] = {
+                childs = {
+                    [1] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_food1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 25,
+                            y = -63,
+                            x = 82,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 18,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [2] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_food1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 25,
+                            y = -58,
+                            x = 221,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 18,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [3] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_tinystone.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 31,
+                            y = -36,
+                            x = 59,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 14,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [4] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_food2.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 20,
+                            y = -65,
+                            x = 255,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 19,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [5] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_grass1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 24,
+                            y = -82,
+                            x = 58,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 16,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [6] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_grass1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 24,
+                            y = -92,
+                            x = 296,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 16,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [7] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "mountain.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 134,
+                            y = -145,
+                            x = -37,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 115,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [8] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_grass2.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 50,
+                            y = -105,
+                            x = -25,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 43,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [9] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "bridge.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 190,
+                            y = 21,
+                            x = 151,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 110,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [10] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_peachtree2.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 140,
+                            y = -94,
+                            x = 29,
+                            anchorEnabled = true
+                            z = 3,
+                            height = 103,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                },
+                type = "gameui.Sprite",
+                data = {
+                    visible = true
+                    flipy = false,
+                    color = {
+                        [1] = 255,
+                        [2] = 255,
+                        [3] = 255,
+                    },
+                    scalex = 1,
+                    action = "waterfall.png",
+                    sets = "scene_grass.plist",
+                    blendEff = {
+                        dst = "invSrcAlpha",
+                        src = "one",
+                    },
+                    flipx = false,
+                    scaley = 1,
+                    anchorx = 0,
+                    width = 311,
+                    y = -597,
+                    x = 513,
+                    anchorEnabled = true
+                    z = 0,
+                    height = 219,
+                    rotate = 0,
+                    anchory = 0,
+                    tag = -1,
+                },
+                name = "waterfall",
+            },
+            [2] = {
+                childs = {
+                    [1] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "mountain.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 134,
+                            y = -76,
+                            x = 123,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 115,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [2] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "mountain.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = true
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 134,
+                            y = -80,
+                            x = 213,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 115,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [3] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_grass1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = true
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 24,
+                            y = -29,
+                            x = 139,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 16,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [4] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_grass2.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = true
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 50,
+                            y = -20,
+                            x = 83,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 43,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [5] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_grass1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 24,
+                            y = -43,
+                            x = 190,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 16,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                },
+                type = "gameui.Sprite",
+                data = {
+                    visible = true
+                    flipy = false,
+                    color = {
+                        [1] = 255,
+                        [2] = 255,
+                        [3] = 255,
+                    },
+                    scalex = 1,
+                    action = "mountain.png",
+                    sets = "scene_grass.plist",
+                    blendEff = {
+                        dst = "invSrcAlpha",
+                        src = "one",
+                    },
+                    flipx = false,
+                    scaley = 1,
+                    anchorx = 0,
+                    width = 134,
+                    y = -592.2109375,
+                    x = 0.8984375,
+                    anchorEnabled = true
+                    z = 0,
+                    height = 115,
+                    rotate = 0,
+                    anchory = 0,
+                    tag = -1,
+                },
+                name = "left_m1",
+            },
+            [3] = {
+                childs = {
+                    [1] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "mountain.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 134,
+                            y = -55,
+                            x = 94,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 115,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [2] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "mountain.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = true
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 134,
+                            y = -72.3671875,
+                            x = 147.0859375,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 115,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [3] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_grass3.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = true
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 48,
+                            y = -19,
+                            x = 63,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 47,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [4] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_basegrass1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = true
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 21,
+                            y = -19,
+                            x = 115,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 34,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                },
+                type = "gameui.Sprite",
+                data = {
+                    visible = true
+                    flipy = false,
+                    color = {
+                        [1] = 255,
+                        [2] = 255,
+                        [3] = 255,
+                    },
+                    scalex = 1,
+                    action = "mountain.png",
+                    sets = "scene_grass.plist",
+                    blendEff = {
+                        dst = "invSrcAlpha",
+                        src = "one",
+                    },
+                    flipx = true
+                    scaley = 1,
+                    anchorx = 0,
+                    width = 134,
+                    y = -624,
+                    x = 206,
+                    anchorEnabled = true
+                    z = 0,
+                    height = 115,
+                    rotate = 0,
+                    anchory = 0,
+                    tag = -1,
+                },
+                name = "left_m2",
+            },
+            [4] = {
+                childs = {
+                    [1] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_peachtree1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 123,
+                            y = -59,
+                            x = 112,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 92,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [2] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_peachtree1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 123,
+                            y = -68,
+                            x = 191,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 92,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [3] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_peachtree3.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 140,
+                            y = 52,
+                            x = 131,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 103,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [4] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_tinystone.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = true
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 31,
+                            y = 107,
+                            x = 157,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 14,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [5] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_grass4.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = true
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 35,
+                            y = 56,
+                            x = 40,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 24,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                },
+                type = "gameui.Sprite",
+                data = {
+                    visible = true
+                    flipy = false,
+                    color = {
+                        [1] = 255,
+                        [2] = 255,
+                        [3] = 255,
+                    },
+                    scalex = 1,
+                    action = "land_peachtree1.png",
+                    sets = "scene_grass.plist",
+                    blendEff = {
+                        dst = "invSrcAlpha",
+                        src = "one",
+                    },
+                    flipx = true
+                    scaley = 1,
+                    anchorx = 0,
+                    width = 123,
+                    y = -618,
+                    x = 52,
+                    anchorEnabled = true
+                    z = 0,
+                    height = 92,
+                    rotate = 0,
+                    anchory = 0,
+                    tag = -1,
+                },
+                name = "",
+            },
+            [5] = {
+                childs = {
+                    [1] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_tree2.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 124,
+                            y = 3,
+                            x = 84,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 84,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                },
+                type = "gameui.Sprite",
+                data = {
+                    visible = true
+                    flipy = false,
+                    color = {
+                        [1] = 255,
+                        [2] = 255,
+                        [3] = 255,
+                    },
+                    scalex = 1,
+                    action = "land_tree1.png",
+                    sets = "scene_grass.plist",
+                    blendEff = {
+                        dst = "invSrcAlpha",
+                        src = "one",
+                    },
+                    flipx = false,
+                    scaley = 1,
+                    anchorx = 0,
+                    width = 187,
+                    y = -477,
+                    x = 8,
+                    anchorEnabled = true
+                    z = 0,
+                    height = 84,
+                    rotate = 0,
+                    anchory = 0,
+                    tag = -1,
+                },
+                name = "",
+            },
+            [6] = {
+                childs = {
+                    [1] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_grass2.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 50,
+                            y = -21,
+                            x = 23,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 43,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                },
+                type = "gameui.Sprite",
+                data = {
+                    visible = true
+                    flipy = false,
+                    color = {
+                        [1] = 255,
+                        [2] = 255,
+                        [3] = 255,
+                    },
+                    scalex = 1,
+                    action = "river_hua.png",
+                    sets = "scene_grass.plist",
+                    blendEff = {
+                        dst = "invSrcAlpha",
+                        src = "one",
+                    },
+                    flipx = false,
+                    scaley = 1,
+                    anchorx = 0,
+                    width = 96,
+                    y = -380,
+                    x = 32,
+                    anchorEnabled = true
+                    z = 0,
+                    height = 78,
+                    rotate = 0,
+                    anchory = 0,
+                    tag = -1,
+                },
+                name = "",
+            },
+            [7] = {
+                childs = {
+                    [1] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_stone1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 37,
+                            y = -8,
+                            x = 72,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 31,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [2] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_tinystone.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 31,
+                            y = -77,
+                            x = 138,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 14,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                },
+                type = "gameui.Sprite",
+                data = {
+                    visible = true
+                    flipy = false,
+                    color = {
+                        [1] = 255,
+                        [2] = 255,
+                        [3] = 255,
+                    },
+                    scalex = 1,
+                    action = "land_tree2.png",
+                    sets = "scene_grass.plist",
+                    blendEff = {
+                        dst = "invSrcAlpha",
+                        src = "one",
+                    },
+                    flipx = false,
+                    scaley = 1,
+                    anchorx = 0,
+                    width = 124,
+                    y = -52,
+                    x = 13,
+                    anchorEnabled = true
+                    z = 0,
+                    height = 84,
+                    rotate = 0,
+                    anchory = 0,
+                    tag = -1,
+                },
+                name = "",
+            },
+            [8] = {
+                childs = {
+                    [1] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_peachtree3.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = true
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 140,
+                            y = 20,
+                            x = 7,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 99,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [2] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_food2.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 20,
+                            y = -7,
+                            x = 101,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 19,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [3] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_treebase.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 45,
+                            y = -45,
+                            x = 202,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 24,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [4] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_peachtree1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 123,
+                            y = 23,
+                            x = 233,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 92,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [5] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_peachtree3.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 140,
+                            y = -101,
+                            x = 820,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 103,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [6] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_food2.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 20,
+                            y = -140,
+                            x = 729,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 19,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [7] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_food2.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 20,
+                            y = -137,
+                            x = 741,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 19,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                },
+                type = "gameui.Sprite",
+                data = {
+                    visible = true
+                    flipy = false,
+                    color = {
+                        [1] = 255,
+                        [2] = 255,
+                        [3] = 255,
+                    },
+                    scalex = 1,
+                    action = "land_peachtree2.png",
+                    sets = "scene_grass.plist",
+                    blendEff = {
+                        dst = "invSrcAlpha",
+                        src = "one",
+                    },
+                    flipx = false,
+                    scaley = 1,
+                    anchorx = 0,
+                    width = 140,
+                    y = -73,
+                    x = 194,
+                    anchorEnabled = true
+                    z = 0,
+                    height = 103,
+                    rotate = 0,
+                    anchory = 0,
+                    tag = -1,
+                },
+                name = "",
+            },
+            [9] = {
+                childs = {
+                    [1] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "river_stone1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 47,
+                            y = 44,
+                            x = 173,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 62,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [2] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "river_stone1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 47,
+                            y = 113,
+                            x = 275,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 62,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                },
+                type = "gameui.Sprite",
+                data = {
+                    visible = true
+                    flipy = false,
+                    color = {
+                        [1] = 255,
+                        [2] = 255,
+                        [3] = 255,
+                    },
+                    scalex = 1,
+                    action = "river_stone2.png",
+                    sets = "scene_grass.plist",
+                    blendEff = {
+                        dst = "invSrcAlpha",
+                        src = "one",
+                    },
+                    flipx = false,
+                    scaley = 1,
+                    anchorx = 0,
+                    width = 73,
+                    y = -224,
+                    x = 489,
+                    anchorEnabled = true
+                    z = 0,
+                    height = 95,
+                    rotate = 0,
+                    anchory = 0,
+                    tag = -1,
+                },
+                name = "river_stone",
+            },
+            [10] = {
+                childs = {
+                    [1] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "river_lotus1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 60,
+                            y = 150,
+                            x = -28,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 67,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [2] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "river_lotus1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = true
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 60,
+                            y = 6,
+                            x = 213,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 67,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [3] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "river_lotus2.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = true
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 60,
+                            y = 1,
+                            x = -116,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 57,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [4] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "river_lotus2.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 60,
+                            y = 93,
+                            x = -169,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 57,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [5] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "river_lotus2.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = true
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 60,
+                            y = 156,
+                            x = 129,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 57,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [6] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "river_lotus2.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 60,
+                            y = 95,
+                            x = 66,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 57,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                },
+                type = "gameui.Sprite",
+                data = {
+                    visible = true
+                    flipy = false,
+                    color = {
+                        [1] = 255,
+                        [2] = 255,
+                        [3] = 255,
+                    },
+                    scalex = 1,
+                    action = "river_lotus1.png",
+                    sets = "scene_grass.plist",
+                    blendEff = {
+                        dst = "invSrcAlpha",
+                        src = "one",
+                    },
+                    flipx = false,
+                    scaley = 1,
+                    anchorx = 0,
+                    width = 60,
+                    y = -240,
+                    x = 606,
+                    anchorEnabled = true
+                    z = 0,
+                    height = 67,
+                    rotate = 0,
+                    anchory = 0,
+                    tag = -1,
+                },
+                name = "river_lotus",
+            },
+            [11] = {
+                childs = {
+                    [1] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "river_move.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 22,
+                            y = 14,
+                            x = -16,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 21,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [2] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "river_move.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 22,
+                            y = -38,
+                            x = 2,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 21,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [3] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "river_move.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 22,
+                            y = 59,
+                            x = 137,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 21,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [4] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "river_move.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 22,
+                            y = 72,
+                            x = 170,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 21,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [5] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "river_move.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 22,
+                            y = 162,
+                            x = 121,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 21,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [6] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "river_move.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 22,
+                            y = 178,
+                            x = 82,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 21,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [7] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "river_move.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 22,
+                            y = 200,
+                            x = 51,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 21,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                },
+                type = "gameui.Sprite",
+                data = {
+                    visible = true
+                    flipy = false,
+                    color = {
+                        [1] = 255,
+                        [2] = 255,
+                        [3] = 255,
+                    },
+                    scalex = 1,
+                    action = "river_move.png",
+                    sets = "scene_grass.plist",
+                    blendEff = {
+                        dst = "invSrcAlpha",
+                        src = "one",
+                    },
+                    flipx = false,
+                    scaley = 1,
+                    anchorx = 0,
+                    width = 22,
+                    y = -222.01953125,
+                    x = 550.6796875,
+                    anchorEnabled = true
+                    z = 0,
+                    height = 21,
+                    rotate = 0,
+                    anchory = 0,
+                    tag = -1,
+                },
+                name = "river_bg",
+            },
+            [12] = {
+                childs = {
+                    [1] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "mountain.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 134,
+                            y = -76,
+                            x = 123,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 115,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [2] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "mountain.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = true
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 134,
+                            y = -80,
+                            x = 213,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 115,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [3] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_grass1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = true
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 24,
+                            y = -29,
+                            x = 139,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 16,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [4] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_grass1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = true
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 24,
+                            y = -23.19921875,
+                            x = 94.61328125,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 16,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [5] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_grass1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 24,
+                            y = -43,
+                            x = 190,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 16,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                },
+                type = "gameui.Sprite",
+                data = {
+                    visible = true
+                    flipy = false,
+                    color = {
+                        [1] = 255,
+                        [2] = 255,
+                        [3] = 255,
+                    },
+                    scalex = 1,
+                    action = "mountain.png",
+                    sets = "scene_grass.plist",
+                    blendEff = {
+                        dst = "invSrcAlpha",
+                        src = "one",
+                    },
+                    flipx = false,
+                    scaley = 1,
+                    anchorx = 0,
+                    width = 134,
+                    y = -626,
+                    x = 799,
+                    anchorEnabled = true
+                    z = 0,
+                    height = 115,
+                    rotate = 0,
+                    anchory = 0,
+                    tag = -1,
+                },
+                name = "left_m1",
+            },
+            [13] = {
+                childs = {
+                    [1] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "mountain.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 134,
+                            y = -55,
+                            x = 94,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 115,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [2] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "mountain.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = true
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 134,
+                            y = -72.3671875,
+                            x = 147.0859375,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 115,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [3] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_grass1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = true
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 24,
+                            y = -19,
+                            x = 63,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 16,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [4] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_basegrass1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 21,
+                            y = -23,
+                            x = 115,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 34,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [5] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "mountain.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = true
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 134,
+                            y = -5,
+                            x = 371,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 115,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [6] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_peachtree2.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 140,
+                            y = 123,
+                            x = 255,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 103,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [7] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_stone1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 37,
+                            y = 166,
+                            x = 184,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 31,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                },
+                type = "gameui.Sprite",
+                data = {
+                    visible = true
+                    flipy = false,
+                    color = {
+                        [1] = 255,
+                        [2] = 255,
+                        [3] = 255,
+                    },
+                    scalex = 1,
+                    action = "mountain.png",
+                    sets = "scene_grass.plist",
+                    blendEff = {
+                        dst = "invSrcAlpha",
+                        src = "one",
+                    },
+                    flipx = true
+                    scaley = 1,
+                    anchorx = 0,
+                    width = 134,
+                    y = -637,
+                    x = 699,
+                    anchorEnabled = true
+                    z = 0,
+                    height = 115,
+                    rotate = 0,
+                    anchory = 0,
+                    tag = -1,
+                },
+                name = "left_m2",
+            },
+            [14] = {
+                childs = {
+                    [1] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_peachtree1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = true
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 123,
+                            y = -67,
+                            x = -44,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 92,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [2] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_peachtree1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 123,
+                            y = -63,
+                            x = -140,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 92,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [3] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_peachtree1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = true
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 123,
+                            y = -73,
+                            x = -190,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 92,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                },
+                type = "gameui.Sprite",
+                data = {
+                    visible = true
+                    flipy = false,
+                    color = {
+                        [1] = 255,
+                        [2] = 255,
+                        [3] = 255,
+                    },
+                    scalex = 1,
+                    action = "land_peachtree1.png",
+                    sets = "scene_grass.plist",
+                    blendEff = {
+                        dst = "invSrcAlpha",
+                        src = "one",
+                    },
+                    flipx = true
+                    scaley = 1,
+                    anchorx = 0,
+                    width = 123,
+                    y = -620,
+                    x = 922,
+                    anchorEnabled = true
+                    z = 0,
+                    height = 92,
+                    rotate = 0,
+                    anchory = 0,
+                    tag = -1,
+                },
+                name = "",
+            },
+            [15] = {
+                childs = {
+                    [1] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_tinystone.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 31,
+                            y = -4,
+                            x = 37,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 14,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [2] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_tinystone.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = true
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 31,
+                            y = -28,
+                            x = 111,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 14,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                },
+                type = "gameui.Sprite",
+                data = {
+                    visible = true
+                    flipy = false,
+                    color = {
+                        [1] = 255,
+                        [2] = 255,
+                        [3] = 255,
+                    },
+                    scalex = 1,
+                    action = "king.png",
+                    sets = "scene_grass.plist",
+                    blendEff = {
+                        dst = "invSrcAlpha",
+                        src = "one",
+                    },
+                    flipx = false,
+                    scaley = 1,
+                    anchorx = 0,
+                    width = 102,
+                    y = -554,
+                    x = 833,
+                    anchorEnabled = true
+                    z = 0,
+                    height = 96,
+                    rotate = 0,
+                    anchory = 0,
+                    tag = -1,
+                },
+                name = "",
+            },
+            [16] = {
+                childs = {
+                    [1] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_stone1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 37,
+                            y = -2,
+                            x = 5,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 31,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [2] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_stone1.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 37,
+                            y = -2,
+                            x = 27,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 31,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                },
+                type = "gameui.Sprite",
+                data = {
+                    visible = true
+                    flipy = false,
+                    color = {
+                        [1] = 255,
+                        [2] = 255,
+                        [3] = 255,
+                    },
+                    scalex = 1,
+                    action = "land_stone1.png",
+                    sets = "scene_grass.plist",
+                    blendEff = {
+                        dst = "invSrcAlpha",
+                        src = "one",
+                    },
+                    flipx = false,
+                    scaley = 1,
+                    anchorx = 0,
+                    width = 37,
+                    y = -485,
+                    x = 736,
+                    anchorEnabled = true
+                    z = 0,
+                    height = 31,
+                    rotate = 0,
+                    anchory = 0,
+                    tag = -1,
+                },
+                name = "block1",
+            },
+            [17] = {
+                childs = {
+                    [1] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_grass5.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 34,
+                            y = -0,
+                            x = 2,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 29,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                    [2] = {
+                        type = "gameui.Sprite",
+                        data = {
+                            visible = true
+                            flipy = false,
+                            color = {
+                                [1] = 255,
+                                [2] = 255,
+                                [3] = 255,
+                            },
+                            scalex = 1,
+                            action = "land_grass5.png",
+                            sets = "scene_grass.plist",
+                            blendEff = {
+                                dst = "invSrcAlpha",
+                                src = "one",
+                            },
+                            flipx = false,
+                            scaley = 1,
+                            anchorx = 0,
+                            width = 34,
+                            y = 1,
+                            x = 28,
+                            anchorEnabled = true
+                            z = 0,
+                            height = 29,
+                            rotate = 0,
+                            anchory = 0,
+                            tag = -1,
+                        },
+                        name = "",
+                    },
+                },
+                type = "gameui.Sprite",
+                data = {
+                    visible = true
+                    flipy = false,
+                    color = {
+                        [1] = 255,
+                        [2] = 255,
+                        [3] = 255,
+                    },
+                    scalex = 1,
+                    action = "land_grass5.png",
+                    sets = "scene_grass.plist",
+                    blendEff = {
+                        dst = "invSrcAlpha",
+                        src = "one",
+                    },
+                    flipx = false,
+                    scaley = 1,
+                    anchorx = 0,
+                    width = 34,
+                    y = -549,
+                    x = 290,
+                    anchorEnabled = true
+                    z = 0,
+                    height = 29,
+                    rotate = 0,
+                    anchory = 0,
+                    tag = -1,
+                },
+                name = "block2",
+            },
+        },
+        type = "gameui.Layer",
+        data = {
+            visible = true
+            anchorEnabled = false,
+            scalex = 1,
+            anchorx = 0,
+            width = 960,
+            y = -0,
+            x = 0,
+            scaley = 1,
+            z = 1,
+            height = 640,
+            rotate = 0,
+            anchory = 0,
+            tag = -1,
+        },
+        name = "layer_up",
+    },
+    [3] = {
+        type = "gameui.Sprite",
+        data = {
+            visible = true
+            flipy = false,
+            color = {
+                [1] = 255,
+                [2] = 255,
+                [3] = 255,
+            },
+            scalex = 1,
+            action = "base.png",
+            sets = "scene_grass.plist",
+            blendEff = {
+                dst = "invSrcAlpha",
+                src = "one",
+            },
+            flipx = false,
+            scaley = 1,
+            anchorx = 0,
+            width = 148,
+            y = -332,
+            x = 880,
+            anchorEnabled = true
+            z = 10,
+            height = 184,
+            rotate = 0,
+            anchory = 0,
+            tag = -1,
+        },
+        name = "base",
+    },
+},
+
