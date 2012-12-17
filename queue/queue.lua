@@ -35,12 +35,12 @@ function Queue:empty()
 end
 
 function Queue:top()
-   if self:empty() then error("队列为空!") 
+   if self:empty() then error("闃熷垪涓虹┖!") 
    else return self._elem[1] end
 end
 
 function Queue:pop()
-   if self:empty() then error("队列为空!") 
+   if self:empty() then error("闃熷垪涓虹┖!") 
    else
        local res = self._elem[1];
 	   self._elem[1] = self._elem[self._top];

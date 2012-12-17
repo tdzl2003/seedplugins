@@ -1,9 +1,9 @@
 --[[
 Seed 插件
-	ui
+	ccb
 包含文件
-	ui.lua - 提供通过ccb文件创建UIstage的方法
-	ui_menu.lua - 提供创建Menu（菜单框架）和MenuItem（可点击的菜单项）的方法
+	ccb.lua - 提供通过ccb文件创建UIstage的方法
+	ccb_menu.lua - 提供创建Menu（菜单框架）和MenuItem（可点击的菜单项）的方法
 依赖组件
 	plist
 	particle
@@ -31,7 +31,7 @@ Seed 插件
 
 
 local plistParser = require("plist")
-require("ui_menu")
+require("ccb_menu")
 require("particle")
 require("transition")
 require("animation")

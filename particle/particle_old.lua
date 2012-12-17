@@ -1,16 +1,16 @@
 --[[
-Seed ²å¼ş
+Seed æ’ä»¶
 	particle
-	°üº¬ÎÄ¼ş
-		particle.lua - Ìá¹©Í¨¹ıÊı¾İtable»òplistÎÄ¼ş´´½¨UIµÄ·½·¨
-	ÒÀÀµ×é¼ş
+	åŒ…å«æ–‡ä»¶
+		particle.lua - æä¾›é€šè¿‡æ•°æ®tableæˆ–plistæ–‡ä»¶åˆ›å»ºUIçš„æ–¹æ³•
+	ä¾èµ–ç»„ä»¶
 		transition
 		plist
 		lua_ex
-	×îºóĞŞ¸ÄÈÕÆÚ
+	æœ€åä¿®æ”¹æ—¥æœŸ
 		2012-6-15
-	¸üĞÂ¼ÇÂ¼
-		2012-6-15£ºÔö¼ÓÁËself:pause(),self:resume(),self:stop(),self:start()·½·¨£¬À©´óÁ£×Ó³Øsize
+	æ›´æ–°è®°å½•
+		2012-6-15ï¼šå¢åŠ äº†self:pause(),self:resume(),self:stop(),self:start()æ–¹æ³•ï¼Œæ‰©å¤§ç²’å­æ± size
 ]]--
 math.randomseed(os.time())	
 local urilib = require("uri")
@@ -40,7 +40,7 @@ function __init__()
 end
 
 
---¸ù¾İÆ½¾ùÖµºÍ¶¶¶¯·¶Î§¼ÆËã×îÖÕÖµ£¬¿ÉÒÔ¼Óµ½ÊıÑ§¿âÀï
+--æ ¹æ®å¹³å‡å€¼å’ŒæŠ–åŠ¨èŒƒå›´è®¡ç®—æœ€ç»ˆå€¼ï¼Œå¯ä»¥åŠ åˆ°æ•°å­¦åº“é‡Œ
 local function calcVariance(value, variance)
 	return value + (math.random() - 0.5) * variance * 2
 end
@@ -58,8 +58,8 @@ local function createNodePool(emit, psd, parentNode)
 				r2d.fillRect(-emit.imgW / 2, -emit.imgH / 2, emit.imgW / 2, emit.imgH / 2)
 			end
 		else
-			--Ê¹ÓÃÁËimage£¬È¡ÏûÁË¿í¸ß
-			emit.node[i] = parentNode:newImage(emit.texture) -- ´´½¨³öÈ«²¿Á£×ÓµÄNode
+			--ä½¿ç”¨äº†imageï¼Œå–æ¶ˆäº†å®½é«˜
+			emit.node[i] = parentNode:newImage(emit.texture) -- åˆ›å»ºå‡ºå…¨éƒ¨ç²’å­çš„Node
 			emit.node[i]:setAnchor(0, 0)
 		end
 		emit.node[i]:hide()
@@ -68,12 +68,12 @@ local function createNodePool(emit, psd, parentNode)
 	end
 end
 
---³õÊ¼»¯Á£×ÓÏµÍ³ËùÓĞÊôĞÔ£¬²ÎÊıÓĞĞ§ĞÔ¼ì²é¶¼ÔÚÕâÀï½øĞĞ
+--åˆå§‹åŒ–ç²’å­ç³»ç»Ÿæ‰€æœ‰å±æ€§ï¼Œå‚æ•°æœ‰æ•ˆæ€§æ£€æŸ¥éƒ½åœ¨è¿™é‡Œè¿›è¡Œ
 local function initAttr(data, emit, parentNode)
 	local psd = {}
 	psd = data
 	
-	--ÓĞĞ§ĞÔ¼ì²é£¬ÈçÊı¾İÎªnilÔò¸³³õÖµ
+	--æœ‰æ•ˆæ€§æ£€æŸ¥ï¼Œå¦‚æ•°æ®ä¸ºnilåˆ™èµ‹åˆå€¼
 	psd.maxParticles = psd.maxParticles or 3500
 
 	psd.particleLifespan = psd.particleLifespan or 0
@@ -116,9 +116,9 @@ local function initAttr(data, emit, parentNode)
 	psd.gravityx = psd.gravityx or 0
 	psd.gravityy = psd.gravityy or 0
 	
-	psd.tangentialAcceleration = psd.tangentialAcceleration or 0	-- ÇĞÏò¼ÓËÙ¶È
+	psd.tangentialAcceleration = psd.tangentialAcceleration or 0	-- åˆ‡å‘åŠ é€Ÿåº¦
 	psd.tangentialAccelVariance = psd.tangentialAccelVariance or 0	
-	psd.radialAcceleration = psd.radialAcceleration or 0			-- ¾¶Ïò¼ÓËÙ¶È
+	psd.radialAcceleration = psd.radialAcceleration or 0			-- å¾„å‘åŠ é€Ÿåº¦
 	psd.radialAccelVariance = psd.radialAccelVariance or 0
 
 	psd.rotationStart = psd.rotationStart or 0						-- 
@@ -130,15 +130,15 @@ local function initAttr(data, emit, parentNode)
 	psd.minRadiusVariance = psd.minRadiusVariance or 0
 	psd.maxRadius = psd.maxRadius or 0
 	psd.maxRadiusVariance = psd.maxRadiusVariance or 0
-	psd.emitterType = psd.emitterType or 0							-- ±ê¼ÇÖ±Ïß·¢Éä»¹ÊÇ»ØĞı·¢Éä
-	psd.rotatePerSecond = psd.rotatePerSecond or 0					-- ½ÇËÙ¶È
-	psd.rotatePerSecondVariance = psd.rotatePerSecondVariance or 0	-- ½ÇËÙ¶È¶¶¶¯·¶Î§
-	psd.omegaAcceleration = psd.omegaAcceleration or 0				-- ½Ç¼ÓËÙ¶È
-	psd.omegaAccelVariance = psd.omegaAccelVariance or 0			-- ½Ç¼ÓËÙ¶È¶¶¶¯·¶Î§
+	psd.emitterType = psd.emitterType or 0							-- æ ‡è®°ç›´çº¿å‘å°„è¿˜æ˜¯å›æ—‹å‘å°„
+	psd.rotatePerSecond = psd.rotatePerSecond or 0					-- è§’é€Ÿåº¦
+	psd.rotatePerSecondVariance = psd.rotatePerSecondVariance or 0	-- è§’é€Ÿåº¦æŠ–åŠ¨èŒƒå›´
+	psd.omegaAcceleration = psd.omegaAcceleration or 0				-- è§’åŠ é€Ÿåº¦
+	psd.omegaAccelVariance = psd.omegaAccelVariance or 0			-- è§’åŠ é€Ÿåº¦æŠ–åŠ¨èŒƒå›´
 	
 	psd.textureFileName = emit.texture
 	
-	createNodePool(emit, psd, parentNode)							-- ´´½¨¶ÔÏó³Ø	
+	createNodePool(emit, psd, parentNode)							-- åˆ›å»ºå¯¹è±¡æ± 	
 	
 	return psd
 end
@@ -146,7 +146,7 @@ end
 
 local tr = require("transition")
 
---¸üĞÂËÙ¶È¡¢Î»ÖÃ¡¢¾¶Ïò¼ÓËÙ¶È¡¢ÇĞÏò¼ÓËÙ¶È
+--æ›´æ–°é€Ÿåº¦ã€ä½ç½®ã€å¾„å‘åŠ é€Ÿåº¦ã€åˆ‡å‘åŠ é€Ÿåº¦
 local function updateLineVA(sx,sy,vx,vy,gx,gy,ra,ta,dt)
 	local rax,ray = 0, 0
 	local tax,tay = 0, 0
@@ -169,7 +169,7 @@ end
 
 
 local function createParticleWithGravity(emit,id,osx,osy,spd,angle,span,ss,es,scr,scg,scb,sca,ecr,ecg,ecb,eca,ra,ta,sspin,espin)
-	--²ÎÊıÔ¤´¦Àí
+	--å‚æ•°é¢„å¤„ç†
 	if es == -1 then es = ss end 
 	ss = ss / emit.imgW
 	es = es / emit.imgW
@@ -177,14 +177,14 @@ local function createParticleWithGravity(emit,id,osx,osy,spd,angle,span,ss,es,sc
 	espin = math.rad(espin)
 	span = math.abs(span)
 
-	--·½±ã¼ÆËãËùÓÃµÄ±¾µØ±äÁ¿
+	--æ–¹ä¾¿è®¡ç®—æ‰€ç”¨çš„æœ¬åœ°å˜é‡
 	local sx,sy = 0, 0
 	local vx, vy = spd * math.cos(math.rad(angle)), spd * math.sin(math.rad(angle))
 	local ds,dr = es - ss, espin - sspin
 	
 	local dcr, dcg, dcb, dca = ecr - scr, ecg - scg, ecb - scb, eca - sca
 	
-	--È·¶¨³õÊ¼×´Ì¬
+	--ç¡®å®šåˆå§‹çŠ¶æ€
 	emit.node[id].rotation = sspin
 	emit.node[id]:show()
 	emit.node[id].x, emit.node[id].y = osx, osy
@@ -195,10 +195,10 @@ local function createParticleWithGravity(emit,id,osx,osy,spd,angle,span,ss,es,sc
 	tr.start(emit.runtime, function()
 		if(span > 0) then
 			tr.timePeriod(span, function(t, dt)
-				-- ÕâÀïÒª¼ÓÈë´øÓĞËÙ¶È¡Ì¡¢¼ÓËÙ¶È¡Ì¡¢¾¶Ïò¼ÓËÙ¶È¡Ì¡¢ÇĞÏò¼ÓËÙ¶È¡Ì¡¢ÑÕÉ«±ä»¯¡ÌµÄ¹«Ê½
+				-- è¿™é‡Œè¦åŠ å…¥å¸¦æœ‰é€Ÿåº¦âˆšã€åŠ é€Ÿåº¦âˆšã€å¾„å‘åŠ é€Ÿåº¦âˆšã€åˆ‡å‘åŠ é€Ÿåº¦âˆšã€é¢œè‰²å˜åŒ–âˆšçš„å…¬å¼
 
 				a = sca + dca * t / span
-				if a > 0.001 then			--µÖÏûRGBµÄÔ¤³Ë
+				if a > 0.001 then			--æŠµæ¶ˆRGBçš„é¢„ä¹˜
 					r = (scr + dcr * t / span) / a
 					g = (scg + dcg * t / span) / a
 					b = (scb + dcb * t / span) / a
@@ -248,9 +248,9 @@ local function createParticleWithRotation(emit,id,osx,osy,omega,omegaAccel,fai,s
 	tr.start(emit.runtime, function()
 		if(span > 0) then
 			tr.timePeriod(span, function(t, dt)
-				-- ÕâÀïÒª¼ÓÈë´øÓĞ½ÇËÙ¶È¡¢ÏàÎ»¡¢°ë¾¶±ä»¯¡¢ÑÕÉ«±ä»¯¡ÌµÄ¹«Ê½
+				-- è¿™é‡Œè¦åŠ å…¥å¸¦æœ‰è§’é€Ÿåº¦ã€ç›¸ä½ã€åŠå¾„å˜åŒ–ã€é¢œè‰²å˜åŒ–âˆšçš„å…¬å¼
 				a = sca + dca * t / span
-				if a > 0.001 then			--µÖÏûRGBµÄÔ¤³Ë
+				if a > 0.001 then			--æŠµæ¶ˆRGBçš„é¢„ä¹˜
 					r = (scr + dcr * t / span) / a
 					g = (scg + dcg * t / span) / a
 					b = (scb + dcb * t / span) / a
@@ -303,9 +303,9 @@ local function shootParticle(posx, posy, emit, psd)
 			emit,
 			table.remove(emit.particlesNeedActive),
 			posx,
-			posy,																-- Ä¿Ç°¼æÈİµÄ±à¼­Æ÷²»Ö§³ÖĞı×ªÊ±Ô²ĞÄµÄÆ«ÒÆ
+			posy,																-- ç›®å‰å…¼å®¹çš„ç¼–è¾‘å™¨ä¸æ”¯æŒæ—‹è½¬æ—¶åœ†å¿ƒçš„åç§»
 			calcVariance(psd.rotatePerSecond, psd.rotatePerSecondVariance),
-			calcVariance(psd.omegaAcceleration, psd.omegaAccelVariance),		-- Ä¿Ç°¼æÈİµÄ±à¼­Æ÷²»Ö§³Ö½Ç¼ÓËÙ¶È
+			calcVariance(psd.omegaAcceleration, psd.omegaAccelVariance),		-- ç›®å‰å…¼å®¹çš„ç¼–è¾‘å™¨ä¸æ”¯æŒè§’åŠ é€Ÿåº¦
 			calcVariance(psd.angle, psd.angleVariance),							
 			calcVariance(psd.particleLifespan, psd.particleLifespanVariance),	
 			calcVariance(psd.startParticleSize, psd.startParticleSizeVariance),	
@@ -319,14 +319,14 @@ local function shootParticle(posx, posy, emit, psd)
 			calcVariance(psd.finishColorBlue, psd.finishColorVarianceBlue),		
 			calcVariance(psd.finishColorAlpha, psd.finishColorVarianceAlpha),	
 			calcVariance(psd.maxRadius, psd.maxRadiusVariance),
-			calcVariance(psd.minRadius, psd.minRadiusVariance),					-- Ä¿Ç°¼æÈİµÄ±à¼­Æ÷²»Ö§³ÖĞı×ª½áÊø°ë¾¶µÄ¶¶¶¯
-			calcVariance(psd.rotationStart, psd.rotationStartVariance),			-- µ¥Ò»Á£×ÓµÄĞı×ª±ä»¯
+			calcVariance(psd.minRadius, psd.minRadiusVariance),					-- ç›®å‰å…¼å®¹çš„ç¼–è¾‘å™¨ä¸æ”¯æŒæ—‹è½¬ç»“æŸåŠå¾„çš„æŠ–åŠ¨
+			calcVariance(psd.rotationStart, psd.rotationStartVariance),			-- å•ä¸€ç²’å­çš„æ—‹è½¬å˜åŒ–
 			calcVariance(psd.rotationEnd, psd.rotationEndVariance)				
 		)
 	end
 end
 
---ÅçÉäÆ÷µÄupdate·½·¨
+--å–·å°„å™¨çš„updateæ–¹æ³•
 local function update(emit, psd, t, dt) 				
 	local posx, posy = emit:localToParent(emit.x, emit.y)
 	local n = 0
@@ -344,7 +344,7 @@ function removeEmit(emit)
 	emit:remove()
 end
 
---ËùÓĞÁ£×Ó´ÓÊôÓÚself¶ÔÏó£¬·¢ÉäÆ÷´ÓÊôÓÚself¶ÔÏó£¬·¢ÉäÆ÷µÄÒÆ¶¯¶ÔÓÚÒÑÖªµÄÁ£×Ó²»Ó°Ïì
+--æ‰€æœ‰ç²’å­ä»å±äºselfå¯¹è±¡ï¼Œå‘å°„å™¨ä»å±äºselfå¯¹è±¡ï¼Œå‘å°„å™¨çš„ç§»åŠ¨å¯¹äºå·²çŸ¥çš„ç²’å­ä¸å½±å“
 local function _newParticleEmit(self, texture, data, ra )
 	local runtime = ra:newAgent()
 
@@ -357,11 +357,11 @@ local function _newParticleEmit(self, texture, data, ra )
 	emit.debugMode = false
 	emit.texture = texture
 
-	emit.node = {}									--¹¹³ÉÁ£×ÓµÄnode¶ÔÏó
-	emit.particlesNeedActive = {}					--¼ÇÂ¼Á£×ÓÊÇ·ñĞèÒª±»¼¤»î
-	emit.imgW, emit.imgH = texW, texH				--ÎÆÀí³ß´ç
+	emit.node = {}									--æ„æˆç²’å­çš„nodeå¯¹è±¡
+	emit.particlesNeedActive = {}					--è®°å½•ç²’å­æ˜¯å¦éœ€è¦è¢«æ¿€æ´»
+	emit.imgW, emit.imgH = texW, texH				--çº¹ç†å°ºå¯¸
 	data.emissionRate = math.floor(data.emissionRate or data.maxParticles / data.particleLifespan)
-	emit.period = 1 / data.emissionRate				--·¢ÉäÖÜÆÚ
+	emit.period = 1 / data.emissionRate				--å‘å°„å‘¨æœŸ
 	emit.shoot_t = 0
 
 	local eff = display.BlendStateEffect.new()

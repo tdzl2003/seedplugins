@@ -79,6 +79,7 @@ local function isDerived(thiz, super)
 	return false
 end
 
+
 function extend_type(name, methods, super, statics)
 	if (type(super) == 'string') then
 		super = requireClass(super)

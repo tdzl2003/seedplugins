@@ -1,10 +1,10 @@
 require("lua_ex")
 local uri = require("uri")
 
--- ºËĞÄ£ºmulti-filter»úÖÆ
+-- æ ¸å¿ƒï¼šmulti-filteræœºåˆ¶
 local filters = {}
 
--- ³¢ÊÔ¹ıÂË×ÊÔ´£¬·µ»ØÒ»¸ö×ÊÔ´³¢ÊÔÁĞ±í
+-- å°è¯•è¿‡æ»¤èµ„æºï¼Œè¿”å›ä¸€ä¸ªèµ„æºå°è¯•åˆ—è¡¨
 local function filter(uri)
 	local list = { {uri, 1} }
 	
@@ -15,7 +15,7 @@ local function filter(uri)
 end
 
 local function mainFilter(uri)
-	-- @¿ªÍ·µÄÊÓÎª¾ø¶ÔÂ·¾¶¡£Èç"@res://config.lua"
+	-- @å¼€å¤´çš„è§†ä¸ºç»å¯¹è·¯å¾„ã€‚å¦‚"@res://config.lua"
 	if (uri:sub(1,1)=='@') then
 		return uri:sub(2), true
 	end
@@ -67,12 +67,12 @@ local function removeScaleFilter(i)
 end
 
 --[[
-²ÎÊımapºÍdisplay.setResourceFilterµÄ±í²ÎÊıÀàËÆ
+å‚æ•°mapå’Œdisplay.setResourceFilterçš„è¡¨å‚æ•°ç±»ä¼¼
 {
 	["_x3.5"] = 3.5,
 	["@2"] = 2,
 }
-¿ÉÒÔÖ¸¶¨Ä¬ÈÏµÄ·Å´ó±¶Êı£º
+å¯ä»¥æŒ‡å®šé»˜è®¤çš„æ”¾å¤§å€æ•°ï¼š
 {
 	[""] = 2,
 	["@1"] = 1,
@@ -86,12 +86,12 @@ local function setContentScaleSuffixFilter(map)
 		table.insert(sorts, {k,v})
 	end
 	
-	-- °´×î½Ó½ücontent scaleµÄË³ĞòÅÅĞò¡£
+	-- æŒ‰æœ€æ¥è¿‘content scaleçš„é¡ºåºæ’åºã€‚
 	local lastScale
 	local function sortMap()
 		local scale = display.getContentScale()
 		if (scale ~= lastScale) then
-			-- scale¸Ä±ä£¬ÖØĞÂÅÅĞò¡£
+			-- scaleæ”¹å˜ï¼Œé‡æ–°æ’åºã€‚
 			table.sort(sorts, function(a, b)
 				return math.abs(a[2]-scale)<math.abs(b[2]-scale)
 			end)

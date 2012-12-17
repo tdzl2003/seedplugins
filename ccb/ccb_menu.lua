@@ -1,28 +1,29 @@
 --[[
-Seed ²å¼ş
-	ui_menu
+Seed æ’ä»¶
+	ccb_menu
 
-	°üº¬ÎÄ¼ş
-		ui_menu.lua - Ìá¹©´´½¨°´Å¥µÄ·½·¨
+	åŒ…å«æ–‡ä»¶
+		ccb_menu.lua - æä¾›åˆ›å»ºæŒ‰é’®çš„æ–¹æ³•
 
-	ÒÀÀµ×é¼ş
+	ä¾èµ–ç»„ä»¶
 		animation
 
-	×îºóĞŞ¸ÄÈÕÆÚ
-		2012-8-6
+	æœ€åä¿®æ”¹æ—¥æœŸ
+		2012-8-8
 
-	¸üĞÂÄÚÈİ
-		2012-8-6£ºÔÚ¹â±êÍÏ×§³ö°´Å¥µÄ·¶Î§Ö®Íâºó£¬ËÉ¿ªÊó±ê°´¼ü»òÊÖÖ¸´ÓÆÁÄ»ÉÏÒÆ¿ªÊ±£¬²»»á´¥·¢°´Å¥ÊÂ¼ş£»µ±°´Å¥ÊôĞÔenabledÎªfalseÊ±£¬ÎŞÂÛÈçºÎÒ²²»´¥·¢°´Å¥ÊÂ¼ş¡£
-					¡¾×¢Òâ£º±¾´Î¸üĞÂÇëÓëinput_exÍ¬²½¸üĞÂ¡¿
-		2012-7-13£ºĞŞÕıÁË°´Å¥µÄstateAutoºÍsetEnabled·½·¨
-		2012-6-15£ºÔö¼ÓÁËstateÊôĞÔ£¬ÓÃÀ´»ñÈ¡µ±Ç°°´Å¥µÄ×´Ì¬
+	æ›´æ–°å†…å®¹
+		2012-8-8ï¼šä¿®æ­£äº†åˆ›å»ºå¤šä¸ªæŒ‰é”®å´åªèƒ½ç›¸åº”ä¸€ä¸ªæŒ‰é”®åŠŸèƒ½çš„bug
+		2012-8-6ï¼šåœ¨å…‰æ ‡æ‹–æ‹½å‡ºæŒ‰é’®çš„èŒƒå›´ä¹‹å¤–åï¼Œæ¾å¼€é¼ æ ‡æŒ‰é”®æˆ–æ‰‹æŒ‡ä»å±å¹•ä¸Šç§»å¼€æ—¶ï¼Œä¸ä¼šè§¦å‘æŒ‰é’®äº‹ä»¶ï¼›å½“æŒ‰é’®å±æ€§enabledä¸ºfalseæ—¶ï¼Œæ— è®ºå¦‚ä½•ä¹Ÿä¸è§¦å‘æŒ‰é’®äº‹ä»¶ã€‚
+					ã€æ³¨æ„ï¼šæœ¬æ¬¡æ›´æ–°è¯·ä¸input_exåŒæ­¥æ›´æ–°ã€‘
+		2012-7-13ï¼šä¿®æ­£äº†æŒ‰é’®çš„stateAutoå’ŒsetEnabledæ–¹æ³•
+		2012-6-15ï¼šå¢åŠ äº†stateå±æ€§ï¼Œç”¨æ¥è·å–å½“å‰æŒ‰é’®çš„çŠ¶æ€
 
-		2012-6-14£ºÔö¼ÓÁËÒ»ÏµÁĞµÄÊôĞÔºÍ·½·¨£¬·½±ãmenuItem¶ÔÏó¸ü¼ÓÁé»îµÄÊ¹ÓÃ
+		2012-6-14ï¼šå¢åŠ äº†ä¸€ç³»åˆ—çš„å±æ€§å’Œæ–¹æ³•ï¼Œæ–¹ä¾¿menuItemå¯¹è±¡æ›´åŠ çµæ´»çš„ä½¿ç”¨
 
-		2012-6-8£ºÔö¼ÓÁËÊ¹ÓÃimageRect´´½¨µÄmenuItemµÄsetDestRect·½·¨
-				¿ª·ÅÁËÊ¹ÓÃimageRect´´½¨µÄmenuItemµÄÈı¸ö×´Ì¬µÄpresentation£¬Ê¹ÓÃnode.pssNormal_, pssSelected_, pssDisabled_ À´»ñÈ¡
+		2012-6-8ï¼šå¢åŠ äº†ä½¿ç”¨imageRectåˆ›å»ºçš„menuItemçš„setDestRectæ–¹æ³•
+				å¼€æ”¾äº†ä½¿ç”¨imageRectåˆ›å»ºçš„menuItemçš„ä¸‰ä¸ªçŠ¶æ€çš„presentationï¼Œä½¿ç”¨node.pssNormal_, pssSelected_, pssDisabled_ æ¥è·å–
 
-		2012-6-4£ºÔö¼ÓµÚÈı¸ö·µ»ØÖµ£ºËùÓÃµ½µÄÍ¼Æ¬×ÊÔ´ÁĞ±í
+		2012-6-4ï¼šå¢åŠ ç¬¬ä¸‰ä¸ªè¿”å›å€¼ï¼šæ‰€ç”¨åˆ°çš„å›¾ç‰‡èµ„æºåˆ—è¡¨
 ]]--
 require("animation")
 local selectors = {}
@@ -39,39 +40,39 @@ display.Stage2D.methods.newMenu = _newMenu
 display.Stage2D.Node.methods.newMenu = _newMenu
 
 --[[
-º¯Êı£ºstage:newMenuItemImage(plist, args, input_ex, anchorx, anchory, enabled)
+å‡½æ•°ï¼šstage:newMenuItemImage(plist, args, input_ex, anchorx, anchory, enabled)
 
-	ËµÃ÷£º
-		´´½¨Ò»¸öÈıÌ¬°´Å¥£¬µ±°´Å¥ÎŞĞ§¡¢ÓĞĞ§ºÍ±»°´ÏÂÊ±£¬ÓĞÈıÖÖ²»Í¬µÄ×´Ì¬
+	è¯´æ˜ï¼š
+		åˆ›å»ºä¸€ä¸ªä¸‰æ€æŒ‰é’®ï¼Œå½“æŒ‰é’®æ— æ•ˆã€æœ‰æ•ˆå’Œè¢«æŒ‰ä¸‹æ—¶ï¼Œæœ‰ä¸‰ç§ä¸åŒçš„çŠ¶æ€
 
-	²ÎÊı£º
-		plist - ×ÊÔ´Í¼ËùÊôplistÎÄ¼ş£¬Èç¹ûÃ»ÓĞ£¬Ìînil£¬ÔòÊÓ×÷Ê¹ÓÃÈıÕÅµ¥¶ÀµÄpngÍ¼Æ¬´´½¨ÈıÌ¬°´Å¥
-		args - argsÊÇÒ»¸ötable£¬Èç¹ûplistÎªnil£¬{ {ÆÕÍ¨×´Ì¬°´Å¥µÄÍ¼Æ¬uri, ¿í, ¸ß}, {Ñ¡ÖĞ×´Ì¬°´Å¥µÄÍ¼Æ¬uri, ¿í, ¸ß}, {ÎŞĞ§×´Ì¬°´Å¥µÄÍ¼Æ¬uri, ¿í, ¸ß} }
-				·ñÔò£¬argsµÄÄÚÈİÎª { {ÆÕÍ¨×´Ì¬°´Å¥µÄÍ¼Æ¬ÔÚplistÖĞµÄÃüÃû}, {Ñ¡ÖĞ×´Ì¬°´Å¥µÄÍ¼Æ¬ÔÚplistÖĞµÄÃüÃû}, {ÎŞĞ§×´Ì¬°´Å¥µÄÍ¼Æ¬ÔÚplistÖĞµÄÃüÃû} }
-		input_ex - input_ex¶ÔÏó
-		anchorx - Ãªµãx
-		anchory - Ãªµãy
-		enabled - ÊÇ·ñÆôÓÃ
+	å‚æ•°ï¼š
+		plist - èµ„æºå›¾æ‰€å±plistæ–‡ä»¶ï¼Œå¦‚æœæ²¡æœ‰ï¼Œå¡«nilï¼Œåˆ™è§†ä½œä½¿ç”¨ä¸‰å¼ å•ç‹¬çš„pngå›¾ç‰‡åˆ›å»ºä¸‰æ€æŒ‰é’®
+		args - argsæ˜¯ä¸€ä¸ªtableï¼Œå¦‚æœplistä¸ºnilï¼Œ{ {æ™®é€šçŠ¶æ€æŒ‰é’®çš„å›¾ç‰‡uri, å®½, é«˜}, {é€‰ä¸­çŠ¶æ€æŒ‰é’®çš„å›¾ç‰‡uri, å®½, é«˜}, {æ— æ•ˆçŠ¶æ€æŒ‰é’®çš„å›¾ç‰‡uri, å®½, é«˜} }
+				å¦åˆ™ï¼Œargsçš„å†…å®¹ä¸º { {æ™®é€šçŠ¶æ€æŒ‰é’®çš„å›¾ç‰‡åœ¨plistä¸­çš„å‘½å}, {é€‰ä¸­çŠ¶æ€æŒ‰é’®çš„å›¾ç‰‡åœ¨plistä¸­çš„å‘½å}, {æ— æ•ˆçŠ¶æ€æŒ‰é’®çš„å›¾ç‰‡åœ¨plistä¸­çš„å‘½å} }
+		input_ex - input_exå¯¹è±¡
+		anchorx - é”šç‚¹x
+		anchory - é”šç‚¹y
+		enabled - æ˜¯å¦å¯ç”¨
 
-	·µ»ØÖµ£ºStage2D.Node¶ÔÏó
+	è¿”å›å€¼ï¼šStage2D.Nodeå¯¹è±¡
 
-	³ıStage2D.NodeÄ¬ÈÏÌá¹©µÄ·½·¨Íâ£¬´Ënode»¹°üº¬ÈçÏÂ·½·¨£º
+	é™¤Stage2D.Nodeé»˜è®¤æä¾›çš„æ–¹æ³•å¤–ï¼Œæ­¤nodeè¿˜åŒ…å«å¦‚ä¸‹æ–¹æ³•ï¼š
 		self:setNormal()
 		self:setDisabled()
 		self:setSelected()
-		self:setEnabled(enabled) ²ÎÊı£ºtrue - enable, false - disable
-		self:autoState(isAuto) ²ÎÊı£ºtrue - ×Ô¶¯´¦Àí°´ÏÂÖ®ºóÍ¼Æ¬µÄ±ä»¯£¬false - °´ÏÂ°´Å¥ºÍÌ§ÆğÖ®ºó£¬Ä¬ÈÏÍ¼Æ¬Ã»ÓĞ±ä»¯
+		self:setEnabled(enabled) å‚æ•°ï¼štrue - enable, false - disable
+		self:autoState(isAuto) å‚æ•°ï¼štrue - è‡ªåŠ¨å¤„ç†æŒ‰ä¸‹ä¹‹åå›¾ç‰‡çš„å˜åŒ–ï¼Œfalse - æŒ‰ä¸‹æŒ‰é’®å’ŒæŠ¬èµ·ä¹‹åï¼Œé»˜è®¤å›¾ç‰‡æ²¡æœ‰å˜åŒ–
 
-	ÊôĞÔ£»
-		self.event Ê¹ÓÃinput_ex´´½¨µÄevent£¬¿ÉÒÔ¸øÆäÉèÖÃonTouchUp,onTouchDownµÈÊÂ¼ş
-		self.enabled  °´¼üÊÇ·ñÓĞĞ§
-		self.state	°´¼üµ±Ç°µÄ×´Ì¬
-		self.pssNormal_		ÆÕÍ¨×´Ì¬ÏÂµÄpresentation
-		self.pssSelected_	Ñ¡ÖĞ×´Ì¬ÏÂµÄpresentation
-		self.pssDisabled_	ÎŞĞ§×´Ì¬ÏÂµÄpresentation
+	å±æ€§ï¼›
+		self.event ä½¿ç”¨input_exåˆ›å»ºçš„eventï¼Œå¯ä»¥ç»™å…¶è®¾ç½®onTouchUp,onTouchDownç­‰äº‹ä»¶
+		self.enabled  æŒ‰é”®æ˜¯å¦æœ‰æ•ˆ
+		self.state	æŒ‰é”®å½“å‰çš„çŠ¶æ€
+		self.pssNormal_		æ™®é€šçŠ¶æ€ä¸‹çš„presentation
+		self.pssSelected_	é€‰ä¸­çŠ¶æ€ä¸‹çš„presentation
+		self.pssDisabled_	æ— æ•ˆçŠ¶æ€ä¸‹çš„presentation
 ]]--
 
---Ôö¼ÓÒ»¸öÓÃ»§ĞèÇó£ºÓÃ»§°´ÏÂ°´¼üÖ®ºó
+--å¢åŠ ä¸€ä¸ªç”¨æˆ·éœ€æ±‚ï¼šç”¨æˆ·æŒ‰ä¸‹æŒ‰é”®ä¹‹å
 local function _newMenuItemImage(self, plist, args, input_ex, anchorx, anchory, enabled)
 	local node
 	
@@ -101,7 +102,7 @@ local function _newMenuItemImage(self, plist, args, input_ex, anchorx, anchory, 
 		imguri[1] = normal[1]
 		imguri[2] = disabled[1]
 		imguri[3] = selected[1]
-		--Ê¹ÓÃÉèÖÃÄ¿µÄ¾ØĞÎµÄ·½Ê½ÊµÏÖ·­×ª
+		--ä½¿ç”¨è®¾ç½®ç›®çš„çŸ©å½¢çš„æ–¹å¼å®ç°ç¿»è½¬
 		node.setDestRect = function(self, l, t, w, h)
 			self.pssNormal_:setDestRect(l, t, w, h)
 			self.pssSelected_:setDestRect(l, t, w, h)
@@ -128,7 +129,7 @@ local function _newMenuItemImage(self, plist, args, input_ex, anchorx, anchory, 
 	else
 		input_node = input_ex:addSpriteRect(node, normal[2] or 64, normal[3] or 64, anchorx, anchory)
 	end
-	ev = event.Dispatcher.new()
+	local ev = event.Dispatcher.new()
 	--input_node.dragable = true
 	
 	input_node.onTouchDown:addListener(function()

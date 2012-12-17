@@ -338,6 +338,10 @@ do
   end
 end
 
+
+--[[
+注意：为避免错误，eval(s)函数的参数s需要使用绝对路径
+]]
 function eval(s)
 	return load(s, s, "t", {})()
 end

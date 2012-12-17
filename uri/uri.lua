@@ -145,13 +145,13 @@ function splitext(p)
     return p, ''
 end
 
---ÎÄ¼şÃû
+--æ–‡ä»¶å
 function basename(p)
     local b, t = split(p)
     return t
 end
 
---Â·¾¶Ãû
+--è·¯å¾„å
 function dirname(p)
     local b, t = split(p)
     return b
@@ -161,10 +161,15 @@ function normjoin(...)
     return normalize(join(...))
 end
 
---È¡¾ø¶ÔÂ·¾¶
+function extension(p)
+	local b, ext = splitext(p)
+	return ext
+end
+
+--å–ç»å¯¹è·¯å¾„
 function absolute(uri, lvl)
 	lvl = lvl or 1
-    return normalize(join(dirname(__FILE__(lvl + 1)), uri))
+    return normalize(join(dirname(__FILE__(lvl + 1)) or "", uri))
 end
 
 

@@ -1,9 +1,12 @@
 --[[
-seed²å¼ş£º
+seedæ’ä»¶ï¼š
 	director
-	ËµÃ÷£º
-		ÓÃÀ´¿ØÖÆ¶à¸ö³¡¾°Ö®¼äµÄÇĞ»»
-	×¢Òâ£ºËäÈ»ÓëdoscriptÓÃ·¨ºÜÏñ£¬µ«director»áÊÍ·ÅµôÖ®Ç°µÄruntime£¬ÖØĞÂ´´½¨runtime£¬²¢Çå³ıÖ®Ç°µÄstage
+	è¯´æ˜ï¼š
+		ç”¨æ¥æ§åˆ¶å¤šä¸ªåœºæ™¯ä¹‹é—´çš„åˆ‡æ¢
+	æ³¨æ„ï¼š
+		è™½ç„¶ä¸doscriptç”¨æ³•å¾ˆåƒï¼Œä½†directorä¼šé‡Šæ”¾æ‰ä¹‹å‰çš„runtimeï¼Œé‡æ–°åˆ›å»ºruntimeï¼Œå¹¶æ¸…é™¤ä¹‹å‰çš„stage
+	æœ€åä¿®æ”¹æ—¥æœŸ:
+		2012-5-30
 ]]--
 module(..., package.seeall)
 
@@ -16,29 +19,29 @@ leavingModule = event.Dispatcher.new()
 enterModule = event.Dispatcher.new()
 
 --[[
-º¯Êı£ºdirector.load(module [, ...])
+å‡½æ•°ï¼šdirector.load(module [, ...])
 
-	²ÎÊı£º
-		module - ÒªÔØÈëµÄmodule,Ò»°ãÓÃÀ´ÔØÈë.lua½Å±¾ÎÄ¼ş
-			Èç¹ûÒªÔØÈë"sample\sample_1\main.lua"£¬ÄÇÃ´µÚÒ»¸ö²ÎÊıÒªÌîĞ´£º"sample.sample_1.main"
-		... - ¡¾¿ÉÑ¡¡¿¿ÉÒÔÔÚÒªÔØÈëµÄ½Å±¾ÎÄ¼şÀïÊ¹ÓÃ ... À´»ñÈ¡runtimeÒÔ¼°¶îÍâ²ÎÊı
+	å‚æ•°ï¼š
+		module - è¦è½½å…¥çš„module,ä¸€èˆ¬ç”¨æ¥è½½å…¥.luaè„šæœ¬æ–‡ä»¶
+			å¦‚æœè¦è½½å…¥"sample\sample_1\main.lua"ï¼Œé‚£ä¹ˆç¬¬ä¸€ä¸ªå‚æ•°è¦å¡«å†™ï¼š"sample.sample_1.main"
+		... - ã€å¯é€‰ã€‘å¯ä»¥åœ¨è¦è½½å…¥çš„è„šæœ¬æ–‡ä»¶é‡Œä½¿ç”¨ ... æ¥è·å–runtimeä»¥åŠé¢å¤–å‚æ•°
 	
-	·µ»ØÖµ£º
-		ÔØÈëµÄmodule»á±»µ±³ÉÒ»¸öº¯Êı·µ»Ø
+	è¿”å›å€¼ï¼š
+		è½½å…¥çš„moduleä¼šè¢«å½“æˆä¸€ä¸ªå‡½æ•°è¿”å›
 
-	ÓÃ·¨Ê¾Àı£º
+	ç”¨æ³•ç¤ºä¾‹ï¼š
 		=============================================================
 		
-		--ÎÄ¼ş£ºmain.lua
+		--æ–‡ä»¶ï¼šmain.lua
 			local a, b = 12, 24
 			local ret = director.load("sample.sample_1.main", a, b)
-			print(ret)						--½á¹ûÎª£º36
+			print(ret)						--ç»“æœä¸ºï¼š36
 
 		=============================================================
 		
-		--ÎÄ¼ş£ºsample\sample_1\main.lua
-			local runtime, a, b = ...		--runtimeÎªdirectorËù´´½¨
-			print(a, b)						--½á¹ûÎª£º12 24
+		--æ–‡ä»¶ï¼šsample\sample_1\main.lua
+			local runtime, a, b = ...		--runtimeä¸ºdirectoræ‰€åˆ›å»º
+			print(a, b)						--ç»“æœä¸ºï¼š12 24
 			return a + b
 		
 		=============================================================

@@ -1,13 +1,13 @@
 --[[
-Seed²å¼þ£º
-	transition - ÓÃÀ´¿ØÖÆÎïÌåÔÚÈ·¶¨Ê±¼äÄÚ£¬×´Ì¬µÄÆ½»¬±ä»¯£¬³£ÓÃÓÚnodeµÄÒÆ¶¯¡¢Ðý×ª¡¢Ëõ·Å
-	°üº¬ÎÄ¼þ£º
+Seedæ’ä»¶ï¼š
+	transition - ç”¨æ¥æŽ§åˆ¶ç‰©ä½“åœ¨ç¡®å®šæ—¶é—´å†…ï¼ŒçŠ¶æ€çš„å¹³æ»‘å˜åŒ–ï¼Œå¸¸ç”¨äºŽnodeçš„ç§»åŠ¨ã€æ—‹è½¬ã€ç¼©æ”¾
+	åŒ…å«æ–‡ä»¶ï¼š
 		transition.lua
-	ÒÀÀµÓÚ£º
-		ÎÞ
-	×îºóÐÞ¸ÄÈÕÆÚ£º
+	ä¾èµ–äºŽï¼š
+		æ— 
+	æœ€åŽä¿®æ”¹æ—¥æœŸï¼š
 		2012-6-18
-	¸üÐÂ¼ÇÂ¼£º
+	æ›´æ–°è®°å½•ï¼š
 			
 ]]
 module(..., package.seeall)
@@ -149,16 +149,16 @@ function timePeriod(time, update)
 end
 
 --[[
-º¯ÊýlinearAttrPeriod
-ÁîÄ³¶ÔÏóµÄÄ³¸öÊôÐÔÔÚÒ»¶ÎÊ±¼äÄÚ½øÐÐÏßÐÔ±ä»¯£º
-	²ÎÊý£º
-		target - Ä¿±ê¶ÔÏó
-		attr - ÊôÐÔÃû³Æ
-		time - ±ä»¯Ê±¼ä
-		from - ÊôÐÔµÄ³õÊ¼Öµ
-		to - ÊôÐÔµÄ½áÊøÖµ
+å‡½æ•°linearAttrPeriod
+ä»¤æŸå¯¹è±¡çš„æŸä¸ªå±žæ€§åœ¨ä¸€æ®µæ—¶é—´å†…è¿›è¡Œçº¿æ€§å˜åŒ–ï¼š
+	å‚æ•°ï¼š
+		target - ç›®æ ‡å¯¹è±¡
+		attr - å±žæ€§åç§°
+		time - å˜åŒ–æ—¶é—´
+		from - å±žæ€§çš„åˆå§‹å€¼
+		to - å±žæ€§çš„ç»“æŸå€¼
 
-		attrÒ²¿ÉÊ¹ÓÃº¯ÊýÀàÐÍ£¬ÕâÑùfrom¾ÍÊÇ³õÊ¼×´Ì¬µÄº¯Êý²ÎÊý£¬to¾ÍÊÇ½áÊø×´Ì¬µÄ²ÎÊý
+		atträ¹Ÿå¯ä½¿ç”¨å‡½æ•°ç±»åž‹ï¼Œè¿™æ ·fromå°±æ˜¯åˆå§‹çŠ¶æ€çš„å‡½æ•°å‚æ•°ï¼Œtoå°±æ˜¯ç»“æŸçŠ¶æ€çš„å‚æ•°
 ]]--
 
 function linearAttrPeriod(target, attr, time, from, to)
@@ -182,20 +182,20 @@ function linearAttrPeriod(target, attr, time, from, to)
 end
 
 --[[
-º¯ÊýlinearAttrPeriodEx
-ÁîÄ³¶ÔÏóµÄÈô¸É¸öÊôÐÔÔÚÒ»¶ÎÊ±¼äÄÚ¹²Í¬½øÐÐÏßÐÔ±ä»¯£º
-	²ÎÊý£º
-		target - Ä¿±ê¶ÔÏó
-		time - ±ä»¯Ê±¼ä
-		attrs - attrsÊÇÒ»¸ötable£¬°üº¬ÈçÏÂÄÚÈÝ£º
+å‡½æ•°linearAttrPeriodEx
+ä»¤æŸå¯¹è±¡çš„è‹¥å¹²ä¸ªå±žæ€§åœ¨ä¸€æ®µæ—¶é—´å†…å…±åŒè¿›è¡Œçº¿æ€§å˜åŒ–ï¼š
+	å‚æ•°ï¼š
+		target - ç›®æ ‡å¯¹è±¡
+		time - å˜åŒ–æ—¶é—´
+		attrs - attrsæ˜¯ä¸€ä¸ªtableï¼ŒåŒ…å«å¦‚ä¸‹å†…å®¹ï¼š
 			{
-				{ÊôÐÔ1Ãû³Æ, ³õÊ¼Öµ, ½áÊøÖµ},
-				{ÊôÐÔ2Ãû³Æ, ³õÊ¼Öµ, ½áÊøÖµ},
-				{ÊôÐÔ3Ãû³Æ, ³õÊ¼Öµ, ½áÊøÖµ},
+				{å±žæ€§1åç§°, åˆå§‹å€¼, ç»“æŸå€¼},
+				{å±žæ€§2åç§°, åˆå§‹å€¼, ç»“æŸå€¼},
+				{å±žæ€§3åç§°, åˆå§‹å€¼, ç»“æŸå€¼},
 				...
 			}
 
-		¡°ÊôÐÔÃû³Æ¡±Ò²¿ÉÊ¹ÓÃº¯ÊýÀàÐÍ£¬ÕâÑù¡°³õÊ¼Öµ¡±¾ÍÊÇ³õÊ¼×´Ì¬µÄº¯Êý²ÎÊý£¬¡°½áÊøÖµ¡±¾ÍÊÇ½áÊø×´Ì¬µÄ²ÎÊý
+		â€œå±žæ€§åç§°â€ä¹Ÿå¯ä½¿ç”¨å‡½æ•°ç±»åž‹ï¼Œè¿™æ ·â€œåˆå§‹å€¼â€å°±æ˜¯åˆå§‹çŠ¶æ€çš„å‡½æ•°å‚æ•°ï¼Œâ€œç»“æŸå€¼â€å°±æ˜¯ç»“æŸçŠ¶æ€çš„å‚æ•°
 ]]--
 
 function linearAttrPeriodEx(target, time, attrs)
