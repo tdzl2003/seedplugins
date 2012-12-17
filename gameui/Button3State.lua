@@ -68,7 +68,7 @@ function Button3State:toNode(selectorTable, rta)
 	
 --	end
 
-	-- print(self.anchorx, self.anchory, self.width, self.height)
+	print(self.anchorx, self.anchory, self.width, self.height)
 
 	self.shape = {
 		type = "ui.Rect",
@@ -83,6 +83,7 @@ function Button3State:toNode(selectorTable, rta)
 	self.evTapped = event.Dispatcher.new()
 	if self.selector then
 		selectorTable[self.selector] = self.evTapped
+		selectorTable[self.selector].uiNode = self
 	end
 	uiNode.evTouchUp:addListener(function(node, ev)
 		self:setNormal()

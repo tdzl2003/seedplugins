@@ -2,7 +2,11 @@
 Seed插件：GameUI
 
 	版本：
-		0.12
+		0.13
+
+	作者：
+		YoungGK
+		[yy.cicada@gmail.com]
 
 	包含文件：
 		init.lua            - 提供创建UI界面的方法以及一些支持函数
@@ -30,9 +34,10 @@ Seed插件：GameUI
 		presentations       - 如果不使用gameui.BarView类，可以不包含这两个文件
 
 	最后修改日期：
-		2012-12-14
+		2012-12-17
 	
 	更新记录：
+		2012-12-17：0.13版本，通过selectorTable["name"].uiNode可以获取到gameui.Button3State对象
 		2012-12-14：0.12版本，修正了按钮的锚点和触控区域问题
 		2012-12-12：将Sprite的内部node由ImageRect改为了Sprite，已解决因原始图片尺寸与实际纹理区域尺寸不同导致的偏移问题
 		2012-12-12：0.1版本
@@ -95,6 +100,12 @@ classTable["gameui.ScreenMask"]   = requireClass("gameui.ScreenMask")
 local baseuri = "res://data/ui"
 
 --相关的工具函数
+
+--/
+-- @function _toAbsolute [转为绝对路径]
+-- @param  {URI} _uri [要转换的URI]
+-- @return {URI}      [已转换为绝对路径的URI]
+--/
 local function _toAbsolute(_uri)
 	if liburi.isabs(_uri) then
 		baseuri = liburi.dirname(_uri)
