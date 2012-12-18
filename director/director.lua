@@ -1,12 +1,21 @@
 --[[
 seed插件：
 	director
+
+	版本：
+		0.2
+
+	最后更改日期：
+		2012-12-18
+
+	更新记录：
+		2012-12-18：
+			0.2版本
+
 	说明：
 		用来控制多个场景之间的切换
-	注意：
-		虽然与doscript用法很像，但director会释放掉之前的runtime，重新创建runtime，并清除之前的stage
-	最后修改日期:
-		2012-5-30
+	
+	注意：虽然与doscript用法很像，但director会释放掉之前的runtime，重新创建runtime，并清除之前的stage
 ]]--
 module(..., package.seeall)
 
@@ -47,8 +56,16 @@ enterModule = event.Dispatcher.new()
 		=============================================================
 
 ]]--
+
+local loading
+local chainLoad
+
 function load(module, ...)
-	if (currt) then
+	if (loading) then
+		chainLoad = {module, ...}
+	end
+	loading = true
+	if (currt and currt.native) then
 		leavingModule(current, currt)
 		currt:remove()
 	end
@@ -61,10 +78,29 @@ function load(module, ...)
 	end
 	
 	local rt = runtime:newAgent()
+	currt = rt
+	
 	local ret = m(rt, ...)
 	
+	collectgarbage()
+
 	current = ret
-	currt = rt
 	enterModule(ret, rt)
+	
+	loading = false
+	if (chainLoad) then
+		local cl = chainLoad
+		chainLoad = nil
+		return load(unpack(chainLoad))
+	end
 	return ret
+end
+
+
+function currentRuntimeAgent()
+	return currt
+end
+
+function currentModule()
+	return current
 end
