@@ -117,7 +117,7 @@ function split(p)
     for i=#p,math.max(rsl+1, 1),-1 do
         if (p:sub(i, i):match(sepm)) then
             local j = i;
-            while (p:sub(j, j):match(sepm)) do
+            while (j>rsl and p:sub(j, j):match(sepm)) do
                 j = j - 1
                 if (j == 0) then
                     j = i
