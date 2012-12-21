@@ -80,7 +80,7 @@ function load(module, ...)
 	local rt = runtime:newAgent()
 	currt = rt
 	
-	local ret = m(rt, ...)
+	local ret = m(rt, ...) or module
 	
 	collectgarbage()
 
