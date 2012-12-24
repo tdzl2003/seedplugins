@@ -16,7 +16,7 @@ if _OS_NAME == "win32" then
  	flurry = {init = nop,logEvent = nop,endTimedEvent = nop,setUserInfo = nop}
 end
 if not director.enterModule then 
-	error("需要director 0.2版本以上支持/need director ver.0.2")
+	error("需要director 0.2版本以上支持/need director ver.0.2.2")
 end
 
 director.enterModule:addListener(function(module,rtAgent)
