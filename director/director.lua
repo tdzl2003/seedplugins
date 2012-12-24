@@ -68,7 +68,7 @@ function load(module, ...)
 		chainLoad = {module, ...}
 	end
 	loading = true
-	if (currt and currt.native) then
+	if currt then
 		leavingModule(current, currt)
 		currt:remove()
 	end
