@@ -68,6 +68,7 @@ local chainLoad
 function load(module, ...)
 	if (loading) then
 		chainLoad = {module, ...}
+		return true
 	end
 	loading = true
 	if currt then
