@@ -1,6 +1,22 @@
-require("lua_ex")
 
+--[[
+Seed基础插件：uri
+
+    版本：
+        1.2
+
+    最后修改日期：2013-1-4
+    
+    更新记录：
+        1.2 split函数修正
+        1.1 增加了extension函数
+]]
+
+
+require("lua_ex")
 module(..., package.seeall)
+
+_G._URI_VER = 10002
 
 local curdir = "."
 local pardir = ".."
