@@ -2,18 +2,17 @@
 Seed基础插件：seed_ex
 
 	版本：
-		0.21
-
+		1.2
 	最后修改日期：
 		2012-12-13
-	
 	更新记录：
-		2012-12-13:
+		1.2
 			恢复了误删的函数 _callobj
-
-		2012-12-12：
+		1.1
 			可以支持Fangus框架
 ]]
+
+_G._SEED_EX_VER = 10002
 
 require("lua_ex")
 local stringize = require("stringize")
