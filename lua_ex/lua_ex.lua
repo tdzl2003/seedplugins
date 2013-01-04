@@ -2,7 +2,7 @@
 Seed基础插件：lua_ex
 
 	版本：
-		0.2
+		1.02
 
 	最后修改日期：
 		2012-12-12
@@ -14,6 +14,8 @@ Seed基础插件：lua_ex
 			增加了warning，assert函数
 			增加utf-8向unicode的转换函数
 ]]
+
+_G._LUA_EX_VER = 10002
 
 function nop()
 end
