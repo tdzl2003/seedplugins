@@ -1,5 +1,5 @@
---APIWrapper£¬½«ImageRectµÄSrcRect¶ÔÆëÖÁÎÆÀí×ø±ê×óÉÏ½Çµã¸ü¸ÄÎªbuild126Ö®Ç°µÄ²»¶ÔÆë
---ÔÚconfig.luaÀïÃærequire¸ÃÎÄ¼þ
+--APIWrapperï¼Œå°†ImageRectçš„SrcRectå¯¹é½è‡³çº¹ç†åæ ‡å·¦ä¸Šè§’ç‚¹æ›´æ”¹ä¸ºbuild126ä¹‹å‰çš„ä¸å¯¹é½
+--åœ¨config.luaé‡Œé¢requireè¯¥æ–‡ä»¶
 if _SEED_VER_BUILD and _SEED_VER_BUILD >= 127 then
 
 	local ori_ImageRect_new = display.presentations.ImageRect.new
