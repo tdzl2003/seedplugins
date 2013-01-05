@@ -1,23 +1,40 @@
 --[[
-Seed ²å¼ş
-	animation
+Seed æ’ä»¶
+	Animation
 
-	°üº¬ÎÄ¼ş
-		animation.lua - Ìá¹©´Óplist´´½¨spriteµÄ·½·¨
+	ç‰ˆæœ¬ï¼š
+		1.4
 
-	ÒÀÀµ×é¼ş
+	åŒ…å«æ–‡ä»¶ï¼š
+		Animation.lua - æä¾›ä»pliståˆ›å»ºspriteçš„æ–¹æ³•
+
+	ä¾èµ–ç»„ä»¶ï¼š
 		sprite_ex
 		seed_ex
 		lua_ex
 		uri
 		plist
 
-	×îºóĞŞ¸ÄÈÕÆÚ
-		2012-6-6
+	æœ€åä¿®æ”¹æ—¥æœŸï¼š
+		2012-12-13ï¼š
 	
-	¸üĞÂÄÚÈİ£º
-		2012-6-6£º
-			getSize¶ÔÓÚSprite¶¯»­Ò²¿ÉÒÔÊ¹ÓÃ£¬µ«Ö»·µ»ØµÚÒ»¸ösheetµÄ´óĞ¡
+	æ›´æ–°å†…å®¹ï¼š
+		1.4 2012-12-13ï¼š
+			ä¿®æ”¹äº†newImageRectWithAniæ–¹æ³•ï¼Œé€‚é…äº†build127ä»¥åçš„å¼•æ“
+			
+		1.3 2012-11-13ï¼š
+			ä¿®æ”¹äº†newImageRectéƒ¨åˆ†ï¼Œé€‚é…äº†build125ä»¥åçš„ç‰ˆæœ¬
+		
+		1.2 2012-6-15ï¼š
+			ä½¿display.presentations.newImageRectWithAni()æ–¹æ³•æ”¯æŒimageRectçš„90åº¦æ—‹è½¬
+			ä¿®æ­£äº†spriteå¯¹è±¡çš„getSize()æ–¹æ³•åœ¨å›¾åƒæœ‰æ—‹è½¬æ—¶çš„é”™è¯¯
+
+		1.1 2012-6-6ï¼š
+			getSizeå¯¹äºSpriteåŠ¨ç”»ä¹Ÿå¯ä»¥ä½¿ç”¨ï¼Œä½†åªè¿”å›ç¬¬ä¸€ä¸ªsheetçš„å¤§å°
+
+	æ³¨æ„äº‹é¡¹ï¼š
+		require("Animation")æ³¨æ„Animationçš„å¤§å°å†™é—®é¢˜
+
 ]]--
 require("sprite_ex")
 require("seed_ex")
@@ -45,24 +62,26 @@ end
 function Animation:__init__WithArray(uri,array)
 	uri = urilib.absolute(uri, 2)
 	local org = _loaded[uri]
-	if (org) then
-		self:__init_With(org._sheet, org._set)
-	else
-		self:__init__With(plist.loadPlistSheet(uri,array))
+	if not org then
+		org = {}
+		org._sheet, org._set, org._shedata, org._setdata, org._framemap, org._imguri = plist.loadPlistSheet(uri,array)
+		_loaded[uri] = org
 	end
+	self:__init__With(org._sheet, org._set, org._shedata, org._setdata, org._framemap, org._imguri)
 end
 
---flags²ÎÊıµÄÒâÒå£º
---	0 - ½âÊÍÎªµ¥ÕÅµÄÍ¼Æ¬£¬1 - °´ÕÕÃû³Æ½âÊÍÎª¶¯»­ĞòÁĞ
+--flagså‚æ•°çš„æ„ä¹‰ï¼š
+--	0 - è§£é‡Šä¸ºå•å¼ çš„å›¾ç‰‡ï¼Œ1 - æŒ‰ç…§åç§°è§£é‡Šä¸ºåŠ¨ç”»åºåˆ—
 function Animation:__init__WithPlist(uri, fps, flags, array)
 	local flags = flags or 1
 	uri = urilib.absolute(uri, 2)
 	local org = _loaded[uri]
-	if (org) then
-		self:__init_With(org._sheet, org._set)
-	else
-		self:__init__With(plist.loadPlistSheet(uri, fps, flags, array))
+	if not org then
+		org = {}
+		org._sheet, org._set, org._shedata, org._setdata, org._framemap, org._imguri = plist.loadPlistSheet(uri, fps, flags, array)
+		_loaded[uri] = org
 	end
+	self:__init__With(org._sheet, org._set, org._shedata, org._setdata, org._framemap, org._imguri)
 end
 
 function Animation:WithDirections(dt)
@@ -70,7 +89,7 @@ function Animation:WithDirections(dt)
 	return self
 end
 
-define_type("Animation", Animation)
+_G.Animation = define_type("Animation", Animation)
 
 local pss = display.presentations
 pss.newSpriteWith = function(rt, ani, action)
@@ -87,7 +106,10 @@ pss.newSpriteWith = function(rt, ani, action)
 			if id == nil then
 				id = 1
 			end
-			local w, h = ani._sheet.data[id][10], ani._sheet.data[id][9] 
+			local w, h = ani._sheet.data[id][9], ani._sheet.data[id][10] 
+			if ani._sheet.data[id][11] == 5 then
+				w, h = h, w
+			end
 			return w, h
 		end
 	end
@@ -95,49 +117,49 @@ pss.newSpriteWith = function(rt, ani, action)
 end
 
 --[[
-	Ê¹ÓÃnewSpriteWith´´½¨µÄ¶ÔÏó£¬¿ÉÒÔÊ¹ÓÃnode:getSize()·½·¨»ñµÃµ±Ç°¶¯×÷µÄ¿íºÍ¸ß
-	×¢Òâ£ºnode:getSize()½öÔÚplist±»½âÊÍÎªµ¥ÕÅÍ¼Æ¬Ê±ÊÊÓÃ¡£
-		ÓÉÓÚÍ¨³£ÔÚ¶¯»­ĞÎÊ½µÄplistÖĞ£¬ËùÓĞsheetµÄ´óĞ¡¶¼ÊÇÍ³Ò»µÄ£¬Òò´Ëplist±»½âÊÍÎª¶¯»­Ê±£¬Ö»ÄÜ»ñµÃsheetÖĞµÚÒ»¸öÍ¼¿éµÄ´óĞ¡¡£¡£
+	ä½¿ç”¨newSpriteWithåˆ›å»ºçš„å¯¹è±¡ï¼Œå¯ä»¥ä½¿ç”¨node:getSize()æ–¹æ³•è·å¾—å½“å‰åŠ¨ä½œçš„å®½å’Œé«˜
+	æ³¨æ„ï¼šnode:getSize()ä»…åœ¨plistè¢«è§£é‡Šä¸ºå•å¼ å›¾ç‰‡æ—¶é€‚ç”¨ã€‚
+		ç”±äºé€šå¸¸åœ¨åŠ¨ç”»å½¢å¼çš„plistä¸­ï¼Œæ‰€æœ‰sheetçš„å¤§å°éƒ½æ˜¯ç»Ÿä¸€çš„ï¼Œå› æ­¤plistè¢«è§£é‡Šä¸ºåŠ¨ç”»æ—¶ï¼Œåªèƒ½è·å¾—sheetä¸­ç¬¬ä¸€ä¸ªå›¾å—çš„å¤§å°ã€‚ã€‚
 ]]--
 
 --[[
-Ê¹ÓÃËµÃ÷£º
+ä½¿ç”¨è¯´æ˜ï¼š
 
-º¯ÊıAnimation:newWithPlist(uri, fps, flag)
-	²ÎÊı£º
-		uri - plistÎÄ¼şµÄuriµØÖ·£¬¿ÉÒÔÀí½âÎªÂ·¾¶
-		fps - ¶¯»­Ö¡ÂÊ£¬Ã¿Ãë²¥·Å¶àÉÙÖ¡
-		flag - ½âÎö±êÖ¾£º0 - ½âÊÍÎªµ¥ÕÅµÄÍ¼Æ¬£¬1 - °´ÕÕÃû³Æ½âÊÍÎª¶¯»­ĞòÁĞ
-	·µ»ØÖµ£º
+å‡½æ•°Animation.newWithPlist(uri, fps, flag)
+	å‚æ•°ï¼š
+		uri - plistæ–‡ä»¶çš„uriåœ°å€ï¼Œå¯ä»¥ç†è§£ä¸ºè·¯å¾„
+		fps - åŠ¨ç”»å¸§ç‡ï¼Œæ¯ç§’æ’­æ”¾å¤šå°‘å¸§
+		flag - è§£ææ ‡å¿—ï¼š0 - è§£é‡Šä¸ºå•å¼ çš„å›¾ç‰‡ï¼Œ1 - æŒ‰ç…§åç§°è§£é‡Šä¸ºåŠ¨ç”»åºåˆ—
+	è¿”å›å€¼ï¼š
 		sheet_set - 
-			sheet_setÊÇÒ»¸ötable£¬°üº¬ÈçÏÂÄÚÈİ£º
-				_sheet	Í¼Æ¬×ÊÔ´·Ö¸îÊı¾İ±í
-				_set	¶¯×÷¼°Æä¶ÔÓ¦µÄÖ¡ĞòÁĞ
-				_shedata	¡¾ÔİÊ±Î´Öª¡¿
-				_framemap	¶¯×÷Ãû³Æ¶ÔÓ¦
-				_imguri	plist¶ÔÓ¦Í¼Æ¬µÄuri
+			sheet_setæ˜¯ä¸€ä¸ªtableï¼ŒåŒ…å«å¦‚ä¸‹å†…å®¹ï¼š
+				_sheet	å›¾ç‰‡èµ„æºåˆ†å‰²æ•°æ®è¡¨
+				_set	åŠ¨ä½œåŠå…¶å¯¹åº”çš„å¸§åºåˆ—
+				_shedata	ã€æš‚æ—¶æœªçŸ¥ã€‘
+				_framemap	åŠ¨ä½œåç§°å¯¹åº”
+				_imguri	plistå¯¹åº”å›¾ç‰‡çš„uri
 
-º¯Êıstage/node:newSpriteWith(runtimeAgent, sheet_set, action)
-	²ÎÊı£º
-		runtimeAgent - runtime.Agent¶ÔÏó
-		sheet_set - Animation:newWithPlist()µÄ·µ»ØÖµ
-		action - Ä¬ÈÏ²¥·ÅµÄ¶¯×÷
-	·µ»ØÖµ:
-		presentations.Sprite¶ÔÏó
+å‡½æ•°stage/node:newSpriteWith(runtimeAgent, sheet_set, action)
+	å‚æ•°ï¼š
+		runtimeAgent - runtime.Agentå¯¹è±¡
+		sheet_set - Animation:newWithPlist()çš„è¿”å›å€¼
+		action - é»˜è®¤æ’­æ”¾çš„åŠ¨ä½œ
+	è¿”å›å€¼:
+		presentations.Spriteå¯¹è±¡
 
-	±ê×¼ÓÃ·¨£º
+	æ ‡å‡†ç”¨æ³•ï¼š
 		local sheet_set = Animation.newWithPlist("res://xxx/xxxx.plist", 24, 1)
 		local node = stage:newSpriteWith(ra, sheet_set, "default_action")
 
-º¯Êıstage/node:newImageRectWithAni(name)
+å‡½æ•°stage/node:newImageRectWithAni(name)
 	
-	²ÎÊı£º
-		name - ¶¯×÷Ãû
+	å‚æ•°ï¼š
+		name - åŠ¨ä½œå
 	
-	·µ»ØÖµ£º
-		presentations.ImageRect¶ÔÏó
+	è¿”å›å€¼ï¼š
+		presentations.ImageRectå¯¹è±¡
 
-	±ê×¼ÓÃ·¨£º
+	æ ‡å‡†ç”¨æ³•ï¼š
 		local sheet_set = Animation.newWithPlist("res://xxx/xxxx.plist", 24, 1)
 		local node = stage:newImageRectWithAni("default_image.png")
 
@@ -153,13 +175,22 @@ pss.newImageRectWithAni = function(self, name)
 	local dx, dy, dr, db = unpack(r, 5, 8)
 	local sw, sh, rotFlag = unpack(r, 9, 11)
 	local ret = pss.newImageRect(self._imguri, 
-			{sx, sy, sr-sx, sb-sy},
-			{dx, dy, dr-dx, db-dy}
+			{sx, sy, sr-sx, sb-sy}
 		)
+	--å¯¹äºplist_sheetè€Œè¨€ï¼Œflipxå’Œflipyè¦è€ƒè™‘å›¾ç‰‡æ—‹è½¬äº†çš„æƒ…å†µ
+	if rotFlag == 5 then
+		local ori_setFlip = ret.setFlip
+		function ret:setFlip(flipx, flipy)
+			ori_setFlip(self, not flipy, flipx)
+		end
+	end
 	local w,h = dr-dx, db-dy
 	ret:setFlag(rotFlag)
+
 	function ret:getSize()
 		return w,h
 	end
+
 	return ret
 end
+return _G.Animation
