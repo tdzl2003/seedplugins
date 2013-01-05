@@ -33,5 +33,5 @@ for /f "skip=4 tokens=3* " %%a in (foldersList) do (
 	del folder
 	cd ..
 )
-
+del foldersList
 pause>nul
