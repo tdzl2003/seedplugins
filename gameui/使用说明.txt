@@ -1,0 +1,38 @@
+将gameui.zip中的所有lua文件放到gameui文件夹中，如:
+res\
+	seed_plugins\
+		gameui\
+			init.lua
+			UIBase.lua
+			Image.lua
+			...
+
+在config.lua里设置路径
+package.path = package.path .. ";res://seed_plugins/?.lua;res://seed_plugins/?.luac;res://seed_plugins/?/init.lua;res://seed_plugins/?/init.luac"
+
+
+1、根据CCB文件创建场景：
+	local gameui = require("gameui")
+	local stage, symbols, selectors = gameui.createWithCCB(father, "res://data/main_menu.ccb", rta)
+	--其中，father可以是Stage2D或Stage2D.Node对象，在创建完CCB之后，会将father对象返回
+	--一般情况下，可以将第一个参数father填nil，这样，就会创建新的stage返回
+	--symbols记录了所有命名过的节点
+	--selector则记录了所有命名过的点击事件
+
+2、debug模式：
+	如果存在名为DEBUG的全局table且其中的showUIData为True，那么，可以看到一些打印信息以帮助调试
+	_G.DEBUG = {
+		showUIData = true
+	}
+
+3、获得UINode和Stage2D.Node对象：
+	如果在cocosbuilder编辑器中已经为节点命了名，那么可以使用symbols["name"]来获得GameUINode
+	需要注意的是，与之前的ccb插件不同，这次获得的是一个gameui.UIBase对象。
+	根据具体的组件不同，获得的GameUINode有不同的方法，详情可以打开对应的lua文件查看。
+	其中，通用的属性和方法有：
+		gameUINode:getNode()          - 获取Stage2D.Node对象
+		gameUINode:withDebug()        - 可以显示出坐标位置
+		gameUINode:move(dx, dy)       - 平移一定距离
+		gameUINode:setPosition(x, y)  - 设置坐标位置
+		gameUINode:hide()             - 隐藏
+		gameUINode:show()             - 显示
