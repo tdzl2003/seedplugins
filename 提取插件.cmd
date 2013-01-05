@@ -1,17 +1,18 @@
 @echo off
 
-::遍历目录,结果存至temp
+
+::删除seed_plugins目录
 rd seed_plugins /S /Q
+::遍历目录,结果存至temp
 dir /o:e >temp
 
 ::从遍历结果中找出文件夹,存入foldersList
-
 find "DIR" temp > foldersList
 del temp
-::删除seed_plugins目录下所有文件
-
-
+::创建seed_plugins目录
 mkdir seed_plugins
+
+::遍历文件夹列表.将其中的文件夹.lua文件复制到seed_plugin目录.
 for /f "skip=4 tokens=3* " %%a in (foldersList) do (
 	cd %%b 
 	dir /o:e > plugins
