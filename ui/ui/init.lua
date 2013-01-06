@@ -236,5 +236,8 @@ require("ui.tap")
 require("ui.hold")
 require("ui.drag")
 require("ui.touch")
+ui.Circle = require("ui.Circle")
+ui.Rect = require("ui.Rect")
+ui.ScreenMask = require("ui.ScreenMask")
 
 return ui
