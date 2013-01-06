@@ -3,11 +3,14 @@
 Seed基础插件：uri
 
     版本：
-        1.2
+        1.3
 
-    最后修改日期：2013-1-4
+    最后修改日期：2013-1-6
     
     更新记录：
+        2013-1-6:
+            去除了可能引发问题的__FILE__ __LINE__ __FUNCTION__三个函数。
+            不再对相对“当前代码文件”提供支持。相对路径转绝对路径时，都会相对"res://"进行。
         1.2 split函数修正
         1.1 增加了extension函数
 ]]
@@ -16,7 +19,7 @@ Seed基础插件：uri
 require("lua_ex")
 module(..., package.seeall)
 
-_G._URI_VER = 10002
+_G._URI_VER = 10003
 
 local curdir = "."
 local pardir = ".."
@@ -185,12 +188,12 @@ end
 --取绝对路径
 function absolute(uri, lvl)
 	lvl = lvl or 1
-    return normalize(join(dirname(__FILE__(lvl + 1)) or "", uri))
+    return normjoin("res://", uri)
 end
 
 
 function reluri(uri, start)
-    start = start and absolute(start, 2) or dirname(__FILE__(2))
+    start = start and absolute(start, 2) or "res://"
     uri = absolute(uri, 2)
     
     local start_prefix, start_list = splitroot(start)
