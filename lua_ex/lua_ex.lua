@@ -17,7 +17,7 @@ Seed基础插件：lua_ex
 			增加utf-8向unicode的转换函数
 ]]
 
-_G._LUA_EX_VER = 10002
+_G._LUA_EX_VER = 10003
 
 function nop()
 end
