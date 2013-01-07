@@ -11,6 +11,7 @@ local function addStage(stage)
 			end
 		end
 	elseif (type(stage) == 'table' and is_function(stage.render)) then
+		assert(stage ~= display, "display:addStage(stage) is deprecated, use display.addStage(stage) instead.")
 		stage.__dorender = stage.__dorender or bind(stage.render, stage)
 		display.render:addListener(stage.__dorender)
 	else
