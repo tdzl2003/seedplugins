@@ -29,6 +29,8 @@ local runtime = require("runtime")
 local current = nil
 local currt = nil
 
+local unpack = unpack or table.unpack
+
 leavingModule = event.Dispatcher.new()
 enterModule = event.Dispatcher.new()
 
@@ -97,7 +99,7 @@ function load(module, ...)
 	if (chainLoad) then
 		local cl = chainLoad
 		chainLoad = nil
-		return load(unpack(chainLoad))
+		return load(unpack(cl))
 	end
 	return ret
 end
