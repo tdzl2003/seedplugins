@@ -66,10 +66,32 @@ local function interpolationTransition(rtAgent, target, time, fields, inter, cal
 	return ret
 end
 
+
 local function linearInter(v0, v1, x)
 	return v0*(1-x) + v1*x
 end
 
+--根据传入的函数决定移动方式
+local function interManager(func,ratio)
+	local ratio = ratio or 1
+	local func = func or values
+	local function inter(v0,v1,x)
+		local x = x * ratio
+		local p = v0 + func(x) * (v1-v0)
+		return p
+	end 
+	return inter
+end
+
+local function change(rtAgent, target, time, att, from, to,callback,inter)
+	local inter = inter or linearInter
+	return interpolationTransition(rtAgent, target, time, {
+			[att] = {
+				from = from,
+				to = to,
+			}
+		}, inter, callback) 
+end
 local function move(rtAgent, target, time, x0, y0, x1, y1, callback)
 	return interpolationTransition(rtAgent, target, time, {
 			x = {
@@ -94,4 +116,6 @@ return {
 	linearInter = linearInter,
 	move = move,
 	moveTo = moveTo,
+	change = change,
+	interManager = interManager,
 }
