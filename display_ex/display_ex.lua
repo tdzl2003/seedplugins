@@ -50,3 +50,10 @@ function display:newStage2D(...)
 	return ret
 end
 
+-- setBrightness
+local function setBrightness(self, v)
+	self:setMaskColor(v, v, v)
+end
+display.Stage2D.methods.setBrightness = setBrightness
+display.Stage2D.Node.methods.setBrightness = setBrightness
+

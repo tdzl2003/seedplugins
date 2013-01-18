@@ -45,12 +45,22 @@ local function interpolationTransition(rtAgent, target, time, fields, inter, cal
 	local startTime = rtAgent:getTime()
 
 	for k,v in pairs(fields) do
-		local startv = v.from or target[k]
-		local endv = v.to or target[k]
-		local function work(now)
-			target[k] = inter(startv, endv, now)
+		if (type(target[k]) == 'function') then
+			local startv = v.from
+			local endv = v.to
+			local func = target[k]
+			local function work(now)
+				func(target, inter(startv, endv, now))
+			end
+			workers:addListener()
+		else
+			local startv = v.from or target[k]
+			local endv = v.to or target[k]
+			local function work(now)
+				target[k] = inter(startv, endv, now)
+			end
+			workers:addListener(work)
 		end
-		workers:addListener(work)
 	end
 
 	local ret
