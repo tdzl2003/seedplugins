@@ -1,5 +1,24 @@
 require("lua_ex")
 
+--[[
+Seed进阶插件:display_ex
+
+	版本：
+		1.2
+
+	最后修改日期：
+		2013-1-18
+	
+	更新记录：
+		v1.2:
+			1.添加setBrightness方法
+		v1.1:
+			1.支持物理的绘制.使用方法保持不变
+		v1.0：
+			1.完成基本功能
+			2.现在可以使用display.removeStage(stage_name)来移除stage了
+]]
+
 -- 重写display.render、display.addStage/removeStage/clearStages
 display.render = event.Dispatcher.new()
 local function addStage(stage)
