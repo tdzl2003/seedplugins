@@ -52,7 +52,7 @@ local function interpolationTransition(rtAgent, target, time, fields, inter, cal
 			local function work(now)
 				func(target, inter(startv, endv, now))
 			end
-			workers:addListener()
+			workers:addListener(work)
 		else
 			local startv = v.from or target[k]
 			local endv = v.to or target[k]
