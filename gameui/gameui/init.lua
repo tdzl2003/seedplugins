@@ -76,7 +76,7 @@ Seed插件：GameUI
 
 require("ui")
 local liburi = require("uri")
-require("Animation")
+require("animation")
 
 if _G.gameui then
 	return _G.gameui

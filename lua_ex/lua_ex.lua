@@ -2,12 +2,14 @@
 Seed基础插件：lua_ex
 
 	版本：
-		1.2
+		1.3
 
 	最后修改日期：
-		2012-12-12
+		2013-1-6
 	
 	更新记录：
+		2013-1-6:
+			去除了可能引发问题的__FILE__ __LINE__ __FUNCTION__三个函数。
 		2012-12-12：
 			修改了bind函数
 			增加了弱key and value引用表
@@ -15,7 +17,7 @@ Seed基础插件：lua_ex
 			增加utf-8向unicode的转换函数
 ]]
 
-_G._LUA_EX_VER = 10002
+_G._LUA_EX_VER = 10003
 
 function nop()
 end
@@ -169,25 +171,6 @@ function math.sign(n)
 	else
 		return 0
 	end
-end
-
-function __FILE__(lvl) 
-	lvl = lvl or 1
-    local s = debug.getinfo(lvl+1,'S').source 
-    if (s:sub(1,1) ~= '@') then
-		return '/'
-    end
-    return s:sub(2)
-end
-
-function __LINE__(lvl) 
-	lvl = lvl or 1
-    return debug.getinfo(lvl+1, 'l').currentline 
-end
-
-function __FUNCTION__(lvl) 
-	lvl = lvl or 1
-    return debug.getinfo(lvl+1, 'n').name
 end
 
 local level_ = 1
